@@ -23,8 +23,11 @@ Once this is done, open STEUP.m in the top directory. After the comments,
 you should see these lines: 
 
 >> BULLET_DIR = '/Users/Trystan/Code/Builds/Bullet/src/';
+
 >> BULLET_SRC = '/Users/Trystan/Code/Thirdparty/bullet-2.81-rev2613/src/';
+
 >> BOOST_DIR = '/usr/local/include';
+
 >> EIGEN_DIR = '/usr/local/include/eigen3';
 
 Replace the strings after the variable names with your own paths, for each
@@ -43,7 +46,7 @@ showcase different things:
 - OptimizerDemo: Seeks to perform Gauss-Newton optimization on a path. Still
   pretty buggy; I would stay away, haha. 
 
-Have fun! Every function in every directory should have a bit of documentation
+Every function in every directory should have a bit of documentation
 involved, so just type 'help [name of function]' to look up usage and arguments
 for everything. Some of the constraints are a bit tricky, so this might help. 
 
@@ -52,10 +55,5 @@ If you'd like to work on the project, or point out anything grossly wrong,
 just reach out:
 gallimatrix ~at~ gmail.com
 
----------------------------------
-*** /SimLAB
-*** /Author: Brandon Minor, Autonomous Robotics Group,
-             George Washington University
----------------------------------
-
+Have fun!
 
