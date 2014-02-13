@@ -38,7 +38,7 @@ After that, everything should work!
 ---------
 DEMOS
 ---------
-Each demo has the same GUI interface (displayed at startup), but they
+Each demo has the same GUI (displayed at startup), but they
 showcase different things: 
 
 - BulletDemo: Shows off how easy it is to add shapes and constraints to the
