@@ -17,6 +17,7 @@ SimLAB only requires a couple of things:
   * Bullet Physics Library: http://bulletphysics.org/wordpress/
   * Eigen Linear Algebra Library: http://bit.ly/LXBsEr
   * Boost C++ Libraries: http://www.boost.org/
+  
 Install all of these; order doesn't really matter here.
 
 Once this is done, open STEUP.m in the top directory. After the comments,
