@@ -1,8 +1,8 @@
 ---------------------------------
-*** SimLAB
-*** Author: Brandon Minor, Autonomous Robotics Group,
-            George Washington University
+SimLAB
 ---------------------------------
+Author: Brandon Minor, Autonomous Robotics Group,
+        George Washington University
 
 SimLAB is a MATLAB Physics Simulator that utilizes the Bullet Physics Engine.
 This program's goal is to allow for convenient use of the MATLAB libraries
