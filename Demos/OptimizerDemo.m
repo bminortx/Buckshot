@@ -35,10 +35,10 @@ BulletOpti.AddRaycastVehicles(RayVehicles);
 % Notice: setting the angles here is a bit pointless, but necessary; if you're
 % optimizing the path, the angle will change to fit the optimization. 
 % poses = [x; y; th; vel]
-poses = [ 5,     12;
-          6,     8; 
-          pi/2,  pi/2;
-          0,     2];
+poses = [ 5,     12,   14;
+          6,     8,    7;
+          pi/2,  pi/2, pi/2;
+          0,     2,     2];
 
 
 % SetToGround is essential for an optimization routine.

@@ -26,6 +26,8 @@
 // the Compounds enum (which is not very useful right now...)
 #include "bullet_entities.h"
 
+
+
 // Our shapes
 #include "../Bullet_shapes/bullet_vehicle.h"
 #include "../Bullet_shapes/bullet_cube.h"
@@ -357,7 +359,7 @@ public:
       }
       count++;
       if(count==20){
-       break;
+        break;
       }
     }
     int on = false;
@@ -413,7 +415,7 @@ public:
     // Reset our car to its initial state.
     m_mRayVehicles[id]->m_pRigidBody->setCenterOfMassTransform(bullet_trans);
   }
-
+  
   //////
 
   double* SpeedSim(double id, double* start_pose, double* start_rot,
