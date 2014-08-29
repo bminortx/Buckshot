@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>SimLAB by bminortx</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>SimLAB</h1>
+        <h2>A MATLAB physics simulator that utilizes the Bullet Physics Engine. </h2>
+        <a href="https://github.com/bminortx/SimLAB" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <hr><h2>
+<a name="simlab" class="anchor" href="#simlab"><span class="octicon octicon-link"></span></a>SimLAB</h2>
+
+<p>Author: Brandon Minor (<a href="https://github.com/bminortx" class="user-mention">@bminortx</a>)</p>
+
+<p>This program's goal is to allow for convenient use of the MATLAB libraries while also guaranteeing accurate simulation through Bullet Physics, a fully functional and reliable engine.</p>
+
+<h3>
+<a name="setup" class="anchor" href="#setup"><span class="octicon octicon-link"></span></a>Setup</h3>
+
+<p>SimLAB only requires a couple of things: </p>
+
+<ul>
+<li>MATLAB</li>
+<li>Bullet Physics Library: <a href="http://bulletphysics.org/wordpress/">http://bulletphysics.org/wordpress/</a>
+</li>
+<li>Eigen Linear Algebra Library: <a href="http://bit.ly/LXBsEr">http://bit.ly/LXBsEr</a>
+</li>
+<li>Boost C++ Libraries: <a href="http://www.boost.org/">http://www.boost.org/</a>
+</li>
+</ul><p>Install all of these; order doesn't really matter here.</p>
+
+<p>Once this is done, open SETUP.m in the top directory. After the comments, you should see these lines: </p>
+
+<p><code>BULLET_DIR = '/Users/Trystan/Code/Builds/Bullet/src/';</code></p>
+
+<p><code>BULLET_SRC = '/Users/Trystan/Code/Thirdparty/bullet-2.81-rev2613/src/';</code></p>
+
+<p><code>BOOST_DIR = '/usr/local/include';</code></p>
+
+<p><code>EIGEN_DIR = '/usr/local/include/eigen3';</code></p>
+
+<p>Replace the strings after the variable names with your own paths, for each respective library. Add the SimLAB folder and all subdirectories to your path. After that, everything should work!</p>
+
+<h3>
+<a name="demos" class="anchor" href="#demos"><span class="octicon octicon-link"></span></a>Demos</h3>
+
+<p>Each demo has the same GUI (displayed at startup), but they showcase different things: </p>
+
+<ul>
+<li>BulletDemo: Shows off how easy it is to add shapes and constraints to the scene. </li>
+<li>VehicleDemo: Demonstrates a Bullet RaycastVehicle.</li>
+<li>OptimizerDemo: Seeks to perform Gauss-Newton optimization on a path. Still pretty buggy; I would stay away for now.</li>
+</ul><p>Every function in every directory should have a bit of documentation involved, so just type 'help [name of function]' to look up usage and arguments for everything. Some of the constraints are a bit tricky, so this might help. </p>
+
+<h3>
+<a name="contribute" class="anchor" href="#contribute"><span class="octicon octicon-link"></span></a>Contribute</h3>
+
+<p>This documentation will continue to expand as things become available. I published this on GitHub in the hopes that it would become a robust library with the help of the community. With that in mind, if you have a feature that you would like to add to SimLAB, go to the issues page on the GitHub repo and file something in. If you want to be even more hands-on, fork this repo and run a pull request with your feature included. Odds are, it'll get added into the system. </p>
+
+<h3>
+<a name="other-things" class="anchor" href="#other-things"><span class="octicon octicon-link"></span></a>Other Things</h3>
+
+<p>Check out my other libraries at my github page: <a href="https://github.com/bminortx" class="user-mention">@bminortx</a>. I've been actively updating another physics library written in C++, <a href="https://github.com/arpg/simba">SimBA</a>. This project is much more advanced, but offers a more diverse skill set as well. Check it out if you're interested. </p>
+
+<h3>
+<a name="the-mit-license-mit" class="anchor" href="#the-mit-license-mit"><span class="octicon octicon-link"></span></a>The MIT License (MIT)</h3>
+
+<p>Copyright (c) 2014, Brandon Minor</p>
+
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:</p>
+
+<p>The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.</p>
+
+<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.</p>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/bminortx/SimLAB/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/bminortx/SimLAB/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/bminortx/SimLAB"></a> is maintained by <a href="https://github.com/bminortx">bminortx</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+            <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-51635732-2");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
