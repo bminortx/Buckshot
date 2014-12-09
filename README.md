@@ -2,8 +2,11 @@
 SimLAB
 ---------------------------------
 Author: Brandon Minor
+
 Email: gallimatrix ~at~ gmail.com
+
 Web: bminortx.github.io
+
 Associated Acts: ARPG @ CU Boulder, Replica Labs
 
 SimLAB is a MATLAB Physics Simulator that utilizes the Bullet Physics Engine.
