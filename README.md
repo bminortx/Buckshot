@@ -1,6 +1,5 @@
----------------------------------
 SimLAB
----------------------------------
+============
 Author: Brandon Minor
 
 gallimatrix ~at~ gmail.com
@@ -18,7 +17,6 @@ If you'd like to work on the project, or point out anything grossly wrong,
 just reach out! I would love to get feedback on this project. 
 
 
-----------
 SETUP
 ----------
 SimLAB only requires a couple of things:
@@ -31,7 +29,7 @@ Install all of these; order doesn't really matter here. Make sure that there is 
 
 Once this is done, open Matlab and run SETUP.m in the top directory. After that, everything should work!
 
----------
+
 DEMOS
 ---------
 Each demo has the same GUI (displayed at startup), but they
@@ -47,7 +45,7 @@ Every function in every directory should have a bit of documentation
 involved, so just type 'help [name of function]' to look up usage and arguments
 for everything. Some of the constraints are a bit tricky, so this might help. 
 
---------
+
 License
 --------
 
