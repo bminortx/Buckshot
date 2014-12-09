@@ -1,10 +1,6 @@
 SimLAB
 ============
-Author: Brandon Minor
-
-gallimatrix ~at~ gmail.com
-
-[bminortx.github.io](bminortx.github.io)
+Author: Brandon Minor | gallimatrix ~at~ gmail.com | [bminortx.github.io](bminortx.github.io)
 
 Associated Acts: ARPG @ CU Boulder, [Replica Labs](www.replicalabs.com)
 
