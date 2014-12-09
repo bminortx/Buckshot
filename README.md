@@ -23,13 +23,13 @@ Install all of these; order doesn't really matter here.
 Once this is done, open STEUP.m in the top directory. After the comments,
 you should see these lines: 
 
->> BULLET_DIR = '/Users/Trystan/Code/Builds/Bullet/src/';
+```BULLET_DIR = '/Users/Trystan/Code/Builds/Bullet/src/';```
 
->> BULLET_SRC = '/Users/Trystan/Code/Thirdparty/bullet-2.81-rev2613/src/';
+```BULLET_SRC = '/Users/Trystan/Code/Thirdparty/bullet-2.81-rev2613/src/';```
 
->> BOOST_DIR = '/usr/local/include';
+```BOOST_DIR = '/usr/local/include';```
 
->> EIGEN_DIR = '/usr/local/include/eigen3';
+```EIGEN_DIR = '/usr/local/include/eigen3';```
 
 Replace the strings after the variable names with your own paths, for each
 respective library. Add the SimLAB folder and all subdirectories to your path.
