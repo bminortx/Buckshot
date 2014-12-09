@@ -1,39 +1,32 @@
 ---------------------------------
 SimLAB
 ---------------------------------
-Author: Brandon Minor, Autonomous Robotics Group,
-        George Washington University
+Author: Brandon Minor
+Email: gallimatrix ~at~ gmail.com
+Web: bminortx.github.io
+Associated Acts: ARPG @ CU Boulder, Replica Labs
 
 SimLAB is a MATLAB Physics Simulator that utilizes the Bullet Physics Engine.
 This program's goal is to allow for convenient use of the MATLAB libraries
 while also guaranteeing accurate simulation through Bullet Physics, a
 fully functional and reliable engine.
 
+If you'd like to work on the project, or point out anything grossly wrong,
+just reach out! I would love to get feedback on this project. 
+
+
 ----------
 SETUP
 ----------
-SimLAB only requires a couple of things: 
-  * MATLAB
-  * Bullet Physics Library: http://bulletphysics.org/wordpress/
-  * Eigen Linear Algebra Library: http://bit.ly/LXBsEr
-  * Boost C++ Libraries: http://www.boost.org/
+SimLAB only requires a couple of things:
+* CMake
+* MATLAB
+* Bullet Physics Library: http://bulletphysics.org/wordpress/
+* Eigen Linear Algebra Library: http://bit.ly/LXBsEr
   
 Install all of these; order doesn't really matter here. Make sure that there is an alias to the mex program (located in MATLAB/Rxxxx/bin/mex)
 
-Once this is done, open STEUP.m in the top directory. After the comments,
-you should see these lines: 
-
-```BULLET_DIR = '/Users/Trystan/Code/Builds/Bullet/src/';```
-
-```BULLET_SRC = '/Users/Trystan/Code/Thirdparty/bullet-2.81-rev2613/src/';```
-
-```BOOST_DIR = '/usr/local/include';```
-
-```EIGEN_DIR = '/usr/local/include/eigen3';```
-
-Replace the strings after the variable names with your own paths, for each
-respective library. Add the SimLAB folder and all subdirectories to your path.
-After that, everything should work!
+Once this is done, open Matlab and run SETUP.m in the top directory. After that, everything should work!
 
 ---------
 DEMOS
@@ -52,9 +45,6 @@ involved, so just type 'help [name of function]' to look up usage and arguments
 for everything. Some of the constraints are a bit tricky, so this might help. 
 
 This documentation will continue to expand as things become available.
-If you'd like to work on the project, or point out anything grossly wrong,
-just reach out:
-gallimatrix ~at~ gmail.com
 
 --------
 License
