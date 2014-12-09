@@ -18,7 +18,7 @@ SimLAB only requires a couple of things:
   * Eigen Linear Algebra Library: http://bit.ly/LXBsEr
   * Boost C++ Libraries: http://www.boost.org/
   
-Install all of these; order doesn't really matter here.
+Install all of these; order doesn't really matter here. Make sure that there is an alias to the mex program (located in MATLAB/Rxxxx/bin/mex)
 
 Once this is done, open STEUP.m in the top directory. After the comments,
 you should see these lines: 
