@@ -3,11 +3,11 @@ SimLAB
 ---------------------------------
 Author: Brandon Minor
 
-Email: gallimatrix ~at~ gmail.com
+gallimatrix ~at~ gmail.com
 
-Web: bminortx.github.io
+[bminortx.github.io](bminortx.github.io)
 
-Associated Acts: ARPG @ CU Boulder, Replica Labs
+Associated Acts: ARPG @ CU Boulder, [Replica Labs](www.replicalabs.com)
 
 SimLAB is a MATLAB Physics Simulator that utilizes the Bullet Physics Engine.
 This program's goal is to allow for convenient use of the MATLAB libraries
@@ -24,8 +24,8 @@ SETUP
 SimLAB only requires a couple of things:
 * CMake
 * MATLAB
-* Bullet Physics Library: http://bulletphysics.org/wordpress/
-* Eigen Linear Algebra Library: http://bit.ly/LXBsEr
+* [Bullet Physics Library](http://bulletphysics.org/wordpress/)
+* [Eigen Linear Algebra Library](http://bit.ly/LXBsEr)
   
 Install all of these; order doesn't really matter here. Make sure that there is an alias to the mex program (located in MATLAB/Rxxxx/bin/mex)
 
@@ -46,8 +46,6 @@ showcase different things:
 Every function in every directory should have a bit of documentation
 involved, so just type 'help [name of function]' to look up usage and arguments
 for everything. Some of the constraints are a bit tricky, so this might help. 
-
-This documentation will continue to expand as things become available.
 
 --------
 License
