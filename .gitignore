@@ -1,0 +1,8 @@
+*.mexmaci64
+*.mexa*
+
+*~
+CMakeCache.txt
+CMakeFiles
+build
+
