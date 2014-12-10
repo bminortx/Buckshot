@@ -41,16 +41,8 @@ showcase different things:
   pretty buggy; I would stay away, haha. 
 
 Every function in every directory should have a bit of documentation
-involved, so just type 'help [name of function]' to look up usage and arguments
+involved, so just type ```help [name of function]``` to look up usage and arguments
 for everything. Some of the constraints are a bit tricky, so this might help.
-
-
-
-
-<video preload="auto" width="683" height="384" data-setup="{}">
-<source src="
-</video>
-
 
 License
 --------
