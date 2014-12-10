@@ -39,7 +39,14 @@ showcase different things:
 
 Every function in every directory should have a bit of documentation
 involved, so just type 'help [name of function]' to look up usage and arguments
-for everything. Some of the constraints are a bit tricky, so this might help. 
+for everything. Some of the constraints are a bit tricky, so this might help.
+
+[![The Bullet Demo in action](http://img.youtube.com/vi/IzXKR44iJ0o/0.jpg)](https://www.youtube.com/watch?v=IzXKR44iJ0o)
+
+
+<video preload="auto" width="683" height="384" data-setup="{}">
+<source src="
+</video>
 
 
 License
