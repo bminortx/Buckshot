@@ -1,4 +1,4 @@
-SimLAB
+[SimLAB](http://bminortx.github.io/SimLAB)
 ============
 Author: Brandon Minor | gallimatrix ~at~ gmail.com | [bminortx.github.io](http://bminortx.github.io)
 
