@@ -28,6 +28,9 @@ Once this is done, open Matlab and run SETUP.m in the top directory. After that,
 
 DEMOS
 ---------
+
+[![The Bullet Demo in action](http://img.youtube.com/vi/IzXKR44iJ0o/0.jpg)](https://www.youtube.com/watch?v=IzXKR44iJ0o)
+
 Each demo has the same GUI (displayed at startup), but they
 showcase different things: 
 
@@ -38,9 +41,8 @@ showcase different things:
   pretty buggy; I would stay away, haha. 
 
 Every function in every directory should have a bit of documentation
-involved, so just type 'help [name of function]' to look up usage and arguments
-for everything. Some of the constraints are a bit tricky, so this might help. 
-
+involved, so just type ```help [name of function]``` to look up usage and arguments
+for everything. Some of the constraints are a bit tricky, so this might help.
 
 License
 --------

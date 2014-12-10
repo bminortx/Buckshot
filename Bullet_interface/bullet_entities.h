@@ -4,66 +4,60 @@
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/LinearMath/btAlignedAllocator.h>
 
-typedef  boost::shared_ptr<btCollisionShape>            CollisionShapePtr;
-typedef  boost::shared_ptr<btMotionState>               MotionStatePtr;
-typedef  boost::shared_ptr<btRigidBody>                 RigidBodyPtr;
-typedef  boost::shared_ptr<btRaycastVehicle>            VehiclePtr;
+typedef  boost::shared_ptr<btCollisionShape> CollisionShapePtr;
+typedef  boost::shared_ptr<btMotionState> MotionStatePtr;
+typedef  boost::shared_ptr<btRigidBody> RigidBodyPtr;
+typedef  boost::shared_ptr<btRaycastVehicle> VehiclePtr;
 
 enum Compounds{
   VEHICLE = 0
 };
 
 ///////////////////////////////////////////////////////
-///
 /// The Entity class
 /// Holds our bullet shapes and terrain.
-///
 ///////////////////////////////////////////////////////
 
-class Shape_Entity
-{
+class Shape_Entity {
 public:
-  Shape_Entity()
-  {
+  Shape_Entity() {
+  }
 
-  }
   Shape_Entity(CollisionShapePtr  pShape, MotionStatePtr  pMotionState,
-         RigidBodyPtr pRigidBody){
-    m_pShape       = pShape;
-    m_pMotionState = pMotionState;
-    m_pRigidBody   = pRigidBody;
+         RigidBodyPtr pRigidBody) {
+    shape_       = pShape;
+    motionstate_ = pMotionState;
+    rigidbody_   = pRigidBody;
   }
-  //member variables
-  CollisionShapePtr       m_pShape;
-  MotionStatePtr          m_pMotionState;
-  RigidBodyPtr            m_pRigidBody;
+  // member variables
+  CollisionShapePtr       shape_;
+  MotionStatePtr          motionstate_;
+  RigidBodyPtr            rigidbody_;
 };
 
 ///////////////////////////////////////////////////////
-///
 /// The Compound_Entity class
 /// Holds all of our compound shapes and constraints, as well as the type of
 /// compound we have.
-///
 ///////////////////////////////////////////////////////
 
-class Compound_Entity
-{
+class Compound_Entity {
 public:
-  Compound_Entity()
-  {
+  Compound_Entity() {
 
   }
+
   Compound_Entity(double* Shape_ids,
                   double* Con_ids,
-                  Compounds type){
-    m_vShape_ids = Shape_ids;
-    m_vCon_ids = Con_ids;
-    m_Type = type;
+                  Compounds type) {
+    shapeid_ = Shape_ids;
+    constraintid_ = Con_ids;
+    type_ = type;
   }
-  double* m_vShape_ids;
-  double* m_vCon_ids;
-  Compounds m_Type;
+
+  double* shapeid_;
+  double* constraintid_;
+  Compounds type_;
 };
 
 ///////////////////////////////////////////////////////
@@ -73,25 +67,23 @@ public:
 ///
 ///////////////////////////////////////////////////////
 
-class Vehicle_Entity
-{
+class Vehicle_Entity {
 public:
-  Vehicle_Entity()
-  {
+  Vehicle_Entity() {
 
   }
+
   Vehicle_Entity(CollisionShapePtr  pShape, MotionStatePtr  pMotionState,
-                 RigidBodyPtr pRigidBody, VehiclePtr pVehicle){
-    m_pShape       = pShape;
-    m_pMotionState = pMotionState;
-    m_pRigidBody   = pRigidBody;
-    m_pVehicle     = pVehicle;
+                 RigidBodyPtr pRigidBody, VehiclePtr pVehicle):
+      shape_(pShape), motionstate_(pMotionState), rigidbody_(pRigidBody),
+      vehicle_(pVehicle) {
+
   }
-  //member variables
-  CollisionShapePtr       m_pShape;
-  MotionStatePtr          m_pMotionState;
-  RigidBodyPtr            m_pRigidBody;
-  VehiclePtr              m_pVehicle;
+  // member variables
+  CollisionShapePtr shape_;
+  MotionStatePtr motionstate_;
+  RigidBodyPtr rigidbody_;
+  VehiclePtr vehicle_;
 };
 
-#endif // BULLET_ENTITIES_H
+#endif //  BULLET_ENTITIES_H
