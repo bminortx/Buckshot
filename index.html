@@ -21,70 +21,69 @@
       <div class="inner">
         <h1>SimLAB</h1>
         <h2>A MATLAB physics simulator that utilizes the Bullet Physics Engine. </h2>
-        <a href="https://github.com/bminortx/SimLAB" class="button"><small>View project on</small>GitHub</a>
+        <a href="https://github.com/bminortx/SimLAB" class="button"><small>View project on</small> GitHub</a>
       </div>
     </header>
 
     <div id="content-wrapper">
       <div class="inner clearfix">
         <section id="main-content">
-          <hr><h2>
-<a name="simlab" class="anchor" href="#simlab"><span class="octicon octicon-link"></span></a>SimLAB</h2>
+          <h1>
+<a id="simlab" class="anchor" href="#simlab" aria-hidden="true"><span class="octicon octicon-link"></span></a><a href="http://bminortx.github.io/SimLAB">SimLAB</a>
+</h1>
 
-<p>Author: Brandon Minor (<a href="https://github.com/bminortx" class="user-mention">@bminortx</a>)</p>
+<p>Author: Brandon Minor | gallimatrix ~at~ gmail.com | <a href="http://bminortx.github.io">bminortx.github.io</a></p>
 
-<p>This program's goal is to allow for convenient use of the MATLAB libraries while also guaranteeing accurate simulation through Bullet Physics, a fully functional and reliable engine.</p>
+<p>Associated Acts: ARPG @ CU Boulder, <a href="http://www.replicalabs.com">Replica Labs</a></p>
 
-<h3>
-<a name="setup" class="anchor" href="#setup"><span class="octicon octicon-link"></span></a>Setup</h3>
+<p>SimLAB is a MATLAB Physics Simulator that utilizes the Bullet Physics Engine.
+This program's goal is to allow for convenient use of the MATLAB libraries
+while also guaranteeing accurate simulation through Bullet Physics, a
+fully functional and reliable engine.</p>
 
-<p>SimLAB only requires a couple of things: </p>
+<p>If you'd like to work on the project, or point out anything grossly wrong,
+just reach out! I would love to get feedback on this project. </p>
+
+<h2>
+<a id="setup" class="anchor" href="#setup" aria-hidden="true"><span class="octicon octicon-link"></span></a>SETUP</h2>
+
+<p>SimLAB only requires a couple of things:</p>
 
 <ul>
+<li>CMake</li>
 <li>MATLAB</li>
-<li>Bullet Physics Library: <a href="http://bulletphysics.org/wordpress/">http://bulletphysics.org/wordpress/</a>
-</li>
-<li>Eigen Linear Algebra Library: <a href="http://bit.ly/LXBsEr">http://bit.ly/LXBsEr</a>
-</li>
-<li>Boost C++ Libraries: <a href="http://www.boost.org/">http://www.boost.org/</a>
-</li>
-</ul><p>Install all of these; order doesn't really matter here.</p>
+<li><a href="http://bulletphysics.org/wordpress/">Bullet Physics Library</a></li>
+<li><a href="http://bit.ly/LXBsEr">Eigen Linear Algebra Library</a></li>
+</ul>
 
-<p>Once this is done, open SETUP.m in the top directory. After the comments, you should see these lines: </p>
+<p>Install all of these; order doesn't really matter here. Make sure that you're pointing to the correct mex directory in the CMake script; it's a set variable at the very top of CMakeLists.txt.</p>
 
-<p><code>BULLET_DIR = '/Users/Trystan/Code/Builds/Bullet/src/';</code></p>
+<p>Once this is done, open Matlab and run SETUP.m in the top directory. After that, everything should work!</p>
 
-<p><code>BULLET_SRC = '/Users/Trystan/Code/Thirdparty/bullet-2.81-rev2613/src/';</code></p>
+<h2>
+<a id="demos" class="anchor" href="#demos" aria-hidden="true"><span class="octicon octicon-link"></span></a>DEMOS</h2>
 
-<p><code>BOOST_DIR = '/usr/local/include';</code></p>
+<p><a href="https://www.youtube.com/watch?v=IzXKR44iJ0o"><img src="http://img.youtube.com/vi/IzXKR44iJ0o/0.jpg" alt="The Bullet Demo in action"></a></p>
 
-<p><code>EIGEN_DIR = '/usr/local/include/eigen3';</code></p>
-
-<p>Replace the strings after the variable names with your own paths, for each respective library. Add the SimLAB folder and all subdirectories to your path. After that, everything should work!</p>
-
-<h3>
-<a name="demos" class="anchor" href="#demos"><span class="octicon octicon-link"></span></a>Demos</h3>
-
-<p>Each demo has the same GUI (displayed at startup), but they showcase different things: </p>
+<p>Each demo has the same GUI (displayed at startup), but they
+showcase different things: </p>
 
 <ul>
-<li>BulletDemo: Shows off how easy it is to add shapes and constraints to the scene. </li>
+<li>BulletDemo: Shows off how easy it is to add shapes and constraints to the
+scene. </li>
 <li>VehicleDemo: Demonstrates a Bullet RaycastVehicle.</li>
-<li>OptimizerDemo: Seeks to perform Gauss-Newton optimization on a path. Still pretty buggy; I would stay away for now.</li>
-</ul><p>Every function in every directory should have a bit of documentation involved, so just type 'help [name of function]' to look up usage and arguments for everything. Some of the constraints are a bit tricky, so this might help. </p>
+<li>OptimizerDemo: Seeks to perform Gauss-Newton optimization on a path. Still
+pretty buggy; I would stay away, haha. </li>
+</ul>
 
-<h3>
-<a name="contribute" class="anchor" href="#contribute"><span class="octicon octicon-link"></span></a>Contribute</h3>
+<p>Every function in every directory should have a bit of documentation
+involved, so just type <code>help [name of function]</code> to look up usage and arguments
+for everything. Some of the constraints are a bit tricky, so this might help.</p>
 
-<p>This documentation will continue to expand as things become available. I published this on GitHub in the hopes that it would become a robust library with the help of the community. With that in mind, if you have a feature that you would like to add to SimLAB, go to the issues page on the GitHub repo and file something in. If you want to be even more hands-on, fork this repo and run a pull request with your feature included. Odds are, it'll get added into the system. </p>
+<h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h2>
 
-<h3>
-<a name="other-things" class="anchor" href="#other-things"><span class="octicon octicon-link"></span></a>Other Things</h3>
-
-<p>Check out my other libraries at my github page: <a href="https://github.com/bminortx" class="user-mention">@bminortx</a>. I've been actively updating another physics library written in C++, <a href="https://github.com/arpg/simba">SimBA</a>. This project is much more advanced, but offers a more diverse skill set as well. Check it out if you're interested. </p>
-
-<h3>
-<a name="the-mit-license-mit" class="anchor" href="#the-mit-license-mit"><span class="octicon octicon-link"></span></a>The MIT License (MIT)</h3>
+<p>The MIT License (MIT)</p>
 
 <p>Copyright (c) 2014, Brandon Minor</p>
 
