@@ -6,10 +6,8 @@ function [ new_class_ptr ] = SETUP( boolCreatePtr )
 %
 
 %Our shapes 
-addpath(genpath('Bullet_shapes'));
-addpath('Bullet_shapes');         
-addpath(genpath('Matlab_shapes'));
-addpath('Matlab_shapes'); 
+addpath(genpath('BulletShapes'));
+addpath('Bullet_shapes');
 disp('> Shapes linked...');
 
 %The Bullet-MATLAB interface
@@ -17,20 +15,9 @@ addpath(genpath('Bullet_interface'));
 addpath('Bullet_interface');
 disp('> Interface linked...');
 
-%Our constraints
-addpath(genpath('Matlab_constraints'));
-addpath('Matlab_constraints'); 
-disp('> Constraints linked...');
-
-%Our compounds (shapes and constraints)
-addpath(genpath('Matlab_compounds'));
-addpath('Matlab_compounds'); 
-disp('> Compounds linked...');
-
-%Our functions   
-addpath(genpath('Matlab_functions'));
-addpath('Matlab_functions'); 
-disp('> Functions linked...');
+% matlab components
+addpath(genpath('matlabComponents'));
+addpath('matlabComponents'); 
 
 %Our demos
 addpath(genpath('Demos'));
