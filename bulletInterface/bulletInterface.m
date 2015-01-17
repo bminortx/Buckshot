@@ -1,7 +1,7 @@
 classdef bullet_interface < handle
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   %%%% MATLAB class wrapper to the Bullet C++ architecture.
-  %%%% Any method with 'bullet_interface_mex(...)'
+  %%%% Any method with 'bulletInterface(...)'
   %%%% represents a call to the Bullet wrapper for MATLAB.
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   
@@ -26,7 +26,7 @@ classdef bullet_interface < handle
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     function this = bullet_interface(varargin)
-      this.bulletHandle = bullet_interface_mex('new', varargin{:});
+      this.bulletHandle = bulletInterface('new', varargin{:});
       this.Terrain = [];
       this.gui.draw = false;           % bool to draw Sim
       this.gui.quit = false;           % bool to quit Sim
@@ -44,7 +44,7 @@ classdef bullet_interface < handle
     end
     
     function delete(this)
-      bullet_interface_mex('delete', this.bulletHandle);
+      bulletInterface('delete', this.bulletHandle);
     end
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -70,7 +70,7 @@ classdef bullet_interface < handle
           restitution = Shape.GetRestitution();
           position = Shape.GetPosition();
           rotation = Shape.GetRotation();
-          id = bullet_interface_mex('AddShape', ...
+          id = bulletInterface('AddShape', ...
             this.bulletHandle, type, CubeDim(1), CubeDim(2), CubeDim(3), ...
             mass, restitution, position, rotation);
           Shape.SetID(id);
@@ -82,7 +82,7 @@ classdef bullet_interface < handle
           restitution = Shape.GetRestitution();
           position = Shape.GetPosition();
           rotation = Shape.GetRotation();
-          id = bullet_interface_mex('AddShape', ...
+          id = bulletInterface('AddShape', ...
             this.bulletHandle, type, radius, mass, restitution, ...
             position, rotation);
           Shape.SetID(id);
@@ -95,7 +95,7 @@ classdef bullet_interface < handle
           restitution = Shape.GetRestitution();
           position = Shape.GetPosition();
           rotation = Shape.GetRotation();
-          id = bullet_interface_mex('AddShape', ...
+          id = bulletInterface('AddShape', ...
             this.bulletHandle, type, radius, height, mass,...
             restitution, position, rotation);
           Shape.SetID(id);
@@ -120,7 +120,7 @@ classdef bullet_interface < handle
       max_ht = extrema(3, 2);
       sze = size(heightmap{1});
       normal = Terrain.GetNormal();
-      id = bullet_interface_mex('AddTerrain', ...
+      id = bulletInterface('AddTerrain', ...
         this.bulletHandle, sze(1), sze(2), grad, min_ht, max_ht, heightmap{1}, ...
         heightmap{2}, heightmap{3}, normal);
       this.Terrain.SetID(id);
@@ -141,7 +141,7 @@ classdef bullet_interface < handle
         Con_ids = this.AddConstraints(Compounds{i}.GetConstraints());
         Type = Compounds{i}.GetType();
         disp(Type);
-        id = bullet_interface_mex('AddCompound', this.bulletHandle, ...
+        id = bulletInterface('AddCompound', this.bulletHandle, ...
           Type, Shape_ids, Con_ids);
         Compounds{i}.SetID(id);
       end
@@ -157,7 +157,7 @@ classdef bullet_interface < handle
         parameters = RayVehicles{i}.GetParameters();
         position = RayVehicles{i}.GetPosition();
         rotation = RayVehicles{i}.GetRotation();
-        id = bullet_interface_mex('AddRaycastVehicle', this.bulletHandle, ...
+        id = bulletInterface('AddRaycastVehicle', this.bulletHandle, ...
           parameters, position, rotation);
         RayVehicles{i}.SetID(id);
       end
@@ -186,14 +186,14 @@ classdef bullet_interface < handle
         if strcmp(type, 'PointToPoint_one')==true,
           id_A = Constraint.Shape_A.GetID();
           pivot_in_A = Constraint.pivot_in_A;
-          id = bullet_interface_mex('AddConstraint', this.bulletHandle, ...
+          id = bulletInterface('AddConstraint', this.bulletHandle, ...
             'PointToPoint_one', id_A, pivot_in_A);
         elseif strcmp(type, 'PointToPoint_two')==true,
           id_A = Constraint.Shape_A.GetID();
           pivot_in_A = Constraint.pivot_in_A;
           id_B = Constraint.Shape_B.GetID();
           pivot_in_B = Constraint.pivot_in_B;
-          id = bullet_interface_mex('AddConstraint', this.bulletHandle, ...
+          id = bulletInterface('AddConstraint', this.bulletHandle, ...
             'PointToPoint_two', id_A, id_B, pivot_in_A, pivot_in_B);
           
           % Hinge
@@ -201,7 +201,7 @@ classdef bullet_interface < handle
           id_A = Constraint.Shape_A.GetID();
           transform_A = Constraint.transform_A;
           limits = Constraint.GetLimits();
-          id = bullet_interface_mex('AddConstraint', this.bulletHandle, ...
+          id = bulletInterface('AddConstraint', this.bulletHandle, ...
             'Hinge_one_transform', id_A, transform_A, limits);
           
         elseif strcmp(type, 'Hinge_two_transform')==true,
@@ -210,7 +210,7 @@ classdef bullet_interface < handle
           id_B = Constraint.Shape_B.GetID();
           transform_B = Constraint.transform_B;
           limits = Constraint.GetLimits();
-          id = bullet_interface_mex('AddConstraint', this.bulletHandle, ...
+          id = bulletInterface('AddConstraint', this.bulletHandle, ...
             'Hinge_two_transform', id_A, id_B, transform_A, transform_B, limits);
           
         elseif strcmp(type, 'Hinge_one_pivot')==true,
@@ -218,7 +218,7 @@ classdef bullet_interface < handle
           pivot_in_A = Constraint.pivot_in_A;
           axis_in_A = Constraint.axis_in_A;
           limits = Constraint.GetLimits();
-          id = bullet_interface_mex('AddConstraint', this.bulletHandle, ...
+          id = bulletInterface('AddConstraint', this.bulletHandle, ...
             'Hinge_one_pivot', id_A, pivot_in_A, axis_in_A, limits);
           
         elseif strcmp(type, 'Hinge_two_pivot')==true,
@@ -229,7 +229,7 @@ classdef bullet_interface < handle
           pivot_in_B = Constraint.pivot_in_B;
           axis_in_B = Constraint.axis_in_B;
           limits = Constraint.GetLimits();
-          id = bullet_interface_mex('AddConstraint', this.bulletHandle, ...
+          id = bulletInterface('AddConstraint', this.bulletHandle, ...
             'Hinge_two_pivot', id_A, id_B, pivot_in_A, pivot_in_B, ...
             axis_in_A, axis_in_B, limits);
           
@@ -243,7 +243,7 @@ classdef bullet_interface < handle
           damping = Constraint.GetDamping;
           stiffness = Constraint.GetStiffness;
           steering_angle = Constraint.GetSteeringAngle;
-          id = bullet_interface_mex('AddConstraint', this.bulletHandle, ...
+          id = bulletInterface('AddConstraint', this.bulletHandle, ...
             'Hinge2', id_A, id_B, Anchor, Axis_1, ...
             Axis_2, damping, stiffness, steering_angle);
           
@@ -252,7 +252,7 @@ classdef bullet_interface < handle
           id_A = Constraint.Shape_A.GetID();
           transform_A = Constraint.GetTransform_A();
           limits = Constraint.GetLimits();
-          id = bullet_interface_mex('AddConstraint', this.bulletHandle, ...
+          id = bulletInterface('AddConstraint', this.bulletHandle, ...
             'SixDOF_one', id_A, transform_A, limits);
         elseif strcmp(type, 'SixDOF_two')==true,
           id_A = Constraint.Shape_A.GetID();
@@ -260,7 +260,7 @@ classdef bullet_interface < handle
           id_B = Constraint.Shape_B.GetID();
           transform_B = Constraint.GetTransform_B();
           limits = Constraint.GetLimits();
-          id = bullet_interface_mex('AddConstraint', this.bulletHandle, ...
+          id = bulletInterface('AddConstraint', this.bulletHandle, ...
             'SixDOF_two', id_A, id_B, transform_A, transform_B, limits);
         end
         Constraint.SetID(id);
@@ -280,7 +280,7 @@ classdef bullet_interface < handle
         steering = Compound.GetSteering();
         force = Compound.GetForce();
         id = Compound.GetID();
-        bullet_interface_mex('CommandCompound', this.bulletHandle, 'Vehicle', ...
+        bulletInterface('CommandCompound', this.bulletHandle, 'Vehicle', ...
           id, steering, force);
       end
     end
@@ -295,7 +295,7 @@ classdef bullet_interface < handle
       if this.gui.draw,
         command = Vehicle.PushCommand();
         id = Vehicle.GetID();
-        bullet_interface_mex('CommandRaycastVehicle', this.bulletHandle, ...
+        bulletInterface('CommandRaycastVehicle', this.bulletHandle, ...
           id, command.steering, command.force);
       end
     end
@@ -304,20 +304,20 @@ classdef bullet_interface < handle
     function [steering, force, lin_vel, ang_vel] = GetMotionState(this, Vehicle)
       id = Vehicle.GetID();
       [steering, force, lin_vel, ang_vel] = ...
-        bullet_interface_mex('GetMotionState', this.bulletHandle, id);
+        bulletInterface('GetMotionState', this.bulletHandle, id);
     end
     
     function SetToGround(this, Vehicle, x_coord, y_coord)
       id = Vehicle.GetID();
       % Get our new position
-      [position] = bullet_interface_mex('SetToGround', this.bulletHandle, id, ...
+      [position] = bulletInterface('SetToGround', this.bulletHandle, id, ...
         x_coord, y_coord);
       % Set our new position
       [body_position, body_rotation,...
         wheel_fl_pos, wheel_fl_rot,...
         wheel_fr_pos, wheel_fr_rot,...
         wheel_bl_pos, wheel_bl_rot,...
-        wheel_br_pos, wheel_br_rot] = bullet_interface_mex('GetTransform', ...
+        wheel_br_pos, wheel_br_rot] = bulletInterface('GetTransform', ...
         this.bulletHandle, 'RaycastVehicle', Vehicle.GetID());
       Vehicle.SetTransform(body_position, body_rotation,...
         wheel_fl_pos, wheel_fl_rot,...
@@ -333,7 +333,7 @@ classdef bullet_interface < handle
       id = Vehicle.GetID();
       [states, end_position, end_rotation, end_lin_vel, ...
        end_ang_vel, grounded] = 
-      bullet_interface_mex('SpeedSim', this.bulletHandle, id, start_pose, ...
+      bulletInterface('SpeedSim', this.bulletHandle, id, start_pose, ...
                            start_rot, start_lin_vel,... 
                            start_ang_vel, engine_commands, steering_commands, ...
                            numel(steering_commands));
@@ -341,7 +341,7 @@ classdef bullet_interface < handle
 
     function ResetVehicle(this, Vehicle, start_pose, start_rot)
       id = Vehicle.GetID();
-      bullet_interface_mex('ResetVehicle', this.bulletHandle, id, start_pose, start_rot);
+      bulletInterface('ResetVehicle', this.bulletHandle, id, start_pose, start_rot);
     end
     
     function RapidGUI(this, Vehicle, forces, steering_angles)
@@ -398,7 +398,7 @@ classdef bullet_interface < handle
             end
             this.DrawSimulation();
         else
-            bullet_interface_mex('InitSceneGraph', this.bulletHandle);
+            bulletInterface('InitSceneGraph', this.bulletHandle);
         end        
     end
     
@@ -425,7 +425,7 @@ classdef bullet_interface < handle
             end      
             this.DrawSimulation();
         else
-            bullet_interface_mex('RunSceneGraph', this.bulletHandle);
+            bulletInterface('RunSceneGraph', this.bulletHandle);
         end
     end
     
@@ -434,9 +434,9 @@ classdef bullet_interface < handle
     
     %%%% Updates all of our objects according to the Bullet world
     function StepSimulation(this)
-      bullet_interface_mex('StepSimulation', this.bulletHandle);
+      bulletInterface('StepSimulation', this.bulletHandle);
       for i = 1:numel(this.Shapes),
-        [position, rotation] = bullet_interface_mex('GetTransform', ...
+        [position, rotation] = bulletInterface('GetTransform', ...
           this.bulletHandle, 'Shape', this.Shapes{i}.GetID());
         this.Shapes{i}.SetTransform(position, rotation);
       end
@@ -453,7 +453,7 @@ classdef bullet_interface < handle
             wheel_fl_pos, wheel_fl_rot,...
             wheel_fr_pos, wheel_fr_rot,...
             wheel_bl_pos, wheel_bl_rot,...
-            wheel_br_pos, wheel_br_rot] = bullet_interface_mex('GetTransform', ...
+            wheel_br_pos, wheel_br_rot] = bulletInterface('GetTransform', ...
             this.bulletHandle, 'RaycastVehicle', this.RayVehicles{i}.GetID());
           this.RayVehicles{i}.SetTransform(body_position, body_rotation,...
             wheel_fl_pos, wheel_fl_rot,...
@@ -467,7 +467,7 @@ classdef bullet_interface < handle
       end
       for i = 1:numel(this.Constraints),
         if strcmp(this.Constraints{i}.GetType(), 'Hinge2')==true,
-          [position] = bullet_interface_mex('GetTransform', ...
+          [position] = bulletInterface('GetTransform', ...
             this.bulletHandle, 'Constraint', this.Constraints{i}.GetID());
           this.Constraints{i}.SetPosition(position);
         end

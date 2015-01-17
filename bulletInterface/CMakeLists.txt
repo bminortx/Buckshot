@@ -50,12 +50,12 @@ link_directories(${USER_INC})
 
 set(HDRS
 	class_handle.hpp
-	bullet_entities.h
-	matlab_bullet_wrapper.h)
+	bulletEntities.h
+	bulletInterface.h)
 set(SRC
-	bullet_interface_mex.cpp)
+	bulletInterface.cpp)
 
-set(MEX_TARGET bullet_interface_mex)
+set(MEX_TARGET bulletInterface)
 # Set the right output file
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 	set(MEX_OUTPUT ${MEX_TARGET}.mexmaci64)

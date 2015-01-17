@@ -11,13 +11,13 @@ addpath('ModelGraph');
 disp('> Shapes linked...');
 
 %The Bullet-MATLAB interface
-addpath(genpath('bulletWrapper'));
-addpath('bulletWrapper');
+addpath(genpath('bulletInterface'));
+addpath('bulletInterface');
 disp('> Bullet Interface linked...');
 
 % matlab components
 addpath(genpath('matlabComponents'));
-addpath('matlabComponents'); 
+addpath('matlabComponents');
 
 %Our demos
 addpath(genpath('Demos'));
@@ -25,7 +25,7 @@ addpath('Demos');
 disp('> Demos linked...');
 
 system('chmod +x createMexFiles.sh')
-if isSceneGraphOn, 
+if isSceneGraphOn,
     system('./createMexFiles.sh true')
 else
     system('./createMexFiles.sh false')
@@ -35,7 +35,7 @@ disp('> Bullet wrapper created...');
 disp('> Linking complete!');
 disp('------------------');
 
-if boolCreatePtr == true,   
+if boolCreatePtr == true,
   new_class_ptr = bullet_interface();
 end
 

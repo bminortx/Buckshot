@@ -8,7 +8,7 @@
 #include "mex.h"
 #include "class_handle.hpp"
 #include "iostream"
-#include "matlab_bullet_wrapper.h"
+#include "bulletInterface.h"
 #include "boost/shared_ptr.hpp"
 
 /*********************************************************************
@@ -576,7 +576,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   // Just get SceneGraph to draw everything
 
   if (!strcmp("InitSceneGraph", cmd)) {
-    
+
   }
 
 
