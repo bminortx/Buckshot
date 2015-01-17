@@ -37,8 +37,6 @@ showcase different things:
 - BulletDemo: Shows off how easy it is to add shapes and constraints to the
   scene. 
 - VehicleDemo: Demonstrates a Bullet RaycastVehicle.
-- OptimizerDemo: Seeks to perform Gauss-Newton optimization on a path. Still
-  pretty buggy; I would stay away, haha. 
 
 Every function in every directory should have a bit of documentation
 involved, so just type ```help [name of function]``` to look up usage and arguments

@@ -326,14 +326,19 @@ classdef bullet_interface < handle
         wheel_br_pos, wheel_br_rot);
     end
     
-    function [states, end_position, end_rotation, end_lin_vel, end_ang_vel, grounded] = SpeedSim(this, Vehicle,...
-        start_pose, start_rot, start_lin_vel, start_ang_vel, engine_commands, steering_commands)
+    function [states, end_position, end_rotation, end_lin_vel, ...
+              end_ang_vel, grounded] = 
+        SpeedSim(this, Vehicle, start_pose, start_rot, start_lin_vel, ...
+                 start_ang_vel, engine_commands, steering_commands);
       id = Vehicle.GetID();
-      [states, end_position, end_rotation, end_lin_vel, end_ang_vel, grounded] = bullet_interface_mex('SpeedSim',...
-        this.bulletHandle, id, start_pose, start_rot, start_lin_vel, start_ang_vel, engine_commands, steering_commands, ...
-        numel(steering_commands));
+      [states, end_position, end_rotation, end_lin_vel, ...
+       end_ang_vel, grounded] = 
+      bullet_interface_mex('SpeedSim', this.bulletHandle, id, start_pose, ...
+                           start_rot, start_lin_vel,... 
+                           start_ang_vel, engine_commands, steering_commands, ...
+                           numel(steering_commands));
     end
-    
+
     function ResetVehicle(this, Vehicle, start_pose, start_rot)
       id = Vehicle.GetID();
       bullet_interface_mex('ResetVehicle', this.bulletHandle, id, start_pose, start_rot);
@@ -346,283 +351,86 @@ classdef bullet_interface < handle
         this.CommandRaycastVehicle(Vehicle);
         this.RunSimulation;
       end
-    end
+    end   
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%%%
-    %%%% OPTIMIZATION METHODS
-    %%%%
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
-    function [ J ] = GetJacobians(this, Vehicle, force, steering, ...
-        start_pose, start_rot, start_lin_vel, start_ang_vel,...
-        end_pos, end_rot, end_lin_vel, pos1, pos2)
-      delta = 1e-9;
-      J = zeros(4, 4);
-      
-      %Find the original difference
-      orig_resid = this.GetResiduals(pos2, end_pos, end_rot, end_lin_vel);
-      
-      %Change each of our spline parameters by delta...
-      force_change = force+delta;
-      
-      mod_pos = repmat(pos2, 1, 3);
-      for i=1:3, 
-        mod_pos(i,i) = mod_pos(i,i)+delta;
-      end
-      mod_steering = {};  
-      speedsim_pos = {};
-      speedsim_rot = {};
-      speedsim_vel = {};
-      
-      for i=1:3, 
-        [ ~, mod_steering{i} ] = RunSplineFunction(Vehicle, pos1, mod_pos(:,i));
-      end
-      
-      % Run our four different paths
-      
-      %force
-      [sim1, speedsim_pos{1}, speedsim_rot{1}, speedsim_vel{1}, ~, ~] = this.SpeedSim(Vehicle, start_pose,...
-        start_rot, start_lin_vel, start_ang_vel, force_change, steering);
-%       xf
-      [sim2, speedsim_pos{2}, speedsim_rot{2}, speedsim_vel{2}, ~, ~] = this.SpeedSim(Vehicle, start_pose,...
-        start_rot, start_lin_vel, start_ang_vel, force, mod_steering{1});
-%       yf
-      [sim3, speedsim_pos{3}, speedsim_rot{3}, speedsim_vel{3}, ~, ~] = this.SpeedSim(Vehicle, start_pose,...
-        start_rot, start_lin_vel, start_ang_vel, force, mod_steering{2});
-%       thf
-      [sim4, speedsim_pos{4}, speedsim_rot{4}, speedsim_vel{4}, ~, ~] = this.SpeedSim(Vehicle, start_pose,...
-        start_rot, start_lin_vel, start_ang_vel, force, mod_steering{3});
-      % Now fill up our Jacobian matrix: output params x spline param
-      for i=1:numel(speedsim_pos),
-        sim_resid = this.GetResiduals(pos2, speedsim_pos{i}, speedsim_rot{i}, speedsim_vel{i});
-        J(:, i) = (orig_resid-sim_resid)/delta;
-      end
-    end
-    
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
-    function [ resid ] = GetResiduals(this, pos2, end_pos, end_rot, end_lin_vel)
-      % Residuals consist of x, y, theta (i.e. yaw), and final lin_vel
-      resid = zeros(4, 1);
-      resid(1) = pos2(1) - end_pos(1);
-      resid(2) = pos2(2) - end_pos(2);
-      new_yaw = atan2(end_rot(2,1), end_rot(1,1));
-      resid(3) = pos2(3) - (new_yaw + pi/2);
-      resid(4) = pos2(4) - norm(abs(end_lin_vel));
-    end
-    
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
-    function [norm_Deltas, Deltas] = GaussNewton3D(this, J, Resid)
-      %%Gauss-Newton matrix multiplication.
-      A = (J'*J);
-      B = J'*Resid;
-      Deltas = pinv(A)*B;
-      damp = .5;
-%       if max(abs(Deltas))>.1,
-%         Deltas = Deltas*damp;
-%       end
-      norm_Deltas = norm(abs(Deltas), 2);
-    end
-    
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
-    function [ engine_commands, steering_commands ] = GN_Optimize(this, Vehicle,...
-        major_poses, start_pose, start_rot, velocities )
-      
-      %%% Initialize Variables
-      norm_Deltas = Inf;
-      jj = 0;
-      maxIter = 200;
-      hit_min = 0;
-      c1 = clock;
-      Old_resid = Inf;
-      engine_commands = {};
-      steering_commands = {};
-      h = [];
-      start_lin_vel = [0, 0, 0];
-      start_ang_vel = [0, 0, 0];
-      orig_start_pose = start_pose;
-      orig_start_rot = start_rot;
-      
-      for k=1:numel(major_poses(1,:))-1,
-        pos1 = [major_poses(:, k); velocities(k)];
-        pos2 = [major_poses(:, k+1); velocities(k+1)];
-        sim_pos2 = pos2;
-        [force,~,~] = RunSplineFunction(Vehicle, pos1, sim_pos2);
-        while norm_Deltas > 1e-5 && jj < maxIter,
-%           disp(['force = ', num2str(force(1))]);
-          % Figure out the commands we need to pass
-          [~, steering_ang, Knots] = RunSplineFunction(Vehicle, pos1, sim_pos2);
-          % Pass commands; gives an initial estimate of what we need
-          [sim_states, end_pos, end_rot, end_lin_vel, ~, grounded] = this.SpeedSim(Vehicle, start_pose,...
-            start_rot, start_lin_vel, start_ang_vel, force, steering_ang);
-          
-          % draw what we've done. 
-          set(h ,'Color', 'c');
-%           fprintf('there are %d states', numel(sim_states(1,:)));
-          h = [h plot3(sim_states(1,:), sim_states(2,:), sim_states(3,:), 'b.-')];
-          hh = plot(Knots(1,:), Knots(2,:), 'r*-', 'MarkerSize', 30);
-          axis tight;
-          drawnow;
-          
-          %%% Calculate Jacobians
-          J = this.GetJacobians(Vehicle, force, steering_ang, start_pose, start_rot, ...
-            start_lin_vel, start_ang_vel, end_pos, end_rot, end_lin_vel, pos1, pos2);
-          %%%Calculate residuals 
-          Resid = this.GetResiduals(pos2, end_pos, end_rot, end_lin_vel);
-          %%% Calculate Gauss-Newton --> Deltas
-          [norm_Deltas, Deltas] = this.GaussNewton3D(J, Resid);
-%           waitforbuttonpress;
-          % If we're on the ground...
-          if grounded==1,
-            %%% Add deltas to the commands
-            force = force + Deltas(1);
-            sim_pos2(1) = sim_pos2(1) + Deltas(2);
-            sim_pos2(2) = sim_pos2(2) + Deltas(3);
-            sim_pos2(3) = sim_pos2(3) + Deltas(4);
-          else
-            % If we flipped...
-            norm_Deltas = 100;
-            force = force-1;
-            if force<=0, 
-              force = .1;
-            end
-          end
-
-          jj = jj+1;
-          
-          if sum(Resid) < sum(Old_resid),
-            hit_min = hit_min+1;
-          else
-            Old_resid = Resid;
-            hit_min = 0;
-          end
-          
-          % A small counter to tell us how long this actually takes.
-          c2 = clock;
-          if etime(c2, c1)>1,
-            disp('.');
-            c1 = clock;
-          end
-          
-          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-          
-%           waitforbuttonpress;
-          delete(hh);
-          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        end
-        
-        % At the end of all this, we should have some successful commands
-        engine_commands{k} = force;
-        [~, steering_ang] = RunSplineFunction(Vehicle, pos1, sim_pos2);
-        steering_commands{k} = steering_ang;
-        
-        % If our optimization worked above, our end points should be damn close
-        % to where we should be next point.
-        [sim_states, end_pos, end_rot, end_lin_vel, end_ang_vel, grounded] = this.SpeedSim(Vehicle, start_pose,...
-            start_rot, start_lin_vel, start_ang_vel, force, steering_ang); 
-        set(h ,'Color', 'c');
-        h = [h plot3(sim_states(1,:), sim_states(2,:), sim_states(3,:), 'b.-')];
-        hh = plot(Knots(1,:), Knots(2,:), 'r*-', 'MarkerSize', 30);
-        axis tight;
-        drawnow;
-        start_pose = end_pos;
-        start_rot = end_rot;
-        start_lin_vel = end_lin_vel;
-        start_ang_vel = end_ang_vel;
-        waitforbuttonpress;
-        norm_Deltas = Inf;
-        jj = 0;
-        
-      end
-      
-      this.ResetVehicle(Vehicle, orig_start_pose, orig_start_rot);
-      
-    end
-   
-    
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%%%
     %%%% INITIALIZE THE GUI
     %%%% Code modified from RPI's MATLAB-only simulator.
-    %%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     function InitSimulation(this)
-      
-      % Keypress event from run()
-      function this = figure_keypress(~, event, this)
-        switch event.Key
-          case 'i'
-            this.gui.draw = false;
-            this.gui.iter = true;
-          case 'q'
-            this.gui.quit = true;
-            close(this.gui.fig);
-          case 'space'
-            this.gui.draw = ~this.gui.draw;
-          case 'p'
-            this.gui.path = ~this.gui.path;
-          case 'c'
-            this.gui.draw_constraint = ~this.gui.draw_constraint;
-        end
-      end
-      
-      disp('Starting simulation...');
-      disp(' || space: start / stop simulation');
-      disp(' || i:     iterate a single step');
-      disp(' || p:     trace the path of an object');
-      disp(' || c:     turn off/turn on constraint display');
-      disp(' || q:     quit');
-      disp('----------------------------------------------');
-      
-      set(0, 'DefaultFigurePosition', [10,10,900,900]);
-      this.gui.fig = figure;
-      set(this.gui.fig, 'KeyPressFcn', {@figure_keypress, this});
-      view(3);
-      hold all;
-      xlabel('x'); ylabel('y'); zlabel('z');
-      title(['Bullet simulation (paused)', char(10), 'Timestep: ',...
-        num2str(this.gui.timestep), char(10), 'Framerate: ', ...
-        num2str(this.gui.framerate)]);
-      for i = 1:numel(this.Terrain),
-        this.Terrain(i).Draw;
-      end
-      this.DrawSimulation();
+        if ~this.isSceneGraphOn,
+            % Keypress event from run()
+            function this = figure_keypress(~, event, this)
+                switch event.Key
+                  case 'i'
+                    this.gui.draw = false;
+                    this.gui.iter = true;
+                  case 'q'
+                    this.gui.quit = true;
+                    close(this.gui.fig);
+                  case 'space'
+                    this.gui.draw = ~this.gui.draw;
+                  case 'p'
+                    this.gui.path = ~this.gui.path;
+                  case 'c'
+                    this.gui.draw_constraint = ~this.gui.draw_constraint;
+                end
+            end            
+            disp('Starting simulation...');
+            disp(' || space: start / stop simulation');
+            disp(' || i:     iterate a single step');
+            disp(' || p:     trace the path of an object');
+            disp(' || c:     turn off/turn on constraint display');
+            disp(' || q:     quit');
+            disp('----------------------------------------------');
+            set(0, 'DefaultFigurePosition', [10,10,900,900]);
+            this.gui.fig = figure;
+            set(this.gui.fig, 'KeyPressFcn', {@figure_keypress, this});
+            view(3);
+            hold all;
+            xlabel('x'); ylabel('y'); zlabel('z');
+            title(['Bullet simulation (paused)', char(10), 'Timestep: ',...
+                   num2str(this.gui.timestep), char(10), 'Framerate: ', ...
+                   num2str(this.gui.framerate)]);
+            for i = 1:numel(this.Terrain),
+                this.Terrain(i).Draw;
+            end
+            this.DrawSimulation();
+        else
+            bullet_interface_mex('InitSceneGraph', this.bulletHandle);
+        end        
     end
     
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%%%
     %%%% RUNNING THE SIMULATION
     %%%% Handles the interaction between the Bullet Physics engine and the Sim.
-    %%%%
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     function RunSimulation(this)
-      if this.gui.draw,
-        title(['Bullet simulation (running)',char(10),'Timestep: ',...
-          num2str(this.gui.timestep), char(10), 'Framerate: ', ...
-          num2str(this.gui.framerate), '  fps']);
-        this.StepSimulation();
-      elseif this.gui.iter == true,
-        title(['Bullet simulation (paused)',char(10),'Timestep: ',...
-          num2str(this.gui.timestep), char(10), 'Framerate: ', ...
-          num2str(this.gui.framerate), '  fps']);
-        this.StepSimulation();
-        this.gui.iter = false;
-      else
-        title(['Bullet simulation (paused)',char(10),'Timestep: ',...
-          num2str(this.gui.timestep), char(10),'Framerate: ', ...
-          num2str(this.gui.framerate), '  fps']);
-      end
-      
-      this.DrawSimulation();
-      %       if this.gui.quit == true,
-      %         break;
-      %       end
+        if ~this.isSceneGraphOn, 
+            if this.gui.draw,
+                title(['Bullet simulation (running)',char(10),'Timestep: ',...
+                       num2str(this.gui.timestep), char(10), 'Framerate: ', ...
+                       num2str(this.gui.framerate), '  fps']);
+                this.StepSimulation();
+            elseif this.gui.iter == true,
+                title(['Bullet simulation (paused)',char(10),'Timestep: ',...
+                       num2str(this.gui.timestep), char(10), 'Framerate: ', ...
+                       num2str(this.gui.framerate), '  fps']);
+                this.StepSimulation();
+                this.gui.iter = false;
+            else
+                title(['Bullet simulation (paused)',char(10),'Timestep: ',...
+                       num2str(this.gui.timestep), char(10),'Framerate: ', ...
+                       num2str(this.gui.framerate), '  fps']);
+            end      
+            this.DrawSimulation();
+        else
+            bullet_interface_mex('RunSceneGraph', this.bulletHandle);
+        end
     end
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%% FOR MATLAB RENDERING ONLY
     
     %%%% Updates all of our objects according to the Bullet world
     function StepSimulation(this)
