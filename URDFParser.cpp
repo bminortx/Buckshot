@@ -296,7 +296,7 @@ void URDFParser::ParseShape(std::string sRobotName,
     if (strcmp(sType, "Box") == 0) {
       std::shared_ptr<BoxShape> pBox =
           std::make_shared<BoxShape>(sBodyName, vDimension[0], vDimension[1],
-                                    vDimension[2], iMass, 1, vPose);
+                                     vDimension[2], iMass, 1, vPose);
       robot_models_[pBox->GetName()] = pBox;
     } else if (strcmp(sType, "Cylinder") == 0) {
       std::shared_ptr<CylinderShape> pCylinder =
@@ -307,7 +307,7 @@ void URDFParser::ParseShape(std::string sRobotName,
     } else if (strcmp(sType, "Sphere") == 0) {
       std::shared_ptr<SphereShape> pSphere =
           std::make_shared<SphereShape>(sBodyName, vDimension[0],
-                                             iMass, 1, vPose);
+                                        iMass, 1, vPose);
       robot_models_[pSphere->GetName()] = pSphere;
     } else if (strcmp(sType, "Plane") == 0) {
       std::shared_ptr<PlaneShape> pPlane =

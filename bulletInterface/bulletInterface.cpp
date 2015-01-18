@@ -8,7 +8,7 @@
 #include "mex.h"
 #include "class_handle.hpp"
 #include "iostream"
-#include "bulletInterface.h"
+#include "bulletSim.h"
 #include "boost/shared_ptr.hpp"
 
 /*********************************************************************
@@ -30,7 +30,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     if (nlhs != 1)
       mexErrMsgTxt("New: One output expected.");
     // Return a handle to a new C++ instance
-    plhs[0] = convertPtr2Mat<Sim>(new Sim);
+    plhs[0] = convertPtr2Mat<bulletSim>(new bulletSim);
     void mexUnlock(void);
     return;
   }
@@ -42,7 +42,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   // Delete
   if (!strcmp("delete", cmd)) {
     // Destroy the C++ object
-    destroyObject<Sim>(prhs[1]);
+    destroyObject<bulletSim>(prhs[1]);
     // Warn if other commands were ignored
     if (nlhs != 0 || nrhs != 2)
       mexWarnMsgTxt("Delete: Unexpected arguments ignored.");
@@ -50,7 +50,15 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   }
 
   // Get the class instance pointer from the second input
-  Sim *Sim_instance = convertMat2Ptr<Sim>(prhs[1]);
+  bulletSim *bullet_sim_ = convertMat2Ptr<bulletSim>(prhs[1]);
+
+
+
+  if (!strcmp("InitSimulation")) {
+    int* is_scenegraph_on = mxGetPr(prhs[2]);
+    bullet_sim_->InitSimulation(int(*is_scenegraph_on));
+    return;
+  }
 
   /*********************************************************************
    *
@@ -69,8 +77,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     double* Y = mxGetPr(prhs[8]);
     double* Z = mxGetPr(prhs[9]);
     double* normal = mxGetPr(prhs[10]);
-    int id = Sim_instance->AddTerrain(int(*row_count), int(*col_count),
-                                      *grad, *min_ht, *max_ht, X, Y, Z, normal);
+    int id = bullet_sim_->AddTerrain(int(*row_count), int(*col_count),
+                                     *grad, *min_ht, *max_ht, X, Y, Z, normal);
     double d_id = (double)id;
     //Return the index, so that we can look up the position later.
     plhs[0] = mxCreateDoubleMatrix(1, 1, mxREAL);
@@ -99,9 +107,9 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
       double* rotation = mxGetPr(prhs[9]);
       plhs[0] = mxCreateDoubleMatrix(1, 1, mxREAL);
       double* ShapeIndex = mxGetPr(plhs[0]);
-      int index = Sim_instance->AddCube(*width, *length, *height, *mass,
-                                        *restitution, position,
-                                        rotation);
+      int index = bullet_sim_->AddCube(*width, *length, *height, *mass,
+                                       *restitution, position,
+                                       rotation);
       *ShapeIndex = (double)index;
     }
 
@@ -114,8 +122,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
       double* rotation = mxGetPr(prhs[7]);
       plhs[0] = mxCreateDoubleMatrix(1, 1, mxREAL);
       double* ShapeIndex = mxGetPr(plhs[0]);
-      int index = Sim_instance->AddSphere(*radius, *mass, *restitution,
-                                        position, rotation);
+      int index = bullet_sim_->AddSphere(*radius, *mass, *restitution,
+                                         position, rotation);
       *ShapeIndex = (double)index;
     }
 
@@ -129,27 +137,10 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
       double* rotation = mxGetPr(prhs[8]);
       plhs[0] = mxCreateDoubleMatrix(1, 1, mxREAL);
       double* ShapeIndex = mxGetPr(plhs[0]);
-      int index = Sim_instance->AddCylinder(*radius, *height, *mass,
-                                            *restitution,
-                                            position, rotation);
+      int index = bullet_sim_->AddCylinder(*radius, *height, *mass,
+                                           *restitution,
+                                           position, rotation);
       *ShapeIndex = (double)index;
-    }
-    return;
-  }
-
-  //////////////////////////////////////////////
-
-  // AddCompounds
-  if (!strcmp("AddCompound", cmd)) {
-    char compound_type[64];
-    mxGetString(prhs[2], compound_type, sizeof(compound_type));
-    if (!strcmp("Vehicle", compound_type)){
-      double* Shape_ids = mxGetPr(prhs[3]);
-      double* Con_ids = mxGetPr(prhs[4]);
-      int index = Sim_instance->AddCompound(Shape_ids, Con_ids, compound_type);
-      plhs[0] = mxCreateDoubleMatrix(1, 1, mxREAL);
-      double* CompoundIndex = mxGetPr(plhs[0]);
-      *CompoundIndex = (double)index;
     }
     return;
   }
@@ -159,8 +150,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     double* parameters = mxGetPr(prhs[2]);
     double* position = mxGetPr(prhs[3]);
     double* rotation = mxGetPr(prhs[4]);
-    int index = Sim_instance->AddRaycastVehicle(parameters,
-                                                position, rotation);
+    int index = bullet_sim_->AddRaycastVehicle(parameters,
+                                               position, rotation);
     plhs[0] = mxCreateDoubleMatrix(1, 1, mxREAL);
     double* CompoundIndex = mxGetPr(plhs[0]);
     *CompoundIndex = (double)index;
@@ -179,7 +170,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     if (nlhs < 0 || nrhs > 2 )
       mexErrMsgTxt("StepSimulation: Unexpected arguments.");
     // Call the method
-    Sim_instance->StepSimulation();
+    bullet_sim_->StepSimulation();
     return;
   }
 
@@ -198,7 +189,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
       double* id = mxGetPr(prhs[3]);
       double* phi = mxGetPr(prhs[4]);
       double* force = mxGetPr(prhs[5]);
-      Sim_instance->CommandVehicle(*id, *phi, *force);
+      bullet_sim_->CommandVehicle(*id, *phi, *force);
     }
     return;
   }
@@ -213,7 +204,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     double* id = mxGetPr(prhs[2]);
     double* phi = mxGetPr(prhs[3]);
     double* force = mxGetPr(prhs[4]);
-    Sim_instance->CommandRaycastVehicle(*id, *phi, *force);
+    bullet_sim_->CommandRaycastVehicle(*id, *phi, *force);
     return;
   }
 
@@ -221,7 +212,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 
   if (!strcmp("GetMotionState", cmd)){
     double* id = mxGetPr(prhs[2]);
-    double* state = Sim_instance->GetRaycastMotionState(*id);
+    double* state = bullet_sim_->GetRaycastMotionState(*id);
     plhs[0] = mxCreateDoubleMatrix(1, 1, mxREAL);
     plhs[1] = mxCreateDoubleMatrix(1, 1, mxREAL);
     plhs[2] = mxCreateDoubleMatrix(1, 3, mxREAL);
@@ -252,7 +243,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     double* y = mxGetPr(prhs[4]);
     plhs[0] = mxCreateDoubleMatrix(1, 3, mxREAL);
     double* position = mxGetPr(plhs[0]);
-    double* pos = Sim_instance->RaycastToGround(*id, *x, *y);
+    double* pos = bullet_sim_->RaycastToGround(*id, *x, *y);
     position[0] = pos[0];
     position[1] = pos[1];
     position[2] = pos[2];
@@ -276,10 +267,10 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     plhs[3] = mxCreateDoubleMatrix(1, 3, mxREAL);
     plhs[4] = mxCreateDoubleMatrix(1, 3, mxREAL);
     plhs[5] = mxCreateDoubleMatrix(1, 1, mxREAL);
-    double* states = Sim_instance->SpeedSim(*id, start_pose, start_rot,
-                                            start_lin_vel, start_ang_vel,
-                                            forces, steering_angles,
-                                            *command_length);
+    double* states = bullet_sim_->SpeedSim(*id, start_pose, start_rot,
+                                           start_lin_vel, start_ang_vel,
+                                           forces, steering_angles,
+                                           *command_length);
     double* xy = mxGetPr(plhs[0]);
     double* end_pos = mxGetPr(plhs[1]);
     double* end_rot = mxGetPr(plhs[2]);
@@ -318,7 +309,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     double* id = mxGetPr(prhs[2]);
     double* start_pose = mxGetPr(prhs[3]);
     double* start_rot = mxGetPr(prhs[4]);
-    Sim_instance->ResetVehicle(*id, start_pose, start_rot);
+    bullet_sim_->ResetVehicle(*id, start_pose, start_rot);
     return;
   }
 
@@ -348,7 +339,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     if (!strcmp("PointToPoint_one", constraint)){
       double* id = mxGetPr(prhs[3]);
       double* pivot_in_A = mxGetPr(prhs[4]);
-      index = Sim_instance->PointToPoint_one(*id, pivot_in_A);
+      index = bullet_sim_->PointToPoint_one(*id, pivot_in_A);
     }
 
     if (!strcmp("PointToPoint_two", constraint)){
@@ -356,8 +347,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
       double* id_B = mxGetPr(prhs[4]);
       double* pivot_in_A = mxGetPr(prhs[5]);
       double* pivot_in_B = mxGetPr(prhs[6]);
-      index = Sim_instance->PointToPoint_two(*id_A, *id_B,
-                                  pivot_in_A, pivot_in_B);
+      index = bullet_sim_->PointToPoint_two(*id_A, *id_B,
+                                            pivot_in_A, pivot_in_B);
     }
 
     ///////
@@ -367,7 +358,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
       double* id = mxGetPr(prhs[3]);
       double* transform_A = mxGetPr(prhs[4]);
       double* limits = mxGetPr(prhs[5]);
-      index = Sim_instance->Hinge_one_transform(*id, transform_A, limits);
+      index = bullet_sim_->Hinge_one_transform(*id, transform_A, limits);
     }
 
     if (!strcmp("Hinge_two_transform", constraint)) {
@@ -376,8 +367,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
       double* transform_A = mxGetPr(prhs[5]);
       double* transform_B = mxGetPr(prhs[6]);
       double* limits = mxGetPr(prhs[7]);
-      index = Sim_instance->Hinge_two_transform(*id_A, *id_B,
-                                        transform_A, transform_B, limits);
+      index = bullet_sim_->Hinge_two_transform(*id_A, *id_B,
+                                               transform_A, transform_B, limits);
     }
 
     if (!strcmp("Hinge_one_pivot", constraint)) {
@@ -385,8 +376,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
       double* pivot_in_A = mxGetPr(prhs[4]);
       double* axis_in_A = mxGetPr(prhs[5]);
       double* limits = mxGetPr(prhs[6]);
-      index = Sim_instance->Hinge_one_pivot(*id_A, pivot_in_A,
-                                    axis_in_A, limits);
+      index = bullet_sim_->Hinge_one_pivot(*id_A, pivot_in_A,
+                                           axis_in_A, limits);
     }
 
     if (!strcmp("Hinge_two_pivot", constraint)) {
@@ -397,9 +388,9 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
       double* axis_in_A = mxGetPr(prhs[7]);
       double* axis_in_B = mxGetPr(prhs[8]);
       double* limits = mxGetPr(prhs[9]);
-      index = Sim_instance->Hinge_two_pivot(*id_A, *id_B,
-                                    pivot_in_A, pivot_in_B,
-                                    axis_in_A, axis_in_B, limits);
+      index = bullet_sim_->Hinge_two_pivot(*id_A, *id_B,
+                                           pivot_in_A, pivot_in_B,
+                                           axis_in_A, axis_in_B, limits);
     }
 
     ///////
@@ -414,8 +405,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
       double* damping = mxGetPr(prhs[8]);
       double* stiffness = mxGetPr(prhs[9]);
       double* steering_angle = mxGetPr(prhs[10]);
-      index = Sim_instance->Hinge2(*id_A, *id_B, Anchor, Axis_1, Axis_2, *damping,
-                               *stiffness, *steering_angle);
+      index = bullet_sim_->Hinge2(*id_A, *id_B, Anchor, Axis_1, Axis_2, *damping,
+                                  *stiffness, *steering_angle);
     }
 
     ///////
@@ -425,7 +416,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
       double* id = mxGetPr(prhs[3]);
       double* transform_A = mxGetPr(prhs[4]);
       double* limits = mxGetPr(prhs[5]);
-      index = Sim_instance->SixDOF_one(*id, transform_A, limits);
+      index = bullet_sim_->SixDOF_one(*id, transform_A, limits);
     }
 
     if (!strcmp("SixDOF_two", constraint)){
@@ -434,8 +425,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
       double* transform_A = mxGetPr(prhs[5]);
       double* transform_B = mxGetPr(prhs[6]);
       double* limits = mxGetPr(prhs[7]);
-      index = Sim_instance->SixDOF_two(*id_A, *id_B,
-                               transform_A, transform_B, limits);
+      index = bullet_sim_->SixDOF_two(*id_A, *id_B,
+                                      transform_A, transform_B, limits);
     }
     plhs[0] = mxCreateDoubleMatrix(1, 1, mxREAL);
     double* ConstIndex = mxGetPr(plhs[0]);
@@ -457,7 +448,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     mxGetString(prhs[2], type, sizeof(type));
     double* id = mxGetPr(prhs[3]);
     if(!strcmp(type, "Shape")){
-      double* pose = Sim_instance->GetShapeTransform(*id);
+      double* pose = bullet_sim_->GetShapeTransform(*id);
       plhs[0] = mxCreateDoubleMatrix(1, 3, mxREAL);
       plhs[1] = mxCreateDoubleMatrix(3, 3, mxREAL);
       double* position = mxGetPr(plhs[0]);
@@ -479,7 +470,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     }
     else if(!strcmp(type, "Constraint")){
       plhs[0] = mxCreateDoubleMatrix(1, 3, mxREAL);
-      double* pose = Sim_instance->GetConstraintTransform(*id);
+      double* pose = bullet_sim_->GetConstraintTransform(*id);
       double* position = mxGetPr(plhs[0]);
       //Position
       position[0] = pose[0];
@@ -497,7 +488,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
       plhs[5] = mxCreateDoubleMatrix(3, 3, mxREAL);
       plhs[7] = mxCreateDoubleMatrix(3, 3, mxREAL);
       plhs[9] = mxCreateDoubleMatrix(3, 3, mxREAL);
-      double* pose = Sim_instance->GetVehicleTransform(*id);
+      double* pose = bullet_sim_->GetVehicleTransform(*id);
       double* body_pos = mxGetPr(plhs[0]);
       double* wheel_fl_pos = mxGetPr(plhs[2]);
       double* wheel_fr_pos = mxGetPr(plhs[4]);

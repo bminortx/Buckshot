@@ -50,10 +50,13 @@ link_directories(${USER_INC})
 
 set(HDRS
 	class_handle.hpp
-	bulletEntities.h
-	bulletInterface.h)
+	bulletSim.h
+	bulletStructs/Shape.h
+	bulletStructs/Constraint.h
+	bulletStructs/SimRaycastVehicle.h)
 set(SRC
-	bulletInterface.cpp)
+	bulletInterface.cpp
+	bulletSim.cpp)
 
 set(MEX_TARGET bulletInterface)
 # Set the right output file

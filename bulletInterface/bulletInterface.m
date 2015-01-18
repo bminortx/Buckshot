@@ -125,28 +125,7 @@ classdef bullet_interface < handle
         heightmap{2}, heightmap{3}, normal);
       this.Terrain.SetID(id);
     end
-    
-    %%%%%%%%%%%%%
-    
-    function AddCompounds( this, Compounds  )
-      % AddCompunds - Adds a bullet compound to the world. Is just an
-      % amalgamation of Shapes and Constraints, so we just use those arguments.
-      if isempty(this.Compounds),
-        this.Compounds = Compounds;
-      else
-        this.Compounds = [this.Compounds Compounds];
-      end
-      for i=1:numel(Compounds),
-        Shape_ids = this.AddShapes(Compounds{i}.GetShapes());
-        Con_ids = this.AddConstraints(Compounds{i}.GetConstraints());
-        Type = Compounds{i}.GetType();
-        disp(Type);
-        id = bulletInterface('AddCompound', this.bulletHandle, ...
-          Type, Shape_ids, Con_ids);
-        Compounds{i}.SetID(id);
-      end
-    end
-    
+
     %%%%%%%%%%%%%
     
     function AddRaycastVehicles( this, RayVehicles  )
@@ -351,15 +330,16 @@ classdef bullet_interface < handle
         this.CommandRaycastVehicle(Vehicle);
         this.RunSimulation;
       end
-    end   
-    
+    end
+
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%% INITIALIZE THE GUI
     %%%% Code modified from RPI's MATLAB-only simulator.
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
+
     function InitSimulation(this)
         if ~this.isSceneGraphOn,
+            bulletInterface('InitSimulation', 0);
             % Keypress event from run()
             function this = figure_keypress(~, event, this)
                 switch event.Key
@@ -376,7 +356,7 @@ classdef bullet_interface < handle
                   case 'c'
                     this.gui.draw_constraint = ~this.gui.draw_constraint;
                 end
-            end            
+            end
             disp('Starting simulation...');
             disp(' || space: start / stop simulation');
             disp(' || i:     iterate a single step');
@@ -397,14 +377,14 @@ classdef bullet_interface < handle
                 this.Terrain(i).Draw;
             end
             this.DrawSimulation();
-        else
-            bulletInterface('InitSceneGraph', this.bulletHandle);
-        end        
+        else,
+            bulletInterface('InitSimulation', 1);
+        end
     end
-    
+
     %%%% RUNNING THE SIMULATION
     %%%% Handles the interaction between the Bullet Physics engine and the Sim.
-    
+
     function RunSimulation(this)
         if ~this.isSceneGraphOn, 
             if this.gui.draw,
