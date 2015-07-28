@@ -52,10 +52,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   // Get the class instance pointer from the second input
   bulletSim *bullet_sim_ = convertMat2Ptr<bulletSim>(prhs[1]);
 
-
-
-  if (!strcmp("InitSimulation")) {
-    int* is_scenegraph_on = mxGetPr(prhs[2]);
+  if (!strcmp("InitSimulation", cmd)) {
+    double* is_scenegraph_on = mxGetPr(prhs[2]);
     bullet_sim_->InitSimulation(int(*is_scenegraph_on));
     return;
   }

@@ -40,6 +40,7 @@
 class bulletSim {
  public:
   bulletSim();
+  void InitSimulation(int is_scenegraph_on);
 
   /*********************************************************************
    *ADDING OBJECTS
