@@ -1,38 +1,37 @@
 project( SimLAB )
 set(PROJECT_NAME SimLAB)
 set(LIBRARY_NAME ${PROJECT_NAME})
-
-set(MEX /usr/local/MATLAB/R2014a/bin/mex)
-
 cmake_minimum_required(VERSION 2.8)
-
 if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 OLD)
 endif(COMMAND cmake_policy)
 
+
+###################
+# USER INPUT
+# might have to change these, depending on your system.
+###################
+
+set(MEX /usr/local/MATLAB/R2014a/bin/mex)
+
 ###################
 # LINK TO OUR LIBRARIES
 ###################
-add_definitions(-DBT_USE_DOUBLE_PRECISION)
-add_definitions(-DBT_NO_PROFILE)
 set( SCENEGRAPH_INTERFACE false CACHE BOOL force )
-
 find_package( Eigen3 REQUIRED )
 find_package( Bullet REQUIRED )
-
+add_definitions(-DBT_USE_DOUBLE_PRECISION)
+add_definitions(-DBT_NO_PROFILE)
 set(USER_INC
 	${EIGEN3_INCLUDE_DIRS}
 	${BULLET_INCLUDE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR})
-
 set(LINK_DIRS
   /usr/local/lib/)
-
 set(LINK_LIBS
   ${BULLET_LIBRARIES}
 	${EIGEN3_LIBRARIES})
-
 # Are we using SceneGraph?
 if(${SCENEGRAPH_INTERFACE})
 	find_package(SceneGraph REQUIRED)
@@ -44,10 +43,8 @@ if(${SCENEGRAPH_INTERFACE})
 		${SceneGraph_LIBRARIES}
 		${Pangolin_LIBRARIES})
 endif()
-
 include_directories(${USER_INC})
 link_directories(${USER_INC})
-
 set(HDRS
 	class_handle.hpp
 	bulletSim.h
@@ -58,6 +55,10 @@ set(SRC
 	bulletInterface.cpp
 	bulletSim.cpp)
 
+###################
+# MEX CONFIGURATION
+###################
+set(MEX_CONFIG ${CMAKE_CURRENT_SOURCE_DIR}/mexopts.sh)
 set(MEX_TARGET bulletInterface)
 # Set the right output file
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
@@ -94,7 +95,10 @@ Endforeach()
 separate_arguments(MEXLIBS)
 message(${MEXLIBS})
 
-set(MEX_COMMAND ${MEX} -f /usr/local/MATLAB/R2014a/bin/mexopts.sh -silent -cxx -O ${MEXINCLUDES} -output
+###################
+# MEX COMPILATION
+###################
+set(MEX_COMMAND ${MEX} -f ${MEX_CONFIG} -silent -cxx -O ${MEXINCLUDES} -output
 	${MEX_OUTPUT} ${SRC} ${MEXLIBS} ${MEXLIBDIRS})
 
 add_custom_command(OUTPUT ${MEX_OUTPUT}
