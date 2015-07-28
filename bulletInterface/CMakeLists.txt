@@ -78,7 +78,7 @@ foreach(INC_DIR_OPT ${USER_INC_OPT})
   set(MEXINCLUDES "${MEXINCLUDES} -I${INC_DIR_OPT}")
 endforeach()
 separate_arguments(MEXINCLUDES)
-message(${MEXINCLUDES})
+# message(${MEXINCLUDES})
 
 foreach(DIR ${LINK_DIRS})
   set(MEXLIBDIRS "${MEXINCLUDES} -L${DIR}")
