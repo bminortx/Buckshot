@@ -1,13 +1,20 @@
 #!/bin/bash
 
-mkdir -p bulletWrapper/build
-cd bulletWrapper/build
-if [[ $1 ]]; then
-		cmake .. -DSCENEGRAPH_INTERFACE=ON
+set -u
+set -e
 
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+INTERFACE_DIR=$SCRIPT_DIR/bulletInterface
+
+mkdir -p $INTERFACE_DIR/build
+cd $INTERFACE_DIR/build
+
+# I use ninja, but just get rid of -GNinja for make instead
+if [[ $1 ]]; then
+		cmake -GNinja $INTERFACE_DIR -DSCENEGRAPH_INTERFACE=ON
 else
-		cmake .. -DSCENEGRAPH_INTERFACE=OFF
+		cmake -GNinja $INTERFACE_DIR -DSCENEGRAPH_INTERFACE=OFF
 fi
 
-make -j4
+ninja -j4
 
