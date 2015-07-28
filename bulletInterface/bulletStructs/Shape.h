@@ -39,12 +39,6 @@ class Shape : public ModelNode {
     m_dRestitution = dRestitution;
   }
 
-  void SetPosition(double x, double y, double z) {
-    model_pose_[0] = x;
-    model_pose_[1] = y;
-    model_pose_[2] = z;
-  }
-
   // GETTERS
   Eigen::Vector3d GetScale() {
     return m_dScale;
@@ -73,7 +67,8 @@ class Shape : public ModelNode {
 class BoxShape : public Shape {
  public:
   BoxShape(double x_length, double y_length, double z_length,
-           double dMass, double dRestitution, std::vector<double> dPose) {
+           double dMass, double dRestitution,
+           double* position, double* rotation) {
     SetMass(dMass);
     SetRestitution(dRestitution);
     SetPose(dPose);

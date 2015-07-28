@@ -18,16 +18,10 @@ void bulletSim::InitSimulation(int is_scenegraph_on) {
 int bulletSim::AddCube(double x_length, double y_length, double z_length,
                        double dMass, double dRestitution,
                        double* position, double* rotation) {
-  std::vector<double> dPose;
-  dPose.push_back(position[0]);
-  dPose.push_back(position[1]);
-  dPose.push_back(position[2]);
-  dPose.push_back(rotation[0]);
-  dPose.push_back(rotation[1]);
-  dPose.push_back(rotation[2]);
+
   std::shared_ptr<BoxShape> pBox =
     std::make_shared<BoxShape>(x_length, y_length, z_length,
-                               dMass, dRestitution, dPose);
+                               dMass, dRestitution, position, rotation);
   pBox->SetID(models_.size);
   robot_models_[pBox->GetName()] = pBox;
   return models_.size;

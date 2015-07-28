@@ -57,6 +57,16 @@ class ModelNode {
     model_pose_ << x, y, z, r, p, q;
   }
 
+  void SetPose(double* position, double* rotation) {
+    std::vector<double> dPose;
+    dPose.push_back(position[0]);
+    dPose.push_back(position[1]);
+    dPose.push_back(position[2]);
+    dPose.push_back(rotation[0]);
+    dPose.push_back(rotation[1]);
+    dPose.push_back(rotation[2]);
+  }
+
   void SetPose(std::vector<double> dPose) {
     SetPose(dPose[0], dPose[1], dPose[2],
             dPose[3], dPose[4], dPose[5]);
@@ -86,7 +96,11 @@ class ModelNode {
     SetPosition(v(0), v(1), v(2));
   }
 
-
+  void SetPosition(double x, double y, double z) {
+    model_pose_[0] = x;
+    model_pose_[1] = y;
+    model_pose_[2] = z;
+  }
 
   ///////////////////////////////////////////////////////////////////
   // GETTERS

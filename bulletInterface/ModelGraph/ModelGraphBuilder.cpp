@@ -53,7 +53,6 @@ void ModelGraphBuilder::Init(const std::vector<std::shared_ptr<ModelNode> >& mod
     RenderGraph();
     render_engine_->AddToScene();
     render_engine_->CompleteScene(camera_option_);
-    // render_engine_->AddDevices(m_SimDevices);
   }
   }
 
