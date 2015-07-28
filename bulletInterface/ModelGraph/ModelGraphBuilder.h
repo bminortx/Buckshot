@@ -8,7 +8,7 @@
 #include <SimDevices/SimDevices.h>
 
 class ModelGraphBuilder{
- public:
+public:
 
   /////////////////////////////////////////
   /// INITIALIZER FOR THE WORLD
@@ -18,7 +18,7 @@ class ModelGraphBuilder{
   void AssociatePhysics();
   /// RENDER_ENGINE CONSTRUCTORS
   void RenderGraph();
-  void Init(const std::vector<boost::shared_ptr<ModelNode> >& models,
+  void Init(const std::vector<std::shared_ptr<ModelNode> >& models,
             const bool camera_option,
             const bool render_option);
 

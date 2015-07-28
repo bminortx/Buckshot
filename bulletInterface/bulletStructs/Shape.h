@@ -72,9 +72,8 @@ class Shape : public ModelNode {
 
 class BoxShape : public Shape {
  public:
-  BoxShape(std::string sName, double x_length, double y_length, double z_length,
+  BoxShape(double x_length, double y_length, double z_length,
            double dMass, double dRestitution, std::vector<double> dPose) {
-    SetName(sName);
     SetMass(dMass);
     SetRestitution(dRestitution);
     SetPose(dPose);

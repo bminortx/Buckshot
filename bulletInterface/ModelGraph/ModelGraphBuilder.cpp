@@ -29,7 +29,7 @@ void ModelGraphBuilder::RenderGraph() {
     Eigen::Vector6d ChildWorldPose;
     for (unsigned int ii = 0; ii < part->NumChildren(); ii++ ) {
       ChildWorldPose = _T2Cart(
-          part->GetPoseMatrix() * part->model_children_[ii]->GetPoseMatrix());
+                               part->GetPoseMatrix() * part->model_children_[ii]->GetPoseMatrix());
       part->SetPose(ChildWorldPose);
     }
   }
@@ -37,12 +37,11 @@ void ModelGraphBuilder::RenderGraph() {
 
 ////////////////////////////////////////
 
-void ModelGraphBuilder::Init(
-    const std::vector<boost::shared_ptr<ModelNode> >& models,
-    const bool camera_option,
-    const bool render_option) :
-    render_option_(render_option), models_(models),
-    camera_option_(camera_option){
+void ModelGraphBuilder::Init(const std::vector<std::shared_ptr<ModelNode> >& models,
+                             const bool camera_option,
+                             const bool render_option) :
+  render_option_(render_option), models_(models),
+  camera_option_(camera_option){
   physics_engine_ = boost::make_shared<PhysicsEngine>();
   physics_engine_->Init();
   if (render_status_) {
@@ -56,7 +55,7 @@ void ModelGraphBuilder::Init(
     render_engine_->CompleteScene(camera_option_);
     // render_engine_->AddDevices(m_SimDevices);
   }
-}
+  }
 
 //////////
 
