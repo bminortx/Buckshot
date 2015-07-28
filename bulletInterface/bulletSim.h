@@ -24,6 +24,7 @@
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/LinearMath/btAlignedAllocator.h>
 // Common geometric shapes available in Bullet
+#include <ModelGraph/ModelGraphBuilder.h>
 #include <bulletStructs/Shape.h>
 // Common joints and hinges in Bullet
 #include <bulletStructs/Constraint.h>
@@ -124,10 +125,9 @@ class bulletSim {
 
   //////////////////////////////////////////////////////////////////
 
-
   ModelGraphBuilder scene_;
   std::vector<std::shared_ptr<ModelNode> > models_;
-  
+
 };
 
 #endif

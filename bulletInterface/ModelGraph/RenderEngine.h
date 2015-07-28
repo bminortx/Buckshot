@@ -8,9 +8,9 @@
 
 
 // All of our bullet objects
-#include <BulletStructs/Shape.h>
-#include <BulletStructs/Constraint.h>
-#include <BulletStructs/SimRaycastVehicle.h>
+#include <bulletStructs/Shape.h>
+#include <bulletStructs/Constraint.h>
+#include <bulletStructs/SimRaycastVehicle.h>
 // Our Sensor data
 #include <SimDevices/SimDevices.h>
 
