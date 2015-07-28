@@ -11,7 +11,6 @@
 #include <bulletStructs/Shape.h>
 #include <bulletStructs/Constraint.h>
 #include <bulletStructs/SimRaycastVehicle.h>
-// Our Sensor data
 #include <SimDevices/SimDevices.h>
 
 #include <map>

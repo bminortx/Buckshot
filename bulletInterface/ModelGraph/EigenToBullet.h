@@ -5,7 +5,7 @@
 
 #include <bullet/btBulletDynamicsCommon.h>
 #include <Eigen/Eigen>
-#include <URDFParser/EigenHelpers.h>
+#include <bulletStructs/EigenHelpers.h>
 
 //////////////////////////////////////////////////////////
 ///

@@ -11,9 +11,9 @@
 #include <bullet/btBulletDynamicsCommon.h>
 
 // Our ModelNode Objects
-#include <BulletStructs/Shape.h>
-#include <BulletStructs/SimRaycastVehicle.h>
-#include <BulletStructs/Constraint.h>
+#include <bulletStructs/Shape.h>
+#include <bulletStructs/SimRaycastVehicle.h>
+#include <bulletStructs/Constraint.h>
 
 // Our Controllers
 #include <SimDevices/SimDevices.h>

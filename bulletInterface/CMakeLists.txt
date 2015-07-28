@@ -48,12 +48,19 @@ link_directories(${USER_INC})
 set(HDRS
 	class_handle.hpp
 	bulletSim.h
+	bulletStructs/EigenHelpers.h
 	bulletStructs/Shape.h
 	bulletStructs/Constraint.h
-	bulletStructs/SimRaycastVehicle.h)
+	bulletStructs/SimRaycastVehicle.h
+  SimDevices/SimDeviceInfo.h
+	SimDevices/SimDevices.h
+	SimDevices/SimGPS.h
+	SimDevices/SimVicon.h
+	SimDevices/SimCamera.h)
 set(SRC
 	bulletInterface.cpp
-	bulletSim.cpp)
+	bulletSim.cpp
+	SimDevices/SimDevices.cpp)
 
 ###################
 # MEX CONFIGURATION
