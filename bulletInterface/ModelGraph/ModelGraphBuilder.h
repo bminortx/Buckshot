@@ -1,8 +1,6 @@
 #ifndef MODELGRAPHBUILDER_H
 #define MODELGRAPHBUILDER_H
 
-#include <mutex>
-
 #include <ModelGraph/RenderEngine.h>
 #include <ModelGraph/PhysicsEngine.h>
 #include <SimRobots/SimRobot.h>

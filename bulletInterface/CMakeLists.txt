@@ -94,7 +94,8 @@ Endforeach()
 separate_arguments(MEXLIBS)
 message(${MEXLIBS})
 
-set(MEX_COMMAND ${MEX} -silent -cxx -O ${MEXINCLUDES} -output ${MEX_OUTPUT} ${SRC} ${MEXLIBS} ${MEXLIBDIRS})
+set(MEX_COMMAND ${MEX} -f /usr/local/MATLAB/R2014a/bin/mexopts.sh -silent -cxx -O ${MEXINCLUDES} -output
+	${MEX_OUTPUT} ${SRC} ${MEXLIBS} ${MEXLIBDIRS})
 
 add_custom_command(OUTPUT ${MEX_OUTPUT}
   COMMAND ${MEX_COMMAND}
