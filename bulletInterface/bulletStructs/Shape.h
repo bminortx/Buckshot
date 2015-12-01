@@ -71,7 +71,7 @@ class BoxShape : public Shape {
            double* position, double* rotation) {
     SetMass(dMass);
     SetRestitution(dRestitution);
-    SetPose(dPose);
+    SetPose(position, rotation);
     SetScale(1);
     m_dBounds << x_length, y_length, z_length;
   }

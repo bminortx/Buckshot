@@ -96,12 +96,6 @@ class ModelNode {
     SetPosition(v(0), v(1), v(2));
   }
 
-  void SetPosition(double x, double y, double z) {
-    model_pose_[0] = x;
-    model_pose_[1] = y;
-    model_pose_[2] = z;
-  }
-
   ///////////////////////////////////////////////////////////////////
   // GETTERS
 
