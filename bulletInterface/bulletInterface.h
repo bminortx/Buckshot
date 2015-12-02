@@ -20,13 +20,13 @@
 #include <boost/shared_ptr.hpp>
 //#include <pangolin/pangolin.h>
 //#include <SceneGraph/SceneGraph.h>
-#include "bullet_entities.h"
+#include "bulletEntities.h"
 // Our shapes
-#include "../Bullet_shapes/bullet_vehicle.h"
-#include "../Bullet_shapes/bullet_cube.h"
-#include "../Bullet_shapes/bullet_sphere.h"
-#include "../Bullet_shapes/bullet_cylinder.h"
-#include "../Bullet_shapes/bullet_heightmap.h"
+#include "../bulletShapes/bullet_vehicle.h"
+#include "../bulletShapes/bullet_cube.h"
+#include "../bulletShapes/bullet_sphere.h"
+#include "../bulletShapes/bullet_cylinder.h"
+#include "../bulletShapes/bullet_heightmap.h"
 
 ///////////////////////////////////////////////////////
 /// The Sim class

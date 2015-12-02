@@ -15,6 +15,7 @@ endif(COMMAND cmake_policy)
 ###################
 add_definitions(-DBT_USE_DOUBLE_PRECISION)
 add_definitions(-DBT_NO_PROFILE)
+set( SCENEGRAPH_INTERFACE false CACHE BOOL force )
 
 find_package( Eigen3 REQUIRED )
 find_package( Bullet REQUIRED )
@@ -25,9 +26,6 @@ set(USER_INC
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR})
 
-include_directories(${USER_INC})
-link_directories(${USER_INC})
-
 set(LINK_DIRS
   /usr/local/lib/)
 
@@ -35,14 +33,29 @@ set(LINK_LIBS
   ${BULLET_LIBRARIES}
 	${EIGEN3_LIBRARIES})
 
+# Are we using SceneGraph?
+if(${SCENEGRAPH_INTERFACE})
+	find_package(SceneGraph REQUIRED)
+	find_package(Pangolin REQUIRED)
+	set(USER_INC_OPT
+		${SceneGraph_INCLUDE_DIRS}
+		${Pangolin_INCLUDE_DIRS})
+	set(LINK_LIBS_OPT
+		${SceneGraph_LIBRARIES}
+		${Pangolin_LIBRARIES})
+endif()
+
+include_directories(${USER_INC})
+link_directories(${USER_INC})
+
 set(HDRS
 	class_handle.hpp
-	bullet_entities.h
-	matlab_bullet_wrapper.h)
+	bulletEntities.h
+	bulletInterface.h)
 set(SRC
-	bullet_interface_mex.cpp)
+	bulletInterface.cpp)
 
-set(MEX_TARGET bullet_interface_mex)
+set(MEX_TARGET bulletInterface)
 # Set the right output file
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 	set(MEX_OUTPUT ${MEX_TARGET}.mexmaci64)
@@ -58,7 +71,11 @@ set(MEXLIBDIRS)
 foreach(INC_DIR ${USER_INC})
   set(MEXINCLUDES "${MEXINCLUDES} -I${INC_DIR}")
 endforeach()
+foreach(INC_DIR_OPT ${USER_INC_OPT})
+  set(MEXINCLUDES "${MEXINCLUDES} -I${INC_DIR_OPT}")
+endforeach()
 separate_arguments(MEXINCLUDES)
+message(${MEXINCLUDES})
 
 foreach(DIR ${LINK_DIRS})
   set(MEXLIBDIRS "${MEXINCLUDES} -L${DIR}")
@@ -68,7 +85,11 @@ separate_arguments(MEXLIBDIRS)
 foreach(DIR ${LINK_LIBS})
   set(MEXLIBS "${MEXLIBS} ${DIR}")
 Endforeach()
+foreach(DIR_OPT ${LINK_LIBS_OPT})
+  set(MEXLIBS "${MEXLIBS} -L${DIR_OPT}")
+Endforeach()
 separate_arguments(MEXLIBS)
+message(${MEXLIBS})
 
 set(MEX_COMMAND ${MEX} -silent -cxx -O ${MEXINCLUDES} -output ${MEX_OUTPUT} ${SRC} ${MEXLIBS} ${MEXLIBDIRS})
 
