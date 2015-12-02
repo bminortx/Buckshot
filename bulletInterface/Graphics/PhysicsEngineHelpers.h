@@ -58,8 +58,6 @@ class NodeMotionState : public btMotionState {
   std::shared_ptr<ModelNode> object;
 };
 
-/// We declare these typedefs to shorten the name, basically.
-
 typedef std::shared_ptr<btCollisionShape> CollisionShapePtr;
 typedef std::shared_ptr<btRigidBody> RigidBodyPtr;
 typedef std::shared_ptr<NodeMotionState> MotionStatePtr;

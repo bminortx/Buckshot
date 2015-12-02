@@ -17,7 +17,6 @@
 #pragma GCC diagnostic pop
 
 #include <map>
-#include <boost/shared_ptr.hpp>
 //#include <pangolin/pangolin.h>
 //#include <SceneGraph/SceneGraph.h>
 #include "bulletEntities.h"
@@ -42,14 +41,14 @@ class Sim {
     m_dGravity = -9.8;
     m_nMaxSubSteps = 10; //  bullet -- for stepSimulation
     m_pDispatcher
-        = boost::shared_ptr<btCollisionDispatcher>(
+        = std::shared_ptr<btCollisionDispatcher>(
             new btCollisionDispatcher(&m_CollisionConfiguration));
     m_pBroadphase
-        = boost::shared_ptr<btDbvtBroadphase>(new btDbvtBroadphase);
+        = std::shared_ptr<btDbvtBroadphase>(new btDbvtBroadphase);
     m_pSolver
-        = boost::shared_ptr<btSequentialImpulseConstraintSolver>(
+        = std::shared_ptr<btSequentialImpulseConstraintSolver>(
             new btSequentialImpulseConstraintSolver);
-    m_pDynamicsWorld = boost::shared_ptr<btDiscreteDynamicsWorld>(
+    m_pDynamicsWorld = std::shared_ptr<btDiscreteDynamicsWorld>(
         new btDiscreteDynamicsWorld(m_pDispatcher.get(),
                                     m_pBroadphase.get(),
                                     m_pSolver.get(),
@@ -71,7 +70,7 @@ class Sim {
     MotionStatePtr pMotionState(btBox.getBulletMotionStatePtr());
     RigidBodyPtr body(btBox.getBulletBodyPtr());
     m_pDynamicsWorld->addRigidBody(body.get());
-    boost::shared_ptr<Shape_Entity> pEntity(new Shape_Entity);
+    std::shared_ptr<Shape_Entity> pEntity(new Shape_Entity);
     pEntity->rigidbody_ = body;
     pEntity->shape_ = pShape;
     pEntity->motionstate_ = pMotionState;
@@ -89,7 +88,7 @@ class Sim {
     MotionStatePtr pMotionState(btSphere.getBulletMotionStatePtr());
     RigidBodyPtr body(btSphere.getBulletBodyPtr());
     m_pDynamicsWorld->addRigidBody(body.get());
-    boost::shared_ptr<Shape_Entity> pEntity(new Shape_Entity);
+    std::shared_ptr<Shape_Entity> pEntity(new Shape_Entity);
     pEntity->rigidbody_ = body;
     pEntity->shape_ = pShape;
     pEntity->motionstate_ = pMotionState;
@@ -107,7 +106,7 @@ class Sim {
     MotionStatePtr pMotionState(btCylinder.getBulletMotionStatePtr());
     RigidBodyPtr body(btCylinder.getBulletBodyPtr());
     m_pDynamicsWorld->addRigidBody(body.get());
-    boost::shared_ptr<Shape_Entity> pEntity(new Shape_Entity);
+    std::shared_ptr<Shape_Entity> pEntity(new Shape_Entity);
     pEntity->rigidbody_ = body;
     pEntity->shape_ = pShape;
     pEntity->motionstate_ = pMotionState;
@@ -127,7 +126,7 @@ class Sim {
     MotionStatePtr pMotionState(btTerrain.getBulletMotionStatePtr());
     RigidBodyPtr body(btTerrain.getBulletBodyPtr());
     m_pDynamicsWorld->addCollisionObject(body.get());
-    boost::shared_ptr<Shape_Entity> pEntity(new Shape_Entity);
+    std::shared_ptr<Shape_Entity> pEntity(new Shape_Entity);
     pEntity->rigidbody_ = body;
     pEntity->shape_ = pShape;
     pEntity->motionstate_ = pMotionState;
@@ -138,7 +137,7 @@ class Sim {
 
   int AddCompound(double* Shape_ids, double* Con_ids,
                   const char* CompoundType) {
-    boost::shared_ptr<Compound_Entity> pCompound(new Compound_Entity);
+    std::shared_ptr<Compound_Entity> pCompound(new Compound_Entity);
     pCompound->shapeid_ = Shape_ids;
     pCompound->constraintid_ = Con_ids;
     if (!std::strcmp(CompoundType, "Vehicle")) {
@@ -157,7 +156,7 @@ class Sim {
     MotionStatePtr pMotionState(btRayVehicle.getBulletMotionStatePtr());
     RigidBodyPtr body(btRayVehicle.getBulletBodyPtr());
     VehiclePtr vehicle(btRayVehicle.getBulletRaycastVehicle());
-    boost::shared_ptr<Vehicle_Entity> pEntity(new Vehicle_Entity);
+    std::shared_ptr<Vehicle_Entity> pEntity(new Vehicle_Entity);
     pEntity->rigidbody_ = body;
     pEntity->shape_ = pShape;
     pEntity->motionstate_ = pMotionState;
@@ -180,14 +179,14 @@ class Sim {
    **********************************************************************/
 
   void CommandVehicle(double id, double steering_angle, double force) {
-    boost::shared_ptr<Compound_Entity> Vehicle = m_mCompounds[id];
+    std::shared_ptr<Compound_Entity> Vehicle = m_mCompounds[id];
     double* Shape_ids = Vehicle->shapeid_;
     double* Con_ids = Vehicle->constraintid_;
     btHinge2Constraint* wheel_fl = m_Hinge2.at(int(Con_ids[0]));
     btHinge2Constraint* wheel_fr = m_Hinge2.at(int(Con_ids[1]));
-    boost::shared_ptr<Shape_Entity> boost_wheel_bl =
+    std::shared_ptr<Shape_Entity> boost_wheel_bl =
         m_mShapes.at(int(Shape_ids[3]));
-    boost::shared_ptr<Shape_Entity> boost_wheel_br =
+    std::shared_ptr<Shape_Entity> boost_wheel_br =
         m_mShapes.at(int(Shape_ids[4]));
     // Turn the front wheels. This requires manipulation of the constraints.
     wheel_fl->setUpperLimit(steering_angle);
@@ -394,7 +393,7 @@ class Sim {
   ///////
   // Point-to-Point
   int PointToPoint_one(double id_A, double* pivot_in_A) {
-    boost::shared_ptr<Shape_Entity> Shape_A = m_mShapes.at(id_A);
+    std::shared_ptr<Shape_Entity> Shape_A = m_mShapes.at(id_A);
     btVector3 pivot_A(pivot_in_A[0], pivot_in_A[1], pivot_in_A[2]);
     btPoint2PointConstraint* PToP =
         new btPoint2PointConstraint(*Shape_A->rigidbody_.get(), pivot_A);
@@ -406,8 +405,8 @@ class Sim {
 
   int PointToPoint_two(double id_A, double id_B,
                        double* pivot_in_A, double* pivot_in_B) {
-    boost::shared_ptr<Shape_Entity> Shape_A = m_mShapes.at(id_A);
-    boost::shared_ptr<Shape_Entity> Shape_B = m_mShapes.at(id_B);
+    std::shared_ptr<Shape_Entity> Shape_A = m_mShapes.at(id_A);
+    std::shared_ptr<Shape_Entity> Shape_B = m_mShapes.at(id_B);
     btVector3 pivot_A(pivot_in_A[0], pivot_in_A[1], pivot_in_A[2]);
     btVector3 pivot_B(pivot_in_B[0], pivot_in_B[1], pivot_in_B[2]);
     btPoint2PointConstraint* PToP =
@@ -423,7 +422,7 @@ class Sim {
   ///////
   // Hinge
   int Hinge_one_transform(double id_A, double* transform_A, double* limits) {
-    boost::shared_ptr<Shape_Entity> Shape_A = m_mShapes.at(id_A);
+    std::shared_ptr<Shape_Entity> Shape_A = m_mShapes.at(id_A);
     int id = 0;
     return id;
   }
@@ -431,8 +430,8 @@ class Sim {
   int Hinge_two_transform(double id_A, double id_B,
                           double* transform_A, double* transform_B,
                           double* limits) {
-    boost::shared_ptr<Shape_Entity> Shape_A = m_mShapes.at(id_A);
-    boost::shared_ptr<Shape_Entity> Shape_B = m_mShapes.at(id_B);
+    std::shared_ptr<Shape_Entity> Shape_A = m_mShapes.at(id_A);
+    std::shared_ptr<Shape_Entity> Shape_B = m_mShapes.at(id_B);
     int id = 0;
     return id;
 
@@ -440,7 +439,7 @@ class Sim {
 
   int Hinge_one_pivot(double id_A, double* pivot_in_A,
                       double* axis_in_A, double* limits) {
-    boost::shared_ptr<Shape_Entity> Shape_A = m_mShapes.at(id_A);
+    std::shared_ptr<Shape_Entity> Shape_A = m_mShapes.at(id_A);
     btVector3 pivot_A(pivot_in_A[0], pivot_in_A[1], pivot_in_A[2]);
     btVector3 axis_A(axis_in_A[0], axis_in_A[1], axis_in_A[2]);
     btHingeConstraint* Hinge =
@@ -457,8 +456,8 @@ class Sim {
                       double* pivot_in_A, double* pivot_in_B,
                       double* axis_in_A, double* axis_in_B,
                       double* limits) {
-    boost::shared_ptr<Shape_Entity> Shape_A = m_mShapes.at(id_A);
-    boost::shared_ptr<Shape_Entity> Shape_B = m_mShapes.at(id_B);
+    std::shared_ptr<Shape_Entity> Shape_A = m_mShapes.at(id_A);
+    std::shared_ptr<Shape_Entity> Shape_B = m_mShapes.at(id_B);
     btVector3 pivot_A(pivot_in_A[0], pivot_in_A[1], pivot_in_A[2]);
     btVector3 axis_A(axis_in_A[0], axis_in_A[1], axis_in_A[2]);
     btVector3 pivot_B(pivot_in_B[0], pivot_in_B[1], pivot_in_B[2]);
@@ -481,8 +480,8 @@ class Sim {
   int Hinge2(double id_A, double id_B, double* Anchor, double* Axis_1,
              double* Axis_2, double damping, double stiffness,
              double steering_angle) {
-    boost::shared_ptr<Shape_Entity> Shape_A = m_mShapes.at(id_A);
-    boost::shared_ptr<Shape_Entity> Shape_B = m_mShapes.at(id_B);
+    std::shared_ptr<Shape_Entity> Shape_A = m_mShapes.at(id_A);
+    std::shared_ptr<Shape_Entity> Shape_B = m_mShapes.at(id_B);
     btVector3 btAnchor(Anchor[0], Anchor[1], Anchor[2]);
     btVector3 btAxis_1(Axis_1[0], Axis_1[1], Axis_1[2]);
     btVector3 btAxis_2(Axis_2[0], Axis_2[1], Axis_2[2]);
@@ -504,7 +503,7 @@ class Sim {
   ///////
   // Six DOF
   int SixDOF_one(double id_A, double* transform_A, double* limits) {
-    boost::shared_ptr<Shape_Entity> Shape_A = m_mShapes.at(id_A);
+    std::shared_ptr<Shape_Entity> Shape_A = m_mShapes.at(id_A);
     btQuaternion quat_A(transform_A[3], transform_A[4],
                         transform_A[5], transform_A[6]);
     btVector3 pos_A(transform_A[0], transform_A[1], transform_A[2]);
@@ -530,8 +529,8 @@ class Sim {
   int SixDOF_two(double id_A, double id_B,
                  double* transform_A, double* transform_B,
                  double* limits) {
-    boost::shared_ptr<Shape_Entity> Shape_A = m_mShapes.at(id_A);
-    boost::shared_ptr<Shape_Entity> Shape_B = m_mShapes.at(id_B);
+    std::shared_ptr<Shape_Entity> Shape_A = m_mShapes.at(id_A);
+    std::shared_ptr<Shape_Entity> Shape_B = m_mShapes.at(id_B);
     btQuaternion quat_A(transform_A[3], transform_A[4],
                         transform_A[5], transform_A[6]);
     btVector3 pos_A(transform_A[0], transform_A[1], transform_A[2]);
@@ -569,7 +568,7 @@ class Sim {
     // 2. The rotation matrix that's used in motion.
     int n_id = (int)id;
     double* pose = new double[12];
-    boost::shared_ptr<Shape_Entity> boost_Entity = m_mShapes.at(n_id);
+    std::shared_ptr<Shape_Entity> boost_Entity = m_mShapes.at(n_id);
     btTransform world_transform = boost_Entity->
         rigidbody_->getCenterOfMassTransform();
     btMatrix3x3 rotation = world_transform.getBasis();
@@ -625,7 +624,7 @@ class Sim {
 
   double* GetVehicleTransform(double id) {
     int n_id = (int)id;
-    boost::shared_ptr<Vehicle_Entity> boost_Vehicle = m_mRayVehicles.at(n_id);
+    std::shared_ptr<Vehicle_Entity> boost_Vehicle = m_mRayVehicles.at(n_id);
     Vehicle_Entity* Vehicle = boost_Vehicle.get();
     std::vector<btTransform> Transforms = GetVehiclePoses(Vehicle);
     double* pose = new double[12*5];
@@ -650,20 +649,20 @@ class Sim {
 
   //////////////////////////////////////////////////////////////////
 
-  std::map<int, boost::shared_ptr<Shape_Entity> > m_mShapes;
-  std::map<int, boost::shared_ptr<Compound_Entity> > m_mCompounds;
+  std::map<int, std::shared_ptr<Shape_Entity> > m_mShapes;
+  std::map<int, std::shared_ptr<Compound_Entity> > m_mCompounds;
   std::vector<btPoint2PointConstraint*> m_PtoP;
   std::vector<btHingeConstraint*> m_Hinge;
   std::vector<btHinge2Constraint*> m_Hinge2;
   std::vector<btGeneric6DofConstraint*> m_SixDOF;
-  std::map<int, boost::shared_ptr<Vehicle_Entity> > m_mRayVehicles;
+  std::map<int, std::shared_ptr<Vehicle_Entity> > m_mRayVehicles;
 
  private:
   btDefaultCollisionConfiguration m_CollisionConfiguration;
-  boost::shared_ptr<btCollisionDispatcher> m_pDispatcher;
-  boost::shared_ptr<btDbvtBroadphase> m_pBroadphase;
-  boost::shared_ptr<btSequentialImpulseConstraintSolver> m_pSolver;
-  boost::shared_ptr<btDiscreteDynamicsWorld> m_pDynamicsWorld;
+  std::shared_ptr<btCollisionDispatcher> m_pDispatcher;
+  std::shared_ptr<btDbvtBroadphase> m_pBroadphase;
+  std::shared_ptr<btSequentialImpulseConstraintSolver> m_pSolver;
+    std::shared_ptr<btDiscreteDynamicsWorld> m_pDynamicsWorld;
   double m_dTimeStep;
   double m_dGravity;
   int m_nMaxSubSteps;

@@ -4,10 +4,12 @@
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/LinearMath/btAlignedAllocator.h>
 
-typedef  boost::shared_ptr<btCollisionShape> CollisionShapePtr;
-typedef  boost::shared_ptr<btMotionState> MotionStatePtr;
-typedef  boost::shared_ptr<btRigidBody> RigidBodyPtr;
-typedef  boost::shared_ptr<btRaycastVehicle> VehiclePtr;
+typedef  std::shared_ptr<btCollisionShape> CollisionShapePtr;
+typedef  std::shared_ptr<btMotionState> MotionStatePtr;
+typedef  std::shared_ptr<btRigidBody> RigidBodyPtr;
+typedef  std::shared_ptr<btRaycastVehicle> VehiclePtr;
+
+std::shared_ptr
 
 enum Compounds{
   VEHICLE = 0

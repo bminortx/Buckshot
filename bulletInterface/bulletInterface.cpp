@@ -9,7 +9,6 @@
 #include "class_handle.hpp"
 #include "iostream"
 #include "bulletSim.h"
-#include "boost/shared_ptr.hpp"
 
 /*********************************************************************
  *

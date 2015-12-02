@@ -16,20 +16,18 @@
 #pragma GCC diagnostic ignored "-Wextra"
 #pragma GCC diagnostic pop
 
-#include <map>
-#include <boost/shared_ptr.hpp>
-#include <vector>
-#include <map>
-#include <string>
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/LinearMath/btAlignedAllocator.h>
+// Graphics Interface
+#include <Graphics/ModelGraphBuilder.h>
 // Common geometric shapes available in Bullet
-#include <ModelGraph/ModelGraphBuilder.h>
 #include <bulletStructs/Shape.h>
-// Common joints and hinges in Bullet
 #include <bulletStructs/Constraint.h>
-// A four-wheeled vehicle with raycasting to calculate contact points
 #include <bulletStructs/SimRaycastVehicle.h>
+
+#include <map>
+#include <string>
+#include <vector>
 
 ///////////////////////////////////////////////////////
 /// The Sim class
