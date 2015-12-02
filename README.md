@@ -1,10 +1,10 @@
-[SimLAB](http://bminortx.github.io/SimLAB)
+[Buckshot](http://bminortx.github.io/Buckshot)
 ============
 Author: Brandon Minor | gallimatrix ~at~ gmail.com | [bminortx.github.io](http://bminortx.github.io)
 
 Associated Acts: ARPG @ CU Boulder, [Replica Labs](http://www.replicalabs.com)
 
-SimLAB is a MATLAB Physics Simulator that utilizes the Bullet Physics Engine.
+Buckshot is a MATLAB Physics Simulator that utilizes the Bullet Physics Engine.
 This program's goal is to allow for convenient use of the MATLAB libraries
 while also guaranteeing accurate simulation through Bullet Physics, a
 fully functional and reliable engine.
@@ -15,7 +15,7 @@ just reach out! I would love to get feedback on this project.
 
 SETUP
 ----------
-SimLAB only requires a couple of things:
+Buckshot only requires a couple of things:
 * CMake
 * MATLAB
 * [Bullet Physics Library](http://bulletphysics.org/wordpress/)
