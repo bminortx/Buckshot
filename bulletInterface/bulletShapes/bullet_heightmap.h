@@ -11,7 +11,7 @@
 
 //Constructs a Bullet btHeightfieldTerrainShape.
 
-class bullet_heightmap{
+class bullet_heightmap : public bullet_shape {
 
 public:
   //constructor

@@ -17,36 +17,34 @@
 #pragma GCC diagnostic pop
 
 #include <map>
-//#include <pangolin/pangolin.h>
-//#include <SceneGraph/SceneGraph.h>
 #include "bulletEntities.h"
 // Our shapes
-#include "../bulletShapes/bullet_vehicle.h"
 #include "../bulletShapes/bullet_cube.h"
-#include "../bulletShapes/bullet_sphere.h"
 #include "../bulletShapes/bullet_cylinder.h"
 #include "../bulletShapes/bullet_heightmap.h"
+#include "../bulletShapes/bullet_sphere.h"
+#include "../bulletShapes/bullet_vehicle.h"
 
 ///////////////////////////////////////////////////////
-/// The Sim class
+/// The BulletWorld class
 /// The Simulator class holds all of the methods that can be called from
 /// bullet_interface_mex.cpp. Any method called from there MUST be in this
 /// class.
 
-class Sim {
+class BulletWorld {
  public:
-  Sim() {
+  BulletWorld() {
     ///Bullet settings
     m_dTimeStep = 1.0/30.0;
     m_dGravity = -9.8;
     m_nMaxSubSteps = 10; //  bullet -- for stepSimulation
-    m_pDispatcher = new btCollisionDispatcher(&m_CollisionConfiguration);
+    m_pDispatcher = new btCollisionDispatcher(m_CollisionConfiguration);
     m_pBroadphase = new btDbvtBroadphase;
     m_pSolver = new btSequentialImpulseConstraintSolver;
     m_pDynamicsWorld = new btDiscreteDynamicsWorld(m_pDispatcher,
                                                    m_pBroadphase,
                                                    m_pSolver,
-                                                   &m_CollisionConfiguration);
+                                                   m_CollisionConfiguration);
     m_pDynamicsWorld->setGravity(btVector3(0, 0, m_dGravity));
   }
 
@@ -54,58 +52,41 @@ class Sim {
    *ADDING OBJECTS
    **********************************************************************/
 
-  int AddCube(double x_length, double y_length, double z_length,
+  // template <class T>
+  inline int AddShapeToWorld(bullet_shape shape) {
+    CollisionShapePtr pShape(shape.getBulletShapePtr());
+    MotionStatePtr pMotionState(shape.getBulletMotionStatePtr());
+    RigidBodyPtr body(shape.getBulletBodyPtr());
+    m_pDynamicsWorld->addRigidBody(body);
+    Shape_Entity pEntity;
+    pEntity.rigidbody_ = body;
+    pEntity.shape_ = pShape;
+    pEntity.motionstate_ = pMotionState;
+    int id = m_mShapes.size();
+    m_mShapes[id] = pEntity;
+    return id;
+  }
+
+  inline int AddCube(double x_length, double y_length, double z_length,
               double dMass, double dRestitution,
               double* position, double* rotation) {
     bullet_cube btBox(x_length, y_length, z_length, dMass, dRestitution,
                       position, rotation);
-    CollisionShapePtr pShape(btBox.getBulletShapePtr());
-    MotionStatePtr pMotionState(btBox.getBulletMotionStatePtr());
-    RigidBodyPtr body(btBox.getBulletBodyPtr());
-    m_pDynamicsWorld->addRigidBody(body);
-    Shape_Entity* pEntity = new Shape_Entity;
-    pEntity->rigidbody_ = body;
-    pEntity->shape_ = pShape;
-    pEntity->motionstate_ = pMotionState;
-    int id = m_mShapes.size();
-    m_mShapes[id] = pEntity;
-    return id;
+    return AddShapeToWorld(btBox);
   }
 
   int AddSphere(double radius, double dMass, double dRestitution,
                 double* position, double* rotation) {
     bullet_sphere btSphere(radius, dMass, dRestitution,
                            position, rotation);
-    CollisionShapePtr pShape(btSphere.getBulletShapePtr());
-    btAssert((!pShape || pShape->getShapeType() != INVALID_SHAPE_PROXYTYPE));
-    MotionStatePtr pMotionState(btSphere.getBulletMotionStatePtr());
-    RigidBodyPtr body(btSphere.getBulletBodyPtr());
-    m_pDynamicsWorld->addRigidBody(body);
-    Shape_Entity* pEntity = new Shape_Entity;
-    pEntity->rigidbody_ = body;
-    pEntity->shape_ = pShape;
-    pEntity->motionstate_ = pMotionState;
-    int id = m_mShapes.size();
-    m_mShapes[id] = pEntity;
-    return id;
+    return AddShapeToWorld(btSphere);
   }
 
   int AddCylinder(double radius, double height, double dMass,
                   double dRestitution, double* position, double* rotation) {
     bullet_cylinder btCylinder(radius, height, dMass, dRestitution,
                                position, rotation);
-    CollisionShapePtr pShape(btCylinder.getBulletShapePtr());
-    btAssert((!pShape || pShape->getShapeType() != INVALID_SHAPE_PROXYTYPE));
-    MotionStatePtr pMotionState(btCylinder.getBulletMotionStatePtr());
-    RigidBodyPtr body(btCylinder.getBulletBodyPtr());
-    m_pDynamicsWorld->addRigidBody(body);
-    Shape_Entity* pEntity = new Shape_Entity;
-    pEntity->rigidbody_ = body;
-    pEntity->shape_ = pShape;
-    pEntity->motionstate_ = pMotionState;
-    int id = m_mShapes.size();
-    m_mShapes[id] = pEntity;
-    return id;
+    return AddShapeToWorld(btCylinder);
   }
 
   int AddTerrain(int row_count, int col_count, double grad,
@@ -115,26 +96,16 @@ class Sim {
     // Let's see if that works... if not, try something else.
     bullet_heightmap btTerrain(row_count, col_count, grad, min_ht,
                                max_ht, X, Y, Z, normal);
-    CollisionShapePtr pShape(btTerrain.getBulletShapePtr());
-    MotionStatePtr pMotionState(btTerrain.getBulletMotionStatePtr());
-    RigidBodyPtr body(btTerrain.getBulletBodyPtr());
-    m_pDynamicsWorld->addCollisionObject(body);
-    Shape_Entity* pEntity = new Shape_Entity;
-    pEntity->rigidbody_ = body;
-    pEntity->shape_ = pShape;
-    pEntity->motionstate_ = pMotionState;
-    int id = m_mShapes.size();
-    m_mShapes[id] = pEntity;
-    return id;
+    return AddShapeToWorld(btTerrain);
   }
 
   int AddCompound(double* Shape_ids, double* Con_ids,
                   const char* CompoundType) {
-    Compound_Entity* pCompound = new Compound_Entity;
-    pCompound->shapeid_ = Shape_ids;
-    pCompound->constraintid_ = Con_ids;
+    Compound_Entity pCompound;
+    pCompound.shapeid_ = Shape_ids;
+    pCompound.constraintid_ = Con_ids;
     if (!std::strcmp(CompoundType, "Vehicle")) {
-      pCompound->type_ = VEHICLE;
+      pCompound.type_ = VEHICLE;
     }
     int id = m_mCompounds.size();
     m_mCompounds[id] = pCompound;
@@ -149,11 +120,11 @@ class Sim {
     MotionStatePtr pMotionState(btRayVehicle.getBulletMotionStatePtr());
     RigidBodyPtr body(btRayVehicle.getBulletBodyPtr());
     VehiclePtr vehicle(btRayVehicle.getBulletRaycastVehicle());
-    Vehicle_Entity* pEntity = new Vehicle_Entity;
-    pEntity->rigidbody_ = body;
-    pEntity->shape_ = pShape;
-    pEntity->motionstate_ = pMotionState;
-    pEntity->vehicle_ = vehicle;
+    Vehicle_Entity pEntity;
+    pEntity.rigidbody_ = body;
+    pEntity.shape_ = pShape;
+    pEntity.motionstate_ = pMotionState;
+    pEntity.vehicle_ = vehicle;
     int id = m_mRayVehicles.size();
     m_mRayVehicles[id] = pEntity;
     return id;
@@ -172,25 +143,25 @@ class Sim {
    **********************************************************************/
 
   void CommandVehicle(double id, double steering_angle, double force) {
-    Compound_Entity* Vehicle = m_mCompounds[id];
-    double* Shape_ids = Vehicle->shapeid_;
-    double* Con_ids = Vehicle->constraintid_;
-    btHinge2Constraint* wheel_fl = m_Hinge2.at(int(Con_ids[0]));
-    btHinge2Constraint* wheel_fr = m_Hinge2.at(int(Con_ids[1]));
-    Shape_Entity* wheel_bl =
+    Compound_Entity Vehicle = m_mCompounds[id];
+    double* Shape_ids = Vehicle.shapeid_;
+    double* Con_ids = Vehicle.constraintid_;
+    btHinge2Constraint wheel_fl = m_Hinge2.at(int(Con_ids[0]));
+    btHinge2Constraint wheel_fr = m_Hinge2.at(int(Con_ids[1]));
+    Shape_Entity wheel_bl =
         m_mShapes.at(int(Shape_ids[3]));
-    Shape_Entity* wheel_br =
+    Shape_Entity wheel_br =
         m_mShapes.at(int(Shape_ids[4]));
     // Turn the front wheels. This requires manipulation of the constraints.
-    wheel_fl->setUpperLimit(steering_angle);
-    wheel_fl->setLowerLimit(steering_angle);
-    wheel_fr->setUpperLimit(steering_angle);
-    wheel_fr->setLowerLimit(steering_angle);
+    wheel_fl.setUpperLimit(steering_angle);
+    wheel_fl.setLowerLimit(steering_angle);
+    wheel_fr.setUpperLimit(steering_angle);
+    wheel_fr.setLowerLimit(steering_angle);
     // Power to the back wheels. Requires torque on the back tires. They're
     // rotated the same way, so torque should be applied in the same direction
     btVector3 torque(0, 0, force);
-    wheel_bl->rigidbody_->applyTorque(torque);
-    wheel_br->rigidbody_->applyTorque(torque);
+    wheel_bl.rigidbody_->applyTorque(torque);
+    wheel_br.rigidbody_->applyTorque(torque);
   }
 
   /*********************************************************************
@@ -198,7 +169,7 @@ class Sim {
    **********************************************************************/
 
   void CommandRaycastVehicle(double id, double steering_angle, double force) {
-    VehiclePtr Vehicle = m_mRayVehicles[id]->vehicle_;
+    VehiclePtr Vehicle = m_mRayVehicles[id].vehicle_;
     Vehicle->setSteeringValue(steering_angle, 0);
     Vehicle->setSteeringValue(steering_angle, 1);
     Vehicle->applyEngineForce(force, 2);
@@ -208,8 +179,8 @@ class Sim {
   // Holds the steering, engine force, and current velocity
   double* GetRaycastMotionState(double id) {
     double* pose = new double[9];
-    VehiclePtr Vehicle = m_mRayVehicles[id]->vehicle_;
-    RigidBodyPtr VehicleBody = m_mRayVehicles[id]->rigidbody_;
+    VehiclePtr Vehicle = m_mRayVehicles[id].vehicle_;
+    RigidBodyPtr VehicleBody = m_mRayVehicles[id].rigidbody_;
     pose[0] = Vehicle->getSteeringValue(0);
     btWheelInfo wheel = Vehicle->getWheelInfo(2);
     pose[1] = wheel.m_engineForce;
@@ -225,12 +196,12 @@ class Sim {
 
   double* RaycastToGround(double id, double x, double y) {
     double* pose = new double[3];
-    VehiclePtr Vehicle = m_mRayVehicles[id]->vehicle_;
+    VehiclePtr Vehicle = m_mRayVehicles[id].vehicle_;
     //  Move our vehicle out of the way...
     btVector3 point(x+50, y+50, -100);
     btMatrix3x3 rot = Vehicle->getChassisWorldTransform().getBasis();
     btTransform bullet_trans(rot, point);
-    m_mRayVehicles[id]->rigidbody_->setCenterOfMassTransform(bullet_trans);
+    m_mRayVehicles[id].rigidbody_->setCenterOfMassTransform(bullet_trans);
     //  Now shoot our ray...
     btVector3 ray_start(x, y, 100);
     btVector3 ray_end(x, y, -100);
@@ -247,7 +218,7 @@ class Sim {
     }
     //  Now move our car!
     btTransform bullet_move(rot, hitpoint);
-    m_mRayVehicles[id]->rigidbody_->setCenterOfMassTransform(bullet_move);
+    m_mRayVehicles[id].rigidbody_->setCenterOfMassTransform(bullet_move);
 
     // Now make sure none of our wheels are in the ground.
     // Kind of a nasty oop, but keep it for now.
@@ -263,7 +234,7 @@ class Sim {
       // If we're still in the ground, lift us up!
       hitpoint.setZ(hitpoint.getZ()+.1);
       btTransform bullet_move(rot, hitpoint);
-      m_mRayVehicles[id]->
+      m_mRayVehicles[id].
           rigidbody_->setCenterOfMassTransform(bullet_move);
       if (hit!= -1) {
         break;
@@ -288,7 +259,7 @@ class Sim {
 
   //  This just drops us off on the surface...
   int OnTheGround(double id) {
-    VehiclePtr Vehicle = m_mRayVehicles[id]->vehicle_;
+    VehiclePtr Vehicle = m_mRayVehicles[id].vehicle_;
     int OnGround = 0;
     int hit = 0;
     for (int i = 0; i<4; i++) {
@@ -301,8 +272,8 @@ class Sim {
   }
 
   void SetVehicleVels(double id, double* lin_vel, double* ang_vel) {
-    RigidBodyPtr VehicleBody = m_mRayVehicles[id]->rigidbody_;
-    VehiclePtr Vehicle = m_mRayVehicles[id]->vehicle_;
+    RigidBodyPtr VehicleBody = m_mRayVehicles[id].rigidbody_;
+    VehiclePtr Vehicle = m_mRayVehicles[id].vehicle_;
     btVector3 Lin(lin_vel[0], lin_vel[1], lin_vel[2]);
     btVector3 Ang(ang_vel[0], ang_vel[1], ang_vel[2]);
     VehicleBody->setLinearVelocity(Lin);
@@ -318,7 +289,7 @@ class Sim {
     btVector3 pose(start_pose[0], start_pose[1], start_pose[2]);
     btTransform bullet_trans(rot, pose);
     //  Reset our car to its initial state.
-    m_mRayVehicles[id]->rigidbody_->setCenterOfMassTransform(bullet_trans);
+    m_mRayVehicles[id].rigidbody_->setCenterOfMassTransform(bullet_trans);
   }
 
   double* SpeedSim(double id, double* start_pose, double* start_rot,
@@ -327,7 +298,7 @@ class Sim {
                    double command_length) {
     int state_size = (command_length*3)+22;
     double* states = new double[state_size];
-    VehiclePtr Vehicle = m_mRayVehicles[id]->vehicle_;
+    VehiclePtr Vehicle = m_mRayVehicles[id].vehicle_;
     ResetVehicle(id, start_pose, start_rot);
     SetVehicleVels(id, start_lin_vel, start_ang_vel);
 
@@ -383,39 +354,38 @@ class Sim {
    *All of the constructors for our constraints.
    **********************************************************************/
 
+  inline int AddConstraintToWorld(btTypedConstraint& constraint) {
+    int id = constraints_.size();
+    constraints_.push_back(constraint);
+    m_pDynamicsWorld->addConstraint(&constraints_[id]);
+    return id;
+  }
+
   ///////
   // Point-to-Point
   int PointToPoint_one(double id_A, double* pivot_in_A) {
-    Shape_Entity* Shape_A = m_mShapes.at(id_A);
+    Shape_Entity Shape_A = m_mShapes.at(id_A);
     btVector3 pivot_A(pivot_in_A[0], pivot_in_A[1], pivot_in_A[2]);
-    btPoint2PointConstraint* PToP =
-        new btPoint2PointConstraint(*Shape_A->rigidbody_, pivot_A);
-    m_pDynamicsWorld->addConstraint(PToP);
-    int id = m_PtoP.size();
-    m_PtoP.push_back(PToP);
-    return id;
+    btPoint2PointConstraint constraint(*Shape_A.rigidbody_, pivot_A);
+    return AddConstraintToWorld(constraint);
   }
 
   int PointToPoint_two(double id_A, double id_B,
                        double* pivot_in_A, double* pivot_in_B) {
-    Shape_Entity* Shape_A = m_mShapes.at(id_A);
-    Shape_Entity* Shape_B = m_mShapes.at(id_B);
+    Shape_Entity Shape_A = m_mShapes.at(id_A);
+    Shape_Entity Shape_B = m_mShapes.at(id_B);
     btVector3 pivot_A(pivot_in_A[0], pivot_in_A[1], pivot_in_A[2]);
     btVector3 pivot_B(pivot_in_B[0], pivot_in_B[1], pivot_in_B[2]);
-    btPoint2PointConstraint* PToP =
-        new btPoint2PointConstraint(*Shape_A->rigidbody_,
-                                    *Shape_B->rigidbody_,
-                                    pivot_A, pivot_B);
-    m_pDynamicsWorld->addConstraint(PToP);
-    int id = m_PtoP.size();
-    m_PtoP.push_back(PToP);
-    return id;
+    btPoint2PointConstraint constraint(*Shape_A.rigidbody_,
+                                 *Shape_B.rigidbody_,
+                                 pivot_A, pivot_B);
+    return AddConstraintToWorld(constraint);
   }
 
   ///////
   // Hinge
   int Hinge_one_transform(double id_A, double* transform_A, double* limits) {
-    Shape_Entity* Shape_A = m_mShapes.at(id_A);
+    Shape_Entity Shape_A = m_mShapes.at(id_A);
     int id = 0;
     return id;
   }
@@ -423,8 +393,8 @@ class Sim {
   int Hinge_two_transform(double id_A, double id_B,
                           double* transform_A, double* transform_B,
                           double* limits) {
-    Shape_Entity* Shape_A = m_mShapes.at(id_A);
-    Shape_Entity* Shape_B = m_mShapes.at(id_B);
+    Shape_Entity Shape_A = m_mShapes.at(id_A);
+    Shape_Entity Shape_B = m_mShapes.at(id_B);
     int id = 0;
     return id;
 
@@ -432,40 +402,32 @@ class Sim {
 
   int Hinge_one_pivot(double id_A, double* pivot_in_A,
                       double* axis_in_A, double* limits) {
-    Shape_Entity* Shape_A = m_mShapes.at(id_A);
+    Shape_Entity Shape_A = m_mShapes.at(id_A);
     btVector3 pivot_A(pivot_in_A[0], pivot_in_A[1], pivot_in_A[2]);
     btVector3 axis_A(axis_in_A[0], axis_in_A[1], axis_in_A[2]);
-    btHingeConstraint* Hinge =
-        new btHingeConstraint(*Shape_A->rigidbody_, pivot_A,
-                              axis_A, true);
-    Hinge->setLimit(limits[0], limits[1], limits[2], limits[3], limits[4]);
-    m_pDynamicsWorld->addConstraint(Hinge);
-    int id = m_Hinge.size();
-    m_Hinge.push_back(Hinge);
-    return id;
+    btHingeConstraint Hinge(*Shape_A.rigidbody_, pivot_A,
+                            axis_A, true);
+    Hinge.setLimit(limits[0], limits[1], limits[2], limits[3], limits[4]);
+    return AddConstraintToWorld(Hinge);
   }
 
   int Hinge_two_pivot(double id_A, double id_B,
                       double* pivot_in_A, double* pivot_in_B,
                       double* axis_in_A, double* axis_in_B,
                       double* limits) {
-    Shape_Entity* Shape_A = m_mShapes.at(id_A);
-    Shape_Entity* Shape_B = m_mShapes.at(id_B);
+    Shape_Entity Shape_A = m_mShapes.at(id_A);
+    Shape_Entity Shape_B = m_mShapes.at(id_B);
     btVector3 pivot_A(pivot_in_A[0], pivot_in_A[1], pivot_in_A[2]);
     btVector3 axis_A(axis_in_A[0], axis_in_A[1], axis_in_A[2]);
     btVector3 pivot_B(pivot_in_B[0], pivot_in_B[1], pivot_in_B[2]);
     btVector3 axis_B(axis_in_B[0], axis_in_B[1], axis_in_B[2]);
-    btHingeConstraint* Hinge =
-        new btHingeConstraint(*Shape_A->rigidbody_,
-                              *Shape_B->rigidbody_,
-                              pivot_A, pivot_B,
-                              axis_A, axis_B,
-                              true);
-    Hinge->setLimit(limits[0], limits[1], limits[2], limits[3], limits[4]);
-    m_pDynamicsWorld->addConstraint(Hinge);
-    int id = m_Hinge.size();
-    m_Hinge.push_back(Hinge);
-    return id;
+    btHingeConstraint Hinge(*Shape_A.rigidbody_,
+                            *Shape_B.rigidbody_,
+                            pivot_A, pivot_B,
+                            axis_A, axis_B,
+                            true);
+    Hinge.setLimit(limits[0], limits[1], limits[2], limits[3], limits[4]);
+    return AddConstraintToWorld(Hinge);
   }
 
   ///////
@@ -473,97 +435,91 @@ class Sim {
   int Hinge2(double id_A, double id_B, double* Anchor, double* Axis_1,
              double* Axis_2, double damping, double stiffness,
              double steering_angle) {
-    Shape_Entity* Shape_A = m_mShapes.at(id_A);
-    Shape_Entity* Shape_B = m_mShapes.at(id_B);
+    Shape_Entity Shape_A = m_mShapes.at(id_A);
+    Shape_Entity Shape_B = m_mShapes.at(id_B);
     btVector3 btAnchor(Anchor[0], Anchor[1], Anchor[2]);
     btVector3 btAxis_1(Axis_1[0], Axis_1[1], Axis_1[2]);
     btVector3 btAxis_2(Axis_2[0], Axis_2[1], Axis_2[2]);
-    btHinge2Constraint* Hinge2 =
-        new btHinge2Constraint(*Shape_A->rigidbody_,
-                               *Shape_B->rigidbody_,
-                               btAnchor, btAxis_1, btAxis_2);
-    Hinge2->setUpperLimit(steering_angle);
-    Hinge2->setLowerLimit(steering_angle);
-    Hinge2->enableSpring(3, true);
-    Hinge2->setStiffness(3, stiffness);
-    Hinge2->setDamping(3, damping);
-    m_pDynamicsWorld->addConstraint(Hinge2);
-    int id = m_Hinge2.size();
-    m_Hinge2.push_back(Hinge2);
-    return id;
+    btHinge2Constraint Hinge2(*Shape_A.rigidbody_,
+                              *Shape_B.rigidbody_,
+                              btAnchor, btAxis_1, btAxis_2);
+    Hinge2.setUpperLimit(steering_angle);
+    Hinge2.setLowerLimit(steering_angle);
+    Hinge2.enableSpring(3, true);
+    Hinge2.setStiffness(3, stiffness);
+    Hinge2.setDamping(3, damping);
+    return AddConstraintToWorld(Hinge2);
   }
 
   ///////
   // Six DOF
   int SixDOF_one(double id_A, double* transform_A, double* limits) {
-    Shape_Entity* Shape_A = m_mShapes.at(id_A);
+    Shape_Entity Shape_A = m_mShapes.at(id_A);
     btQuaternion quat_A(transform_A[3], transform_A[4],
                         transform_A[5], transform_A[6]);
     btVector3 pos_A(transform_A[0], transform_A[1], transform_A[2]);
     btTransform trans_A(quat_A, pos_A);
-    btGeneric6DofConstraint* SixDOF =
-        new btGeneric6DofConstraint(*Shape_A->rigidbody_,
-                                    trans_A,
-                                    true);
+    btGeneric6DofConstraint SixDOF(*Shape_A.rigidbody_,
+                                   trans_A,
+                                   true);
     btVector3 max_lin_limits(limits[0], limits[1],  limits[2]);
     btVector3 min_lin_limits(limits[3], limits[4],  limits[5]);
     btVector3 max_ang_limits(limits[6], limits[7],  limits[8]);
     btVector3 min_ang_limits(limits[9], limits[10], limits[11]);
-    SixDOF->setLinearLowerLimit(min_lin_limits);
-    SixDOF->setLinearUpperLimit(max_lin_limits);
-    SixDOF->setAngularLowerLimit(min_ang_limits);
-    SixDOF->setAngularUpperLimit(max_ang_limits);
-    m_pDynamicsWorld->addConstraint(SixDOF);
-    int id = m_SixDOF.size();
-    m_SixDOF.push_back(SixDOF);
-    return id;
+    SixDOF.setLinearLowerLimit(min_lin_limits);
+    SixDOF.setLinearUpperLimit(max_lin_limits);
+    SixDOF.setAngularLowerLimit(min_ang_limits);
+    SixDOF.setAngularUpperLimit(max_ang_limits);
+    return AddConstraintToWorld(SixDOF);
   }
 
-  int SixDOF_two(double id_A, double id_B,
-                 double* transform_A, double* transform_B,
-                 double* limits) {
-    Shape_Entity* Shape_A = m_mShapes.at(id_A);
-    Shape_Entity* Shape_B = m_mShapes.at(id_B);
-    btQuaternion quat_A(transform_A[3], transform_A[4],
-                        transform_A[5], transform_A[6]);
-    btVector3 pos_A(transform_A[0], transform_A[1], transform_A[2]);
-    btTransform trans_A(quat_A, pos_A);
-    btQuaternion quat_B(transform_B[3], transform_B[4],
-                        transform_B[5], transform_B[6]);
-    btVector3 pos_B(transform_B[0], transform_B[1], transform_B[2]);
-    btTransform trans_B(quat_B, pos_B);
-    btGeneric6DofConstraint* SixDOF =
-        new btGeneric6DofConstraint(*Shape_A->rigidbody_,
-                                    *Shape_B->rigidbody_,
-                                    trans_A, trans_B,
-                                    true);
-    btVector3 max_lin_limits(limits[0], limits[1],  limits[2]);
-    btVector3 min_lin_limits(limits[3], limits[4],  limits[5]);
-    btVector3 max_ang_limits(limits[6], limits[7],  limits[8]);
-    btVector3 min_ang_limits(limits[9], limits[10], limits[11]);
-    SixDOF->setLinearLowerLimit(min_lin_limits);
-    SixDOF->setLinearUpperLimit(max_lin_limits);
-    SixDOF->setAngularLowerLimit(min_ang_limits);
-    SixDOF->setAngularUpperLimit(max_ang_limits);
-    m_pDynamicsWorld->addConstraint(SixDOF);
-    int id = m_SixDOF.size();
-    m_SixDOF.push_back(SixDOF);
-    return id;
-  }
+ // int SixDOF_two(double id_A, double id_B,
+  //                double* transform_A, double* transform_B,
+  //                double* limits) {
+  //   Shape_Entity* Shape_A = m_mShapes.at(id_A);
+  //   Shape_Entity* Shape_B = m_mShapes.at(id_B);
+  //   btQuaternion quat_A(transform_A[3], transform_A[4],
+  //                       transform_A[5], transform_A[6]);
+  //   btVector3 pos_A(transform_A[0], transform_A[1], transform_A[2]);
+  //   btTransform trans_A(quat_A, pos_A);
+        //   btQuaternion quat_B(transform_B[3], transform_B[4],
+  //                       transform_B[5], transform_B[6]);
+  //   btVector3 pos_B(transform_B[0], transform_B[1], transform_B[2]);
+  //   btTransform trans_B(quat_B, pos_B);
+  //   btGeneric6DofConstraint* SixDOF =
+  //       new btGeneric6DofConstraint(*Shape_A.rigidbody_,
+  //                                   *Shape_B.rigidbody_,
+  //                                   trans_A, trans_B,
+  //                                   true);
+  //   btVector3 max_lin_limits(limits[0], limits[1],  limits[2]);
+  //   btVector3 min_lin_limits(limits[3], limits[4],  limits[5]);
+  //   btVector3 max_ang_limits(limits[6], limits[7],  limits[8]);
+  //   btVector3 min_ang_limits(limits[9], limits[10], limits[11]);
+  //   SixDOF.setLinearLowerLimit(min_lin_limits);
+  //   SixDOF.setLinearUpperLimit(max_lin_limits);
+  //   SixDOF.setAngularLowerLimit(min_ang_limits);
+  //   SixDOF.setAngularUpperLimit(max_ang_limits);
+  //   m_pDynamicsWorld->addConstraint(SixDOF);
+  //   int id = m_SixDOF.size();
+  //   m_SixDOF.push_back(SixDOF);
+  //   return id;
+  // }
 
-  /*********************************************************************
+    /*********************************************************************
    *GETTERS FOR OBJECT POSES
    **********************************************************************/
 
-  double* GetShapeTransform(double id) {
+  std::vector<double> GetShapeTransform(double id) {
     // Returns:
     // 1. The positon of the object in the world
     // 2. The rotation matrix that's used in motion.
     int n_id = (int)id;
-    double* pose = new double[12];
-    Shape_Entity* entity = m_mShapes.at(n_id);
+    std::vector<double> pose;
+    pose.resize(12);
+    // double* pose = new double[12];
+    Shape_Entity entity = m_mShapes.at(n_id);
     btTransform world_transform =
-        entity->rigidbody_->getCenterOfMassTransform();
+        entity.rigidbody_->getCenterOfMassTransform();
     btMatrix3x3 rotation = world_transform.getBasis();
     btVector3 position = world_transform.getOrigin();
     pose[0] = position.getX();
@@ -583,8 +539,8 @@ class Sim {
 
   double* GetConstraintTransform(double id) {
     int n_id = (int)id;
-    btHinge2Constraint* constraint = m_Hinge2.at(n_id);
-    btVector3 position = constraint->getAnchor();
+    btHinge2Constraint constraint = m_Hinge2.at(n_id);
+    btVector3 position = constraint.getAnchor();
     double* pose = new double[3];
     pose[0] = position.getX();
     pose[1] = position.getY();
@@ -617,7 +573,7 @@ class Sim {
 
   double* GetVehicleTransform(double id) {
     int n_id = (int)id;
-    Vehicle_Entity* Vehicle = m_mRayVehicles.at(n_id);
+    Vehicle_Entity Vehicle = m_mRayVehicles.at(n_id);
     std::vector<btTransform> Transforms = GetVehiclePoses(Vehicle);
     double* pose = new double[12*5];
     for (unsigned int i = 0; i<5; i++) {
@@ -641,16 +597,17 @@ class Sim {
 
   //////////////////////////////////////////////////////////////////
 
-  std::map<int, Shape_Entity* > m_mShapes;
-  std::map<int, Compound_Entity* > m_mCompounds;
-  std::vector<btPoint2PointConstraint*> m_PtoP;
-  std::vector<btHingeConstraint*> m_Hinge;
-  std::vector<btHinge2Constraint*> m_Hinge2;
-  std::vector<btGeneric6DofConstraint*> m_SixDOF;
-  std::map<int, Vehicle_Entity* > m_mRayVehicles;
+  std::map<int, Shape_Entity> m_mShapes;
+  std::map<int, Compound_Entity> m_mCompounds;
+  std::vector<btTypedConstraint> constraints_;
+  std::vector<btPoint2PointConstraint> m_PtoP;
+  std::vector<btHingeConstraint> m_Hinge;
+  std::vector<btHinge2Constraint> m_Hinge2;
+  std::vector<btGeneric6DofConstraint> m_SixDOF;
+  std::map<int, Vehicle_Entity> m_mRayVehicles;
 
  private:
-  btDefaultCollisionConfiguration m_CollisionConfiguration;
+  btDefaultCollisionConfiguration* m_CollisionConfiguration;
   btCollisionDispatcher* m_pDispatcher;
   btDbvtBroadphase* m_pBroadphase;
   btSequentialImpulseConstraintSolver* m_pSolver;

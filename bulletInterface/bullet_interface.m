@@ -338,44 +338,43 @@ classdef bullet_interface < handle
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     function InitSimulation(this)
-%             bulletInterface('InitSimulation', 0);
-            % Keypress event from run()
-            function this = figure_keypress(~, event, this)
-                switch event.Key
-                  case 'i'
-                    this.gui.draw = false;
-                    this.gui.iter = true;
-                  case 'q'
-                    this.gui.quit = true;
-                    close(this.gui.fig);
-                  case 'space'
-                    this.gui.draw = ~this.gui.draw;
-                  case 'p'
-                    this.gui.path = ~this.gui.path;
-                  case 'c'
-                    this.gui.draw_constraint = ~this.gui.draw_constraint;
-                end
+    % Keypress event from run()
+        function this = figure_keypress(~, event, this)
+            switch event.Key
+              case 'i'
+                this.gui.draw = false;
+                this.gui.iter = true;
+              case 'q'
+                this.gui.quit = true;
+                close(this.gui.fig);
+              case 'space'
+                this.gui.draw = ~this.gui.draw;
+              case 'p'
+                this.gui.path = ~this.gui.path;
+              case 'c'
+                this.gui.draw_constraint = ~this.gui.draw_constraint;
             end
-            disp('Starting simulation...');
-            disp(' || space: start / stop simulation');
-            disp(' || i:     iterate a single step');
-            disp(' || p:     trace the path of an object');
-            disp(' || c:     turn off/turn on constraint display');
-            disp(' || q:     quit');
-            disp('----------------------------------------------');
-            set(0, 'DefaultFigurePosition', [10,10,900,900]);
-            this.gui.fig = figure;
-            set(this.gui.fig, 'KeyPressFcn', {@figure_keypress, this});
-            view(3);
-            hold all;
-            xlabel('x'); ylabel('y'); zlabel('z');
-            title(['Bullet simulation (paused)', char(10), 'Timestep: ',...
-                   num2str(this.gui.timestep), char(10), 'Framerate: ', ...
-                   num2str(this.gui.framerate)]);
-            for i = 1:numel(this.Terrain),
-                this.Terrain(i).Draw;
-            end
-            this.DrawSimulation();
+        end
+        disp('Starting simulation...');
+        disp(' || space: start / stop simulation');
+        disp(' || i:     iterate a single step');
+        disp(' || p:     trace the path of an object');
+        disp(' || c:     turn off/turn on constraint display');
+        disp(' || q:     quit');
+        disp('----------------------------------------------');
+        set(0, 'DefaultFigurePosition', [10,10,900,900]);
+        this.gui.fig = figure;
+        set(this.gui.fig, 'KeyPressFcn', {@figure_keypress, this});
+        view(3);
+        hold all;
+        xlabel('x'); ylabel('y'); zlabel('z');
+        title(['Bullet simulation (paused)', char(10), 'Timestep: ',...
+               num2str(this.gui.timestep), char(10), 'Framerate: ', ...
+               num2str(this.gui.framerate)]);
+        for i = 1:numel(this.Terrain),
+            this.Terrain(i).Draw;
+        end
+        this.DrawSimulation();
     end
 
     %%%% RUNNING THE SIMULATION

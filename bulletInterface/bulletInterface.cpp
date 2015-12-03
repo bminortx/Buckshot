@@ -8,7 +8,7 @@
 #include "mex.h"
 #include "class_handle.hpp"
 #include "iostream"
-#include "bulletInterface.h"
+#include "bulletWorld.h"
 
 /*********************************************************************
  *
@@ -29,7 +29,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     if (nlhs != 1)
       mexErrMsgTxt("New: One output expected.");
     // Return a handle to a new C++ instance
-    plhs[0] = convertPtr2Mat<Sim>(new Sim);
+    plhs[0] = convertPtr2Mat<BulletWorld>(new BulletWorld);
     void mexUnlock(void);
     return;
   }
@@ -41,7 +41,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   // Delete
   if (!strcmp("delete", cmd)) {
     // Destroy the C++ object
-    destroyObject<Sim>(prhs[1]);
+    destroyObject<BulletWorld>(prhs[1]);
     // Warn if other commands were ignored
     if (nlhs != 0 || nrhs != 2)
       mexWarnMsgTxt("Delete: Unexpected arguments ignored.");
@@ -49,10 +49,10 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   }
 
   // Get the class instance pointer from the second input
-  Sim *bullet_sim_ = convertMat2Ptr<Sim>(prhs[1]);
-  
+  BulletWorld *bullet_sim_ = convertMat2Ptr<BulletWorld>(prhs[1]);
+
   if (!strcmp("InitSimulation", cmd)) {
-      return;
+    return;
   }
 
   /*********************************************************************
@@ -443,7 +443,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     mxGetString(prhs[2], type, sizeof(type));
     double* id = mxGetPr(prhs[3]);
     if(!strcmp(type, "Shape")){
-      double* pose = bullet_sim_->GetShapeTransform(*id);
+      std::vector<double> pose = bullet_sim_->GetShapeTransform(*id);
       plhs[0] = mxCreateDoubleMatrix(1, 3, mxREAL);
       plhs[1] = mxCreateDoubleMatrix(3, 3, mxREAL);
       double* position = mxGetPr(plhs[0]);
