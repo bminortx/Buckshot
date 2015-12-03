@@ -8,7 +8,7 @@
 #include "mex.h"
 #include "class_handle.hpp"
 #include "iostream"
-#include "bulletSim.h"
+#include "bulletInterface.h"
 
 /*********************************************************************
  *
@@ -29,7 +29,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     if (nlhs != 1)
       mexErrMsgTxt("New: One output expected.");
     // Return a handle to a new C++ instance
-    plhs[0] = convertPtr2Mat<bulletSim>(new bulletSim);
+    plhs[0] = convertPtr2Mat<Sim>(new Sim);
     void mexUnlock(void);
     return;
   }
@@ -41,7 +41,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   // Delete
   if (!strcmp("delete", cmd)) {
     // Destroy the C++ object
-    destroyObject<bulletSim>(prhs[1]);
+    destroyObject<Sim>(prhs[1]);
     // Warn if other commands were ignored
     if (nlhs != 0 || nrhs != 2)
       mexWarnMsgTxt("Delete: Unexpected arguments ignored.");
@@ -49,12 +49,10 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   }
 
   // Get the class instance pointer from the second input
-  bulletSim *bullet_sim_ = convertMat2Ptr<bulletSim>(prhs[1]);
-
+  Sim *bullet_sim_ = convertMat2Ptr<Sim>(prhs[1]);
+  
   if (!strcmp("InitSimulation", cmd)) {
-    double* is_scenegraph_on = mxGetPr(prhs[2]);
-    bullet_sim_->InitSimulation(int(*is_scenegraph_on));
-    return;
+      return;
   }
 
   /*********************************************************************

@@ -18,44 +18,32 @@ set(MEX /usr/local/MATLAB/R2014a/bin/mex)
 ###################
 # LINK TO OUR LIBRARIES
 ###################
-set( SCENEGRAPH_INTERFACE false CACHE BOOL force )
 find_package( Eigen3 REQUIRED )
 find_package( Bullet REQUIRED )
 add_definitions(-DBT_USE_DOUBLE_PRECISION)
 add_definitions(-DBT_NO_PROFILE)
 set(USER_INC
-	${EIGEN3_INCLUDE_DIRS}
-	${BULLET_INCLUDE_DIR}
+  ${EIGEN3_INCLUDE_DIRS}
+  ${BULLET_INCLUDE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR})
 set(LINK_DIRS
   /usr/local/lib/)
 set(LINK_LIBS
   ${BULLET_LIBRARIES}
-	${EIGEN3_LIBRARIES})
-# Are we using SceneGraph?
-if(${SCENEGRAPH_INTERFACE})
-	find_package(SceneGraph REQUIRED)
-	find_package(Pangolin REQUIRED)
-	set(USER_INC_OPT
-		${SceneGraph_INCLUDE_DIRS}
-		${Pangolin_INCLUDE_DIRS})
-	set(LINK_LIBS_OPT
-		${SceneGraph_LIBRARIES}
-		${Pangolin_LIBRARIES})
-endif()
+  ${EIGEN3_LIBRARIES})
 include_directories(${USER_INC})
 link_directories(${USER_INC})
 set(HDRS
-	class_handle.hpp
-	bulletSim.h
-	bulletStructs/EigenHelpers.h
-	bulletStructs/Shape.h
-	bulletStructs/Constraint.h
-	bulletStructs/SimRaycastVehicle.h)
+  class_handle.hpp)
+  # bulletSim.h
+  # bulletStructs/EigenHelpers.h
+  # bulletStructs/Shape.h
+  # bulletStructs/Constraint.h
+  # bulletStructs/SimRaycastVehicle.h)
 set(SRC
-	bulletInterface.cpp
-	bulletSim.cpp)
+  bulletInterface.cpp)
+  # bulletSim.cpp)
 
 ###################
 # MEX CONFIGURATION
@@ -64,10 +52,10 @@ set(MEX_CONFIG ${CMAKE_CURRENT_SOURCE_DIR}/mexopts.sh)
 set(MEX_TARGET bulletInterface)
 # Set the right output file
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-	set(MEX_OUTPUT ${MEX_TARGET}.mexmaci64)
+  set(MEX_OUTPUT ${MEX_TARGET}.mexmaci64)
 endif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-	set(MEX_OUTPUT ${MEX_TARGET}.mexglx)
+  set(MEX_OUTPUT ${MEX_TARGET}.mexglx)
 endif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
 
@@ -101,13 +89,13 @@ message(${MEXLIBS})
 # MEX COMPILATION
 ###################
 set(MEX_COMMAND ${MEX} -f ${MEX_CONFIG} -silent -cxx -O ${MEXINCLUDES} -output
-	${MEX_OUTPUT} ${SRC} ${MEXLIBS} ${MEXLIBDIRS})
+  ${MEX_OUTPUT} ${SRC} ${MEXLIBS} ${MEXLIBDIRS})
 
 add_custom_command(OUTPUT ${MEX_OUTPUT}
   COMMAND ${MEX_COMMAND}
   DEPENDS ${HDRS} ${SRC}
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-  
+
 add_custom_target(${MEX_TARGET} ALL
   DEPENDS ${MEX_OUTPUT})
 

@@ -3,9 +3,7 @@
 #ifndef SIMBA_MODELGRAPH_RENDERENGINE_H_
 #define SIMBA_MODELGRAPH_RENDERENGINE_H_
 
-// Our SceneGraph interface
-#include <SceneGraph/SceneGraph.h>
-
+// TODO: OpenGL Graphics here
 
 // All of our bullet objects
 #include <bulletStructs/Shape.h>

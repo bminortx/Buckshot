@@ -305,18 +305,18 @@ classdef bullet_interface < handle
         wheel_br_pos, wheel_br_rot);
     end
     
-    function [states, end_position, end_rotation, end_lin_vel, ...
-              end_ang_vel, grounded] = 
-        SpeedSim(this, Vehicle, start_pose, start_rot, start_lin_vel, ...
-                 start_ang_vel, engine_commands, steering_commands);
-      id = Vehicle.GetID();
-      [states, end_position, end_rotation, end_lin_vel, ...
-       end_ang_vel, grounded] = 
-      bulletInterface('SpeedSim', this.bulletHandle, id, start_pose, ...
-                           start_rot, start_lin_vel,... 
-                           start_ang_vel, engine_commands, steering_commands, ...
-                           numel(steering_commands));
-    end
+%     function [states, end_position, end_rotation, end_lin_vel, ...
+%               end_ang_vel, grounded] =  
+%         SpeedSim(this, Vehicle, start_pose, start_rot, start_lin_vel, ...
+%                  start_ang_vel, engine_commands, steering_commands);
+%       id = Vehicle.GetID();
+%       [states, end_position, end_rotation, end_lin_vel, ...
+%        end_ang_vel, grounded] = 
+%       bulletInterface('SpeedSim', this.bulletHandle, id, start_pose, ...
+%                            start_rot, start_lin_vel,... 
+%                            start_ang_vel, engine_commands, steering_commands, ...
+%                            numel(steering_commands));
+%     end
 
     function ResetVehicle(this, Vehicle, start_pose, start_rot)
       id = Vehicle.GetID();
@@ -338,8 +338,7 @@ classdef bullet_interface < handle
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     function InitSimulation(this)
-        if ~this.isSceneGraphOn,
-            bulletInterface('InitSimulation', 0);
+%             bulletInterface('InitSimulation', 0);
             % Keypress event from run()
             function this = figure_keypress(~, event, this)
                 switch event.Key
@@ -377,16 +376,13 @@ classdef bullet_interface < handle
                 this.Terrain(i).Draw;
             end
             this.DrawSimulation();
-        else,
-            bulletInterface('InitSimulation', 1);
-        end
     end
 
     %%%% RUNNING THE SIMULATION
     %%%% Handles the interaction between the Bullet Physics engine and the Sim.
 
     function RunSimulation(this)
-        if ~this.isSceneGraphOn, 
+%         if ~this.isSceneGraphOn, 
             if this.gui.draw,
                 title(['Bullet simulation (running)',char(10),'Timestep: ',...
                        num2str(this.gui.timestep), char(10), 'Framerate: ', ...
@@ -404,9 +400,9 @@ classdef bullet_interface < handle
                        num2str(this.gui.framerate), '  fps']);
             end      
             this.DrawSimulation();
-        else
-            bulletInterface('RunSceneGraph', this.bulletHandle);
-        end
+%         else
+%             bulletInterface('RunSceneGraph', this.bulletHandle);
+%         end
     end
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

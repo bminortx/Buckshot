@@ -1,4 +1,4 @@
-function [ new_class_ptr ] = SETUP(boolCreatePtr, isSceneGraphOn)
+function [ new_class_ptr ] = SETUP(boolCreatePtr)
 %Includes all of the libraries necessary for the Sim bullet wrapper to
 %function in MATLAB. The boolCreatePtr that SETUP takes as an argument lets the
 %user choose whether or not they want to create a bullet class object (true), or
@@ -25,11 +25,7 @@ addpath('Demos');
 disp('> Demos linked...');
 
 system('chmod +x createMexFiles.sh')
-if isSceneGraphOn,
-    system('./createMexFiles.sh true')
-else
-    system('./createMexFiles.sh false')
-end
+system('./createMexFiles.sh false')
 
 disp('> Bullet wrapper created...');
 disp('> Linking complete!');
