@@ -108,7 +108,7 @@ int BulletWorld::AddRaycastVehicle(double* parameters, double* position,
 
 void BulletWorld::StepSimulation() {
   dynamics_world_->stepSimulation(timestep_,  max_sub_steps_);
-
+  graphics_world_->stepSimulation();
 }
 
 /*********************************************************************
