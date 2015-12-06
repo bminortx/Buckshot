@@ -22,6 +22,7 @@
 #include "../bulletShapes/bullet_heightmap.h"
 #include "../bulletShapes/bullet_sphere.h"
 #include "../bulletShapes/bullet_vehicle.h"
+#include "../Graphics/graphicsWorld.h"
 #include <map>
 #include <vector>
 #include <memory>
@@ -128,6 +129,7 @@ class BulletWorld {
   std::map<int, Shape_Entity> shapes_;
   std::map<int, Vehicle_Entity> vehicles_;
   std::shared_ptr<btDiscreteDynamicsWorld> dynamics_world_;
+  std::shared_ptr<GraphicsWorld> graphics_world_;
   double timestep_;
   double gravity_;
   int max_sub_steps_;

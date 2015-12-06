@@ -17,6 +17,8 @@ BulletWorld::BulletWorld() {
                               &constraint_solver_,
                               &collision_configuration_));
   dynamics_world_->setGravity(btVector3(0, 0, gravity_));
+  graphics_world_ = std::make_shared<GraphicsWorld>(GraphicsWorld());
+  graphics_world_->Init();
 }
 
 /*********************************************************************
@@ -106,6 +108,7 @@ int BulletWorld::AddRaycastVehicle(double* parameters, double* position,
 
 void BulletWorld::StepSimulation() {
   dynamics_world_->stepSimulation(timestep_,  max_sub_steps_);
+
 }
 
 /*********************************************************************
