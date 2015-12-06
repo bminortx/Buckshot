@@ -1,7 +1,6 @@
 #ifndef BULLET_VEHICLE_H
 #define BULLET_VEHICLE_H
 
-#include <vector>
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/BulletCollision/CollisionShapes/btBoxShape.h>
 #include <bullet/LinearMath/btAlignedAllocator.h>

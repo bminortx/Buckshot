@@ -414,15 +414,6 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
       index = bullet_sim_->SixDOF_one(*id, transform_A, limits);
     }
 
-    if (!strcmp("SixDOF_two", constraint)){
-      double* id_A = mxGetPr(prhs[3]);
-      double* id_B = mxGetPr(prhs[4]);
-      double* transform_A = mxGetPr(prhs[5]);
-      double* transform_B = mxGetPr(prhs[6]);
-      double* limits = mxGetPr(prhs[7]);
-      index = bullet_sim_->SixDOF_two(*id_A, *id_B,
-                                      transform_A, transform_B, limits);
-    }
     plhs[0] = mxCreateDoubleMatrix(1, 1, mxREAL);
     double* ConstIndex = mxGetPr(plhs[0]);
     *ConstIndex = (double)index;
@@ -448,29 +439,15 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
       plhs[1] = mxCreateDoubleMatrix(3, 3, mxREAL);
       double* position = mxGetPr(plhs[0]);
       double* rotation = mxGetPr(plhs[1]);
-      //Position
-      position[0] = pose[0];
-      position[1] = pose[1];
-      position[2] = pose[2];
-      //Rotation
-      rotation[0] = pose[3];
-      rotation[1] = pose[4];
-      rotation[2] = pose[5];
-      rotation[3] = pose[6];
-      rotation[4] = pose[7];
-      rotation[5] = pose[8];
-      rotation[6] = pose[9];
-      rotation[7] = pose[10];
-      rotation[8] = pose[11];
+      position = &pose[0];
+      rotation = &pose[3];
     }
     else if(!strcmp(type, "Constraint")){
       plhs[0] = mxCreateDoubleMatrix(1, 3, mxREAL);
-      double* pose = bullet_sim_->GetConstraintTransform(*id);
+      std::vector<double> pose = bullet_sim_->GetConstraintTransform(*id);
       double* position = mxGetPr(plhs[0]);
       //Position
-      position[0] = pose[0];
-      position[1] = pose[1];
-      position[2] = pose[2];
+      position = &pose[0];
     }
     else if(!strcmp(type, "RaycastVehicle")){
       plhs[0] = mxCreateDoubleMatrix(1, 3, mxREAL);
