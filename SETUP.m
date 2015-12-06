@@ -5,19 +5,15 @@ function [ new_class_ptr ] = SETUP(boolCreatePtr)
 %merely link the libraries to MATLAB for ease of coding (false).
 %
 
-%Our shapes 
-addpath(genpath('ModelGraph'));
-addpath('ModelGraph');
-disp('> Shapes linked...');
-
 %The Bullet-MATLAB interface
-addpath(genpath('bulletInterface'));
-addpath('bulletInterface');
-disp('> Bullet Interface linked...');
+addpath(genpath('bulletComponents'));
+addpath('bulletComponents');
+disp('> Bullet Components linked...');
 
 % matlab components
 addpath(genpath('matlabComponents'));
 addpath('matlabComponents');
+disp('> MATLAB Components linked...');
 
 %Our demos
 addpath(genpath('Demos'));

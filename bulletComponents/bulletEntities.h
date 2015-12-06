@@ -1,22 +1,23 @@
 #ifndef BULLET_ENTITIES_H
 #define BULLET_ENTITIES_H
 
+#include <memory>
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/LinearMath/btAlignedAllocator.h>
 
-typedef btCollisionShape* CollisionShapePtr;
-typedef btMotionState* MotionStatePtr;
-typedef btRigidBody* RigidBodyPtr;
-typedef btRaycastVehicle* VehiclePtr;
+typedef std::shared_ptr<btCollisionShape> CollisionShapePtr;
+typedef std::shared_ptr<btMotionState> MotionStatePtr;
+typedef std::shared_ptr<btRigidBody> RigidBodyPtr;
+typedef std::shared_ptr<btRaycastVehicle> VehiclePtr;
 
+// Useless enum until we get more compounds
 enum Compounds{
   VEHICLE = 0
 };
 
-///////////////////////////////////////////////////////
-/// The Entity class
-/// Holds our bullet shapes and terrain.
-///////////////////////////////////////////////////////
+/**
+ * The Shape Entity class: Holds our bullet shapes and terrain.
+ */
 
 class Shape_Entity {
 public:
@@ -35,12 +36,10 @@ public:
   RigidBodyPtr            rigidbody_;
 };
 
-///////////////////////////////////////////////////////
-/// The Compound_Entity class
-/// Holds all of our compound shapes and constraints, as well as the type of
-/// compound we have.
-///////////////////////////////////////////////////////
-
+/**
+ * The Compound_Entity class: Holds all of our compound shapes and constraints,
+ * as well as the type of compound we have.
+ */
 class Compound_Entity {
 public:
   Compound_Entity() {
@@ -60,13 +59,9 @@ public:
   Compounds type_;
 };
 
-///////////////////////////////////////////////////////
-///
-/// The Vehicle_Entity class
-/// Holds all of our RaycastVehicles
-///
-///////////////////////////////////////////////////////
-
+/**
+ * The Vehicle_Entity class: Holds all of our RaycastVehicles
+ */
 class Vehicle_Entity {
 public:
   Vehicle_Entity() {
