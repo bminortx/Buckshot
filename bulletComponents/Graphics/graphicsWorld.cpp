@@ -1,6 +1,11 @@
 #include "graphicsWorld.h"
+#include <string.h>
 
-GraphicsWorld::GraphicsWorld(){}
+GraphicsWorld::GraphicsWorld()
+    : light_move_(1), view_angle_(0), view_elevation_(0), fov_(55),
+      aspect_ratio_(1), world_dim_(3.0f), light_angle_(90),
+      light_elevation_(2)
+{}
 
 void GraphicsWorld::Init() {
   //  Initialize GLUT
