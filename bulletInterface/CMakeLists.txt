@@ -36,14 +36,9 @@ include_directories(${USER_INC})
 link_directories(${USER_INC})
 set(HDRS
   class_handle.hpp)
-  # bulletSim.h
-  # bulletStructs/EigenHelpers.h
-  # bulletStructs/Shape.h
-  # bulletStructs/Constraint.h
-  # bulletStructs/SimRaycastVehicle.h)
 set(SRC
-  bulletInterface.cpp)
-  # bulletSim.cpp)
+  bulletInterface.cpp
+  bulletWorld.cpp)
 
 ###################
 # MEX CONFIGURATION

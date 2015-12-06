@@ -15,15 +15,27 @@ just reach out! I would love to get feedback on this project.
 
 SETUP
 ----------
-SimLAB only requires a couple of things:
+
+### 1. Requirements ###
+
 * CMake
 * MATLAB
 * [Bullet Physics Library](http://bulletphysics.org/wordpress/)
 * [Eigen Linear Algebra Library](http://bit.ly/LXBsEr)
-  
-Install all of these; order doesn't really matter here. Make sure that you're pointing to the correct mex directory in the CMake script; it's a set variable at the very top of CMakeLists.txt.
 
-Once this is done, open Matlab and run SETUP.m in the top directory. After that, everything should work!
+### 2. MEX Directory ###
+
+Make sure that you're pointing to the correct mex directory in the CMake script; it's a set variable at the very top of bulletInterface/CMakeLists.txt:
+
+`set(MEX /usr/local/MATLAB/R2014a/bin/mex)`
+
+### 3. SETUP.m ###
+
+Once 1. and 2. are out of the way, Open Matlab and run `SETUP(true)` in the top directory. `SETUP` is a good way to start any bullet-focused MATLAB script, as it:
+
+1. Connects all of Buckshot's paths to MATLAB
+2. Builds the BulletInterface class via CMake
+3. Creates a MATLAB pointer to the class, if you needed it [set argument to `false` if not]
 
 
 DEMOS
