@@ -20,25 +20,35 @@ set(MEX /usr/local/MATLAB/R2014a/bin/mex)
 ###################
 find_package( Eigen3 REQUIRED )
 find_package( Bullet REQUIRED )
+
+# TODO: MAKE THIS NOT REQUIRED
+find_package( OpenGL )
+find_package( GLUT )
+
 add_definitions(-DBT_USE_DOUBLE_PRECISION)
 add_definitions(-DBT_NO_PROFILE)
 set(USER_INC
   ${EIGEN3_INCLUDE_DIRS}
   ${BULLET_INCLUDE_DIR}
+  ${OPENGL_INCLUDE_DIRS}
+  ${GLUT_INCLUDE_DIRS}  
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR})
 set(LINK_DIRS
   /usr/local/lib/)
 set(LINK_LIBS
   ${BULLET_LIBRARIES}
-  ${EIGEN3_LIBRARIES})
+  ${EIGEN3_LIBRARIES}
+  ${OPENGL_LIBRARIES}
+  ${GLUT_LIBRARY})
 include_directories(${USER_INC})
 link_directories(${USER_INC})
 set(HDRS
   class_handle.hpp)
 set(SRC
   bulletInterface.cpp
-  bulletWorld.cpp)
+  bulletWorld.cpp
+  Graphics/graphicsWorld.cpp)
 
 ###################
 # MEX CONFIGURATION
