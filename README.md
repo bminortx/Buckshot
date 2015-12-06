@@ -1,16 +1,10 @@
-[Buckshot](http://bminortx.github.io/Buckshot)
-============
-Author: Brandon Minor | gallimatrix ~at~ gmail.com | [bminortx.github.io](http://bminortx.github.io)
+# [Buckshot](http://bminortx.github.io/Buckshot) #
 
-Associated Acts: ARPG @ CU Boulder, [Replica Labs](http://www.replicalabs.com)
+## A MATLAB Interface for the Bullet Physics Engine. ##
 
-Buckshot is a MATLAB Physics Simulator that utilizes the Bullet Physics Engine.
-This program's goal is to allow for convenient use of the MATLAB libraries
+Buckshot's goal is to allow for convenient use of the MATLAB libraries,
 while also guaranteeing accurate simulation through Bullet Physics, a
 wonderful physics engine written by Erwin Coumans.
-
-If you'd like to work on the project, or point out anything grossly wrong,
-just reach out! I would love to get feedback on this project.
 
 - - - - - - - - -
 
@@ -55,6 +49,16 @@ showcase different things:
 Every function in every directory should have a bit of documentation
 involved, so just type ```help [name of function]``` to look up usage and arguments
 for everything. Some of the constraints are a bit tricky, so this might help.
+
+WHO DIS
+---------
+
+Author: Brandon Minor | gallimatrix ~at~ gmail.com | [bminortx.github.io](http://bminortx.github.io)
+
+Associated Acts: ARPG @ CU Boulder, [Replica Labs](http://www.replicalabs.com)
+
+If you'd like to work on the project, or point out anything grossly wrong,
+just reach out! I would love to make Buckshot a useful tool. 
 
 License
 --------
