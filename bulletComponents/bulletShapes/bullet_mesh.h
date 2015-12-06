@@ -91,6 +91,8 @@ class bullet_mesh: public bullet_shape{
                          flScale, triangleMesh, dMin, dMax);
     }
   }
+
+  void set_vertex_data() {}
 };
 
 #endif //  BULLET_MESH_H

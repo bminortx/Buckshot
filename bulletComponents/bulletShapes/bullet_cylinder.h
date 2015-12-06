@@ -29,6 +29,8 @@ public:
     SetPose(position, rotation);
   }
 
+  void set_vertex_data() {}
+
 };
 
 #endif // BULLET_CYLINDER_H
