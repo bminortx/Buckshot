@@ -1,6 +1,15 @@
-# [Buckshot](http://bminortx.github.io/Buckshot) #
+[ ______            _______  _        _______           _______ _________
+(  ___ \ |\     /|(  ____ \| \    /\(  ____ \|\     /|(  ___  )\__   __/
+| (   ) )| )   ( || (    \/|  \  / /| (    \/| )   ( || (   ) |   ) (   
+| (__/ / | |   | || |      |  (_/ / | (_____ | (___) || |   | |   | |   
+|  __ (  | |   | || |      |   _ (  (_____  )|  ___  || |   | |   | |   
+| (  \ \ | |   | || |      |  ( \ \       ) || (   ) || |   | |   | |   
+| )___) )| (___) || (____/\|  /  \ \/\____) || )   ( || (___) |   | |   
+|/ \___/ (_______)(_______/|_/    \/\_______)|/     \|(_______)   )_(   
+                                                                        
+](http://bminortx.github.io/Buckshot)
 
-## A MATLAB Interface for the Bullet Physics Engine. ##
+## A MATLAB Interface for the Bullet Physics Engine ##
 
 Buckshot's goal is to allow for convenient use of the MATLAB libraries,
 while also guaranteeing accurate simulation through Bullet Physics, a
