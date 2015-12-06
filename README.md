@@ -1,4 +1,4 @@
-```
+
 ______            _        _           _   
 | ___ \          | |      | |         | |  
 | |_/ /_   _  ___| | _____| |__   ___ | |_ 
@@ -6,7 +6,7 @@ ______            _        _           _
 | |_/ / |_| | (__|   <\__ \ | | | (_) | |_ 
 \____/ \__,_|\___|_|\_\___/_| |_|\___/ \__|   
 
-```
+
 ## A MATLAB Interface for the Bullet Physics Engine ##
 
 Buckshot's goal is to allow for convenient use of the MATLAB libraries,
