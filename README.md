@@ -15,7 +15,7 @@ just reach out! I would love to get feedback on this project.
 SETUP
 ----------
 
-### 1. Requirements ###
+#### 1. Requirements ####
 
 * CMake
 * MATLAB
