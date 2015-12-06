@@ -1,10 +1,10 @@
 ```
 ______            _        _           _   
 | ___ \          | |      | |         | |  
-| |_/ /_   _  ___| | _____| |__   ___ | |_ 
-| ___ \ | | |/ __| |/ / __| '_ \ / _ \| __|
-| |_/ / |_| | (__|   <\__ \ | | | (_) | |_ 
-\____/ \__,_|\___|_|\_\___/_| |_|\___/ \__|   
+| |_/ /_   _  ___| | _____| |__   ___ | |_   
+| ___ \ | | |/ __| |/ / __| '_ \ / _ \| __|            
+| |_/ / |_| | (__|   <\__ \ | | | (_) | |_             
+\____/ \__,_|\___|_|\_\___/_| |_|\___/ \__|            
 
 ```
 ## A MATLAB Interface for the Bullet Physics Engine ##
@@ -15,8 +15,8 @@ wonderful physics engine written by Erwin Coumans.
 
 - - - - - - - - -
 
-SETUP
-----------
+## Getting Started ##
+
 
 #### 1. Requirements ####
 
@@ -41,8 +41,8 @@ Once 1. and 2. are out of the way, Open Matlab and run `SETUP(true)` in the top 
 
 - - - - - - - - -
 
-DEMOS
----------
+## Demos ##
+
 
 [![The Bullet Demo in action](http://img.youtube.com/vi/IzXKR44iJ0o/0.jpg)](https://www.youtube.com/watch?v=IzXKR44iJ0o)
 
@@ -57,8 +57,7 @@ Every function in every directory should have a bit of documentation
 involved, so just type ```help [name of function]``` to look up usage and arguments
 for everything. Some of the constraints are a bit tricky, so this might help.
 
-WHO DIS
----------
+## WHO DIS ##
 
 Author: Brandon Minor | gallimatrix ~at~ gmail.com | [bminortx.github.io](http://bminortx.github.io)
 
@@ -67,8 +66,7 @@ Associated Acts: ARPG @ CU Boulder, [Replica Labs](http://www.replicalabs.com)
 If you'd like to work on the project, or point out anything grossly wrong,
 just reach out! I would love to make Buckshot a useful tool. 
 
-License
---------
+## License ##
 
 The MIT License (MIT)
 
