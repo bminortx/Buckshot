@@ -7,10 +7,12 @@ Associated Acts: ARPG @ CU Boulder, [Replica Labs](http://www.replicalabs.com)
 Buckshot is a MATLAB Physics Simulator that utilizes the Bullet Physics Engine.
 This program's goal is to allow for convenient use of the MATLAB libraries
 while also guaranteeing accurate simulation through Bullet Physics, a
-fully functional and reliable engine.
+wonderful physics engine written by Erwin Coumans.
 
 If you'd like to work on the project, or point out anything grossly wrong,
-just reach out! I would love to get feedback on this project. 
+just reach out! I would love to get feedback on this project.
+
+- - - - - - - - -
 
 SETUP
 ----------
@@ -22,13 +24,13 @@ SETUP
 * [Bullet Physics Library](http://bulletphysics.org/wordpress/)
 * [Eigen Linear Algebra Library](http://bit.ly/LXBsEr)
 
-### 2. MEX Directory ###
+#### 2. MEX Directory ####
 
 Make sure that you're pointing to the correct mex directory in the CMake script; it's a set variable at the very top of bulletInterface/CMakeLists.txt:
 
 `set(MEX /usr/local/MATLAB/R2014a/bin/mex)`
 
-### 3. SETUP.m ###
+#### 3. SETUP.m ####
 
 Once 1. and 2. are out of the way, Open Matlab and run `SETUP(true)` in the top directory. `SETUP` is a good way to start any bullet-focused MATLAB script, as it:
 
@@ -36,6 +38,7 @@ Once 1. and 2. are out of the way, Open Matlab and run `SETUP(true)` in the top 
 2. Builds the BulletInterface class via CMake
 3. Creates a MATLAB pointer to the class, if you needed it [set argument to `false` if not]
 
+- - - - - - - - -
 
 DEMOS
 ---------
