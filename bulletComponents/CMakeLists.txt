@@ -44,7 +44,9 @@ set(LINK_LIBS
 include_directories(${USER_INC})
 link_directories(${USER_INC})
 set(HDRS
-  class_handle.hpp)
+  class_handle.hpp
+  bulletWorld.h
+  Graphics/graphicsWorld.h)
 set(SRC
   bulletInterface.cpp
   bulletWorld.cpp
@@ -54,7 +56,7 @@ set(SRC
 # MEX CONFIGURATION
 ###################
 set(MEX_CONFIG ${CMAKE_CURRENT_SOURCE_DIR}/mexopts.sh)
-set(MEX_TARGET bulletInterface)
+set(MEX_TARGET buckshot)
 # Set the right output file
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
   set(MEX_OUTPUT ${MEX_TARGET}.mexmaci64)
@@ -93,6 +95,7 @@ message(${MEXLIBS})
 ###################
 # MEX COMPILATION
 ###################
+
 set(MEX_COMMAND ${MEX} -f ${MEX_CONFIG} -silent -cxx -O ${MEXINCLUDES} -output
   ${MEX_OUTPUT} ${SRC} ${MEXLIBS} ${MEXLIBDIRS})
 
