@@ -85,10 +85,6 @@ class BulletWorld {
   int OnTheGround(double id);
   void SetVehicleVels(double id, double* lin_vel, double* ang_vel);
   void ResetVehicle(double id, double* start_pose, double* start_rot);
-  double* SpeedSim(double id, double* start_pose, double* start_rot,
-                   double* start_lin_vel, double* start_ang_vel,
-                   double* forces, double* steering_angles,
-                   double command_length);
 
   /*********************************************************************
    *CONSTRAINT METHODS

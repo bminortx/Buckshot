@@ -1,4 +1,5 @@
 #include "bulletWorld.h"
+#include <iostream>
 #include <cstring>
 
 BulletWorld::BulletWorld() {
@@ -18,7 +19,6 @@ BulletWorld::BulletWorld() {
                               &collision_configuration_));
   dynamics_world_->setGravity(btVector3(0, 0, gravity_));
   graphics_world_ = std::make_shared<GraphicsWorld>(GraphicsWorld());
-  graphics_world_->Init();
 }
 
 /*********************************************************************
@@ -108,7 +108,6 @@ int BulletWorld::AddRaycastVehicle(double* parameters, double* position,
 
 void BulletWorld::StepSimulation() {
   dynamics_world_->stepSimulation(timestep_,  max_sub_steps_);
-  graphics_world_->stepSimulation();
 }
 
 /*********************************************************************
@@ -265,63 +264,6 @@ void BulletWorld::ResetVehicle(double id, double* start_pose, double* start_rot)
   btTransform bullet_trans(rot, pose);
   //  Reset our car to its initial state.
   vehicles_[id].rigidbody_->setCenterOfMassTransform(bullet_trans);
-}
-
-double* BulletWorld::SpeedSim(double id, double* start_pose, double* start_rot,
-                              double* start_lin_vel, double* start_ang_vel,
-                              double* forces, double* steering_angles,
-                              double command_length) {
-  int state_size = (command_length*3)+22;
-  double* states = new double[state_size];
-  VehiclePtr Vehicle = vehicles_[id].vehicle_;
-  ResetVehicle(id, start_pose, start_rot);
-  SetVehicleVels(id, start_lin_vel, start_ang_vel);
-
-  //  Run our commands through
-  for (int i = 0; i < command_length; i++) {
-    CommandRaycastVehicle(id, steering_angles[i], forces[i]);
-    StepSimulation();
-    btVector3 VehiclePose =
-        Vehicle->getChassisWorldTransform().getOrigin();
-    states[3*i] = VehiclePose[0];
-    states[3*i+1] = VehiclePose[1];
-    states[3*i+2] = VehiclePose[2];
-
-    //  Get our whole state on the last step.
-
-    if (i == command_length-1) {
-      btVector3 VehiclePose =
-          Vehicle->getChassisWorldTransform().getOrigin();
-      btMatrix3x3 VehicleRot =
-          Vehicle->getChassisWorldTransform().getBasis();
-      states[3*i+3] = VehiclePose[0];
-      states[3*i+4] = VehiclePose[1];
-      states[3*i+5] = VehiclePose[2];
-      states[3*i+6] = VehicleRot[0][0];
-      states[3*i+7] = VehicleRot[1][0];
-      states[3*i+8] = VehicleRot[2][0];
-      states[3*i+9] = VehicleRot[0][1];
-      states[3*i+10] = VehicleRot[1][1];
-      states[3*i+11] = VehicleRot[2][1];
-      states[3*i+12] = VehicleRot[0][2];
-      states[3*i+13] = VehicleRot[1][2];
-      states[3*i+14] = VehicleRot[2][2];
-      double* motionstate = GetRaycastMotionState(id);
-      states[3*i+15] = motionstate[2];
-      states[3*i+16] = motionstate[3];
-      states[3*i+17] = motionstate[4];
-      states[3*i+18] = motionstate[5];
-      states[3*i+19] = motionstate[6];
-      states[3*i+20] = motionstate[7];
-      states[3*i+21] = motionstate[8];
-    }
-  }
-
-  // Reset our vehicle again (just in case this is our last iteration)
-  ResetVehicle(id, start_pose, start_rot);
-  SetVehicleVels(id, start_lin_vel, start_ang_vel);
-  CommandRaycastVehicle(id, 0, 0);
-  return states;
 }
 
 /*********************************************************************
