@@ -59,14 +59,14 @@ for everything. Some of the constraints are a bit tricky, so this might help.
 
 - - - - - - - - -
 
-## WHO DIS ##
+## WHO IS THIS ##
 
 Author: Brandon Minor | gallimatrix ~at~ gmail.com | [bminortx.github.io](http://bminortx.github.io)
 
 Associated Acts: ARPG @ CU Boulder, [Replica Labs](http://www.replicalabs.com)
 
 If you'd like to work on the project, or point out anything grossly wrong,
-just reach out! I would love to make Buckshot a useful tool. 
+just reach out! I would love to make Buckshot a legitimately useful tool. 
 
 - - - - - - - - -
 
