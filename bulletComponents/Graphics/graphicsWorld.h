@@ -8,12 +8,15 @@
 #include <GL/glew.h>
 #endif
 #define GL_GLEXT_PROTOTYPES
+
+/// TODO: Make this optional
+#include <GL/freeglut.h>
+
 #ifdef __APPLE__
 #include <GLUT/glut.h>
 #else
 #include <GL/glut.h>
 #endif
-#include <cmath>
 
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
@@ -22,9 +25,12 @@
 #include <glm/mat4x4.hpp> // glm::mat4
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <cmath>
 #include <stdio.h>
 #include <vector>
 
+
+static int window = 0;
 static std::vector<int> buffers_;
 static int view_angle_ = 0;
 static int view_elevation_ = 0;
@@ -280,7 +286,10 @@ inline void gwDisplay(){
   //  Display parameters
   glWindowPos2i(5,5);
   //  Render the scene and make it visible
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glFlush();
+  glutSwapBuffers();
+  glutPostWindowRedisplay(window);
 }
 
 inline void gwReshape(int width, int height){
