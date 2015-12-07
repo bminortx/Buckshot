@@ -13,7 +13,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules")
 # might have to change these, depending on your system.
 ###################
 
-set(MEX /usr/local/MATLAB/R2014a/bin/mex)
+set(MEX /usr/local/MATLAB/R2015b/bin/mex)
 
 ###################
 # LINK TO OUR LIBRARIES
