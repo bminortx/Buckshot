@@ -1,5 +1,5 @@
 /*********************************************************************
- * File:   bulletInterface.cpp
+ * File:   buckshot.cpp
  * Author: bminortx
  * The MEX interface that connects Bullet functions with MATLAB calls
  **********************************************************************/
@@ -17,6 +17,7 @@
 
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
+  mexPrintf("woooo");
   // Get the command string
   char cmd[64];
   if (nrhs < 1 || mxGetString(prhs[0], cmd, sizeof(cmd)))

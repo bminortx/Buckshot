@@ -48,7 +48,7 @@ set(HDRS
   bulletWorld.h
   Graphics/graphicsWorld.h)
 set(SRC
-  bulletInterface.cpp
+  buckshot.cpp
   bulletWorld.cpp
   Graphics/graphicsWorld.cpp)
 
@@ -62,7 +62,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
   set(MEX_OUTPUT ${MEX_TARGET}.mexmaci64)
 endif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-  set(MEX_OUTPUT ${MEX_TARGET}.mexglx)
+  set(MEX_OUTPUT ${MEX_TARGET})
 endif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
 
