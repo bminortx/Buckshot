@@ -350,41 +350,41 @@ classdef bullet_interface < handle
         disp(' || q:     quit');
         disp('----------------------------------------------');
         set(0, 'DefaultFigurePosition', [10,10,900,900]);
-        % this.gui.fig = figure;
-        % set(this.gui.fig, 'KeyPressFcn', {@figure_keypress, this});
-        % view(3);
-        % hold all;
-        % xlabel('x'); ylabel('y'); zlabel('z');
-        % title(['Bullet simulation (paused)', char(10), 'Timestep: ',...
-        %        num2str(this.gui.timestep), char(10), 'Framerate: ', ...
-        %        num2str(this.gui.framerate)]);
-        % for i = 1:numel(this.Terrain),
-        %     this.Terrain(i).Draw;
-        % end
-        % this.DrawSimulation();
+        this.gui.fig = figure;
+        set(this.gui.fig, 'KeyPressFcn', {@figure_keypress, this});
+        view(3);
+        hold all;
+        xlabel('x'); ylabel('y'); zlabel('z');
+        title(['Bullet simulation (paused)', char(10), 'Timestep: ',...
+               num2str(this.gui.timestep), char(10), 'Framerate: ', ...
+               num2str(this.gui.framerate)]);
+        for i = 1:numel(this.Terrain),
+            this.Terrain(i).Draw;
+        end
+        this.DrawSimulation();
     end
 
     %%%% RUNNING THE SIMULATION
     %%%% Handles the interaction between the Bullet Physics engine and the Sim.
 
     function RunSimulation(this) 
-        % if this.gui.draw,
-        %     title(['Bullet simulation (running)',char(10),'Timestep: ',...
-        %            num2str(this.gui.timestep), char(10), 'Framerate: ', ...
-        %            num2str(this.gui.framerate), '  fps']);
+        if this.gui.draw,
+            title(['Bullet simulation (running)',char(10),'Timestep: ',...
+                   num2str(this.gui.timestep), char(10), 'Framerate: ', ...
+                   num2str(this.gui.framerate), '  fps']);
             this.StepSimulation();
-        % elseif this.gui.iter == true,
-        %     title(['Bullet simulation (paused)',char(10),'Timestep: ',...
-        %            num2str(this.gui.timestep), char(10), 'Framerate: ', ...
-        %            num2str(this.gui.framerate), '  fps']);
-        %     this.StepSimulation();
-        %     this.gui.iter = false;
-        % else
-        %     title(['Bullet simulation (paused)',char(10),'Timestep: ',...
-        %            num2str(this.gui.timestep), char(10),'Framerate: ', ...
-        %            num2str(this.gui.framerate), '  fps']);
-        % end      
-        % this.DrawSimulation();
+        elseif this.gui.iter == true,
+            title(['Bullet simulation (paused)',char(10),'Timestep: ',...
+                   num2str(this.gui.timestep), char(10), 'Framerate: ', ...
+                   num2str(this.gui.framerate), '  fps']);
+            this.StepSimulation();
+            this.gui.iter = false;
+        else
+            title(['Bullet simulation (paused)',char(10),'Timestep: ',...
+                   num2str(this.gui.timestep), char(10),'Framerate: ', ...
+                   num2str(this.gui.framerate), '  fps']);
+        end      
+        this.DrawSimulation();
     end
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
