@@ -57,12 +57,14 @@ set(SRC
 ###################
 set(MEX_CONFIG ${CMAKE_CURRENT_SOURCE_DIR}/mexopts.sh)
 set(MEX_TARGET buckshot)
-# Set the right output file
+# Apple
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
   set(MEX_OUTPUT ${MEX_TARGET}.mexmaci64)
 endif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+
+## 64-bit Linux
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-  set(MEX_OUTPUT ${MEX_TARGET})
+  set(MEX_OUTPUT ${MEX_TARGET}.mexa64)
 endif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
 
