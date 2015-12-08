@@ -50,7 +50,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
   set(MEX_OUTPUT ${MEX_TARGET}.mexmaci64)
 endif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-  set(MEX_OUTPUT ${MEX_TARGET}.mexglx)
+  set(MEX_OUTPUT ${MEX_TARGET}.mexa64)
 endif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
 
