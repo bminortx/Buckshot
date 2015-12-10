@@ -19,8 +19,13 @@ addpath(genpath('Demos'));
 addpath('Demos');
 disp('> Demos linked...');
 
-system('chmod +x createMexFiles.sh')
-system('./createMexFiles.sh false')
+system('chmod +x createMexFiles.sh');
+result = system('./createMexFiles.sh false');
+
+if (result ~= 0),
+    disp('Buckshot failed to compile');
+    return;
+end
 
 disp('> Bullet wrapper created...');
 disp('> Linking complete!');
