@@ -120,15 +120,27 @@ class BulletWorld {
   double* GetVehicleTransform(double id);
 
  private:
+  
+  // Physics Bodies
   std::map<int, Compound_Entity> compounds_;
   std::map<int, btTypedConstraint*> constraints_;
   std::map<int, Shape_Entity> shapes_;
   std::map<int, Vehicle_Entity> vehicles_;
-  std::shared_ptr<btDiscreteDynamicsWorld> dynamics_world_;
-  std::shared_ptr<GraphicsWorld> graphics_world_;
+  
+  // Physics Engine setup
   double timestep_;
   double gravity_;
   int max_sub_steps_;
+  btDefaultCollisionConfiguration  collision_configuration_;
+  std::shared_ptr<btCollisionDispatcher> bt_dispatcher_;
+  std::shared_ptr<btDbvtBroadphase> bt_broadphase_;
+  std::shared_ptr<btSequentialImpulseConstraintSolver> bt_solver_;
+  
+  // Physics and Graphics worlds
+  std::shared_ptr<btDiscreteDynamicsWorld> dynamics_world_;
+  std::shared_ptr<GraphicsWorld> graphics_world_;
+
+
 };
 
 #endif

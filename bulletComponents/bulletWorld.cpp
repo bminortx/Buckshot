@@ -3,19 +3,20 @@
 #include <cstring>
 
 BulletWorld::BulletWorld() {
-  ///Bullet settings
+  // See http://bulletphysics.org/mediawiki-1.5.8/index.php/Hello_World
   timestep_ = 1.0/30.0;
   gravity_ = -9.8;
   max_sub_steps_ = 10; //  bullet -- for stepSimulation
-  btDefaultCollisionConfiguration collision_configuration_;
-  btCollisionDispatcher dispatcher_ =
-      btCollisionDispatcher(&collision_configuration_);
-  btDbvtBroadphase broadphase_;
-  btSequentialImpulseConstraintSolver constraint_solver_;
+  bt_dispatcher_ = std::make_shared<btCollisionDispatcher>(
+      btCollisionDispatcher(&collision_configuration_));
+  std::shared_ptr<btDbvtBroadphase> Broadphase(new btDbvtBroadphase);
+  bt_broadphase_ = Broadphase;
+  bt_solver_ = std::make_shared<btSequentialImpulseConstraintSolver>(
+      btSequentialImpulseConstraintSolver());
   dynamics_world_ = std::make_shared<btDiscreteDynamicsWorld>(
-      btDiscreteDynamicsWorld(&dispatcher_,
-                              &broadphase_,
-                              &constraint_solver_,
+      btDiscreteDynamicsWorld(bt_dispatcher_.get(),
+                              bt_broadphase_.get(),
+                              bt_solver_.get(),
                               &collision_configuration_));
   dynamics_world_->setGravity(btVector3(0, 0, gravity_));
   graphics_world_ = std::make_shared<GraphicsWorld>(GraphicsWorld());
