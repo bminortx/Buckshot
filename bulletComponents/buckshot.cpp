@@ -4,7 +4,6 @@
  * The MEX interface that connects Bullet functions with MATLAB calls
  **********************************************************************/
 
-#include "mex.h"
 #include "class_handle.hpp"
 #include "iostream"
 #include "bulletWorld.h"
@@ -47,12 +46,9 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     return;
   }
 
+
   // Get the class instance pointer from the second input
   BulletWorld *bullet_sim_ = convertMat2Ptr<BulletWorld>(prhs[1]);
-
-  if (!strcmp("InitSimulation", cmd)) {
-    return;
-  }
 
   /*********************************************************************
    *
@@ -62,6 +58,11 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 
   // AddTerrain
   if (!strcmp("AddTerrain", cmd)) {
+    mexPrintf("did the terrain thing!");
+
+
+    
+    /// TODO: DEBUG. THESE ARE NOT POPULATING...
     double* row_count = mxGetPr(prhs[2]);
     double* col_count = mxGetPr(prhs[3]);
     double* grad = mxGetPr(prhs[4]);
@@ -71,8 +72,14 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     double* Y = mxGetPr(prhs[8]);
     double* Z = mxGetPr(prhs[9]);
     double* normal = mxGetPr(prhs[10]);
+    mexPrintf("did the terrain thing!");
     int id = bullet_sim_->AddTerrain(int(*row_count), int(*col_count),
                                      *grad, *min_ht, *max_ht, X, Y, Z, normal);
+    mexPrintf("did the terrain thing!");
+
+
+
+    mexPrintf("%d", id);
     double d_id = (double)id;
     //Return the index, so that we can look up the position later.
     plhs[0] = mxCreateDoubleMatrix(1, 1, mxREAL);
