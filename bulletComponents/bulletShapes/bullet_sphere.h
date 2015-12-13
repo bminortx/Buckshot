@@ -28,6 +28,8 @@ public:
     bulletBody->setContactProcessingThreshold( dContactProcessingThreshold );
     bulletBody->setRestitution( dRestitution );
     SetPose(position, rotation);
+    //// IF OPENGL
+    set_vertex_data();
   }
 
   /// OpenGL stuff

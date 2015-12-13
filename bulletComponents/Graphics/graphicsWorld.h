@@ -18,6 +18,7 @@
 #include <GL/glut.h>
 #endif
 
+/// OpenGL Headers
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 #include <glm/vec3.hpp> // glm::vec3
@@ -25,6 +26,13 @@
 #include <glm/mat4x4.hpp> // glm::mat4
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+// All of our shapes to draw
+#include "../bulletShapes/bullet_cube.h"
+#include "../bulletShapes/bullet_cylinder.h"
+#include "../bulletShapes/bullet_heightmap.h"
+#include "../bulletShapes/bullet_sphere.h"
+#include "../bulletShapes/bullet_vehicle.h"
+// Std lib
 #include <cmath>
 #include <stdio.h>
 #include <vector>
@@ -179,6 +187,9 @@ static int CreateShaderProg(const char* VertFile,const char* FragFile)
 ////// Most of these are used to Init OpenGL
 
 inline void gwDisplay(){
+  glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+  glEnable(GL_DEPTH_TEST);
+  glLoadIdentity();
 
   // TAKEN FROM HW 4
   const double len=2.0;  //  Length of axes
@@ -190,55 +201,35 @@ inline void gwDisplay(){
                        light_elevation_,
                        (float)(2*std::sin(light_angle_)),
                        1.0};
-
-  //  Erase The Window and the depth buffer
-  glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-
-  //  Enable Z-buffering in OpenGL
-  glEnable(GL_DEPTH_TEST);
-
-  //  Undo previous transformations
-  glLoadIdentity();
   //  Perspective - set eye position
   float Ex = -2 * world_dim_ * std::sin(view_angle_) * std::cos(view_elevation_);
   float Ey = +2 * world_dim_ * std::sin(view_elevation_);
   float Ez = +2 * world_dim_ * std::cos(view_angle_) * std::cos(view_elevation_);
   gluLookAt(Ex,Ey,Ez , 0,0,0 , 0, std::cos(view_elevation_),0);
-  //  Draw light position as sphere
-  //  This uses the fixed pipeline
   glColor3f(1,1,1);
   glPushMatrix();
   glTranslated(Position[0],Position[1],Position[2]);
   glutSolidSphere(0.03,10,10);
   glPopMatrix();
 
-  // Use our shader_index_
+  // Use our Shader
   glUseProgram(shader_program_);
 
-  // Hand-calculate matrices based on project()
-  // ModelMatrix is set to Identity, so nothing needed there.
-  glm::mat4 ProjectionMatrix;
-  ProjectionMatrix = glm::ortho<float>(-aspect_ratio_*world_dim_, aspect_ratio_*world_dim_, -world_dim_, world_dim_, -4 * world_dim_,
-                                       4 * world_dim_);
+  /// Define our view matrices
   int loc;
-  ProjectionMatrix = glm::perspective<float>(fov_, aspect_ratio_, world_dim_/16, world_dim_*16);
+  glm::mat4 ProjectionMatrix = glm::perspective<float>(fov_, aspect_ratio_,
+                                                       world_dim_/16,
+                                                       world_dim_*16);
   Ex = -2 * world_dim_ * std::sin(view_angle_)
        * std::cos(view_elevation_);
   Ey = +2 * world_dim_ * std::sin(view_elevation_);
   Ez = +2 * world_dim_ * std::cos(view_angle_) * std::cos(view_elevation_);
-  glm::mat4 ViewMatrix = glm::lookAt(glm::vec3(Ex, Ey, Ez),
-                                     glm::vec3(0, 0, 0),
-                                     glm::vec3(0, std::cos(view_elevation_), 0));
+  glm::mat4 ViewMatrix = glm::lookAt(
+      glm::vec3(Ex, Ey, Ez),
+      glm::vec3(0, 0, 0),
+      glm::vec3(0, std::cos(view_elevation_), 0));
   glm::mat4 NormalMatrix = glm::transpose(glm::inverse(ViewMatrix));
-  loc = glGetUniformLocation(shader_program_, "ModelViewMatrix");
-  if (loc>=0) glUniformMatrix4fv(loc, 1, GL_FALSE,
-                                 glm::value_ptr(ViewMatrix));
-  loc = glGetUniformLocation(shader_program_, "ProjectionMatrix");
-  if (loc>=0) glUniformMatrix4fv(loc, 1, GL_FALSE,
-                                 glm::value_ptr(ProjectionMatrix));
-  loc = glGetUniformLocation(shader_program_, "NormalMatrix");
-  if (loc>=0) glUniformMatrix4fv(loc, 1, GL_FALSE,
-                                 glm::value_ptr(NormalMatrix));
+
   loc = glGetUniformLocation(shader_program_, "light_position");
   if (loc>=0) glUniform3fv(loc, 1, Position);
   loc = glGetUniformLocation(shader_program_, "light_ambient");
@@ -247,38 +238,61 @@ inline void gwDisplay(){
   if (loc>=0) glUniform4fv(loc, 1, Diffuse);
   loc = glGetUniformLocation(shader_program_, "light_specular");
   if (loc>=0) glUniform4fv(loc, 1, Specular);
+  loc = glGetUniformLocation(shader_program_, "ProjectionMatrix");
+  if (loc>=0) glUniformMatrix4fv(loc, 1, GL_FALSE,
+                                 glm::value_ptr(ProjectionMatrix));
+  loc = glGetUniformLocation(shader_program_, "NormalMatrix");
+  if (loc>=0) glUniformMatrix4fv(loc, 1, GL_FALSE,
+                                 glm::value_ptr(NormalMatrix));
 
-  //  Select cube buffer
-  // glBindBuffer(GL_ARRAY_BUFFER, cube_buffer);
+  // FOR ALL OF OUR OBJECTS
+  // Hand-calculate View Matrices FOR EACH OBJECT
+  // Get transformation matrix from bullet
+  // Set to model matrix
+  int numModels = 1;
+  for (int i = 1; i < numModels; i++) {
+    glm::mat4 ModelMatrix = glm::translate(glm::mat4(1.0f),
+                                           glm::vec3(-5.0f, 0.0f, 0.0f));
 
-  glEnableVertexAttribArray(0);
-  glEnableVertexAttribArray(1);
-  glEnableVertexAttribArray(2);
-  glEnableVertexAttribArray(3);
-  //   Attribute 0: vertex coordinate (vec4) at offset 0
-  glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 12*sizeof(float),
-                        (void*)0);
-  //   Attribute 1:  vertex normal (vec3) offset 4 floats
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 12*sizeof(float),
-                        (void*)(4*sizeof(float)));
-  //   Attribute 2:  vertex color (vec3) offset 7 floats
-  glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 12*sizeof(float),
-                        (void*)(7*sizeof(float)));
-  //   Attribute 3:  vertex texture (vec2) offset 10 floats
-  glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 12*sizeof(float),
-                        (void*)(10*sizeof(float)));
+    loc = glGetUniformLocation(shader_program_, "ModelViewMatrix");
+    if (loc>=0) glUniformMatrix4fv(loc, 1, GL_FALSE,
+                                   glm::value_ptr(ViewMatrix * ModelMatrix));
 
-  // Draw the cube
-  // glDrawArrays(GL_TRIANGLES,0,cube_size);
+    /////////
+    // DRAWING OUR SHAPES
+    //  Select cube buffer
+    // glBindBuffer(GL_ARRAY_BUFFER, cube_buffer);
 
-  //  Disable vertex arrays
-  glDisableVertexAttribArray(0);
-  glDisableVertexAttribArray(1);
-  glDisableVertexAttribArray(2);
-  glDisableVertexAttribArray(3);
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
+    glEnableVertexAttribArray(3);
+    //   Attribute 0: vertex coordinate (vec4) at offset 0
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 12*sizeof(float),
+                          (void*)0);
+    //   Attribute 1:  vertex normal (vec3) offset 4 floats
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 12*sizeof(float),
+                          (void*)(4*sizeof(float)));
+    //   Attribute 2:  vertex color (vec3) offset 7 floats
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 12*sizeof(float),
+                          (void*)(7*sizeof(float)));
+    //   Attribute 3:  vertex texture (vec2) offset 10 floats
+    glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 12*sizeof(float),
+                          (void*)(10*sizeof(float)));
 
-  //  Unbind this buffer
-  glBindBuffer(GL_ARRAY_BUFFER,0);
+    // Draw the cube
+    // glDrawArrays(GL_TRIANGLES,0,cube_size);
+
+    //  Disable vertex arrays
+    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
+    glDisableVertexAttribArray(2);
+    glDisableVertexAttribArray(3);
+
+    //  Unbind this buffer
+    glBindBuffer(GL_ARRAY_BUFFER,0);
+  }
+
 
   // Back to fixed pipeline
   glUseProgram(0);
