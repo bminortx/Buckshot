@@ -60,8 +60,6 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   if (!strcmp("AddTerrain", cmd)) {
     mexPrintf("did the terrain thing!");
 
-
-    
     /// TODO: DEBUG. THESE ARE NOT POPULATING...
     double* row_count = mxGetPr(prhs[2]);
     double* col_count = mxGetPr(prhs[3]);

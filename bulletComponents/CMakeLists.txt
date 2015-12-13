@@ -1,12 +1,12 @@
 project( SimLAB )
-set(PROJECT_NAME SimLAB)
+set(PROJECT_NAME Buckshot)
 set(LIBRARY_NAME ${PROJECT_NAME})
 cmake_minimum_required(VERSION 2.8)
 if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 OLD)
 endif(COMMAND cmake_policy)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules")
-
 
 ###################
 # USER INPUT
@@ -33,6 +33,8 @@ set(USER_INC
   ${OPENGL_INCLUDE_DIRS}
   ${GLUT_INCLUDE_DIRS}  
   ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/bulletShapes
+  ${CMAKE_CURRENT_SOURCE_DIR}/Graphics
   ${CMAKE_CURRENT_BINARY_DIR})
 set(LINK_DIRS
   /usr/local/lib/)
@@ -51,6 +53,27 @@ set(SRC
   buckshot.cpp
   bulletWorld.cpp
   Graphics/graphicsWorld.cpp)
+set(TEST_HDRS
+  bulletShapes/bullet_cube.h
+  bulletShapes/bullet_cylinder.h
+  bulletShapes/bullet_heightmap.h
+  bulletShapes/bullet_mesh.h
+  bulletShapes/bullet_shape.h
+  bulletShapes/bullet_sphere.h
+  bulletShapes/bullet_vehicle.h
+  bulletWorld.h
+  bulletEntities.h
+  Graphics/graphicsWorld.h)
+set(TEST_SRC
+  Graphics/graphicsWorld.cpp
+  bulletWorld.cpp)
+
+###################
+# BULLET TESTER
+###################
+
+add_executable(BulletTester maintest.cpp ${TEST_SRC} ${TEST_HDRS})
+target_link_libraries(BulletTester ${LINK_LIBS})
 
 ###################
 # MEX CONFIGURATION
@@ -98,7 +121,7 @@ message(${MEXLIBS})
 # MEX COMPILATION
 ###################
 
-set(MEX_COMMAND ${MEX} -f ${MEX_CONFIG} -silent -cxx -O ${MEXINCLUDES} -output
+set(MEX_COMMAND ${MEX} -f ${MEX_CONFIG} -silent -cxx -DBT_USE_DOUBLE_PRECISION -O ${MEXINCLUDES} -output
   ${MEX_OUTPUT} ${SRC} ${MEXLIBS} ${MEXLIBDIRS})
 
 add_custom_command(OUTPUT ${MEX_OUTPUT}
@@ -108,4 +131,3 @@ add_custom_command(OUTPUT ${MEX_OUTPUT}
 
 add_custom_target(${MEX_TARGET} ALL
   DEPENDS ${MEX_OUTPUT})
-
