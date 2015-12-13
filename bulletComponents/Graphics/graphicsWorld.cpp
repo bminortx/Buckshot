@@ -23,7 +23,6 @@ void GraphicsWorld::Init() {
   if (!GLEW_VERSION_4_3) Fatal("OpenGL 4.3 not supported\n");
 #endif
 
-  // TODO: CREATE FUNCTIONS
   //  Set callbacks
   glutDisplayFunc(gwDisplay);
   glutReshapeFunc(gwReshape);

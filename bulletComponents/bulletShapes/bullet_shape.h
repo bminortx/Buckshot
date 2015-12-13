@@ -57,6 +57,12 @@ class bullet_shape{
   std::vector<float> vertex_color_;
   int vertex_data_size_;
   unsigned int vertex_buffer_;  // Vertex buffer object
-  std::vector<float> vertex_data_;   // Vertex data
+  unsigned int color_buffer_;  // color buffer object
+  unsigned int normal_buffer_;  // normal buffer object
+  unsigned int texture_buffer_;  // texture buffer object
+  std::vector<float> vertex_data_;   // vertex data
+  std::vector<float> color_data_;   // color data
+  std::vector<float> normal_data_;   // normal data
+  std::vector<float> texture_data_;   // texture data
 
 };
