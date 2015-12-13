@@ -40,8 +40,6 @@ class BulletWorld {
   /*********************************************************************
    *ADDING OBJECTS
    **********************************************************************/
-  int AddShapeToWorld(bullet_shape& shape);
-
   int AddCube(double x_length, double y_length, double z_length,
                      double dMass, double dRestitution,
                      double* position, double* rotation);
@@ -75,7 +73,6 @@ class BulletWorld {
   /*********************************************************************
    *RAYCAST VEHICLE METHODS
    **********************************************************************/
-
   void CommandRaycastVehicle(double id, double steering_angle, double force);
   // Holds the steering, engine force, and current velocity
   double* GetRaycastMotionState(double id);
@@ -90,7 +87,6 @@ class BulletWorld {
    *CONSTRAINT METHODS
    *All of the constructors for our constraints.
    **********************************************************************/
-
   int AddConstraintToWorld(btTypedConstraint& constraint);
   int PointToPoint_one(double id_A, double* pivot_in_A);
   int PointToPoint_two(double id_A, double id_B,
@@ -116,29 +112,29 @@ class BulletWorld {
 
   std::vector<double> GetShapeTransform(double id);
   std::vector<double> GetConstraintTransform(double id);
-  std::vector< btTransform > GetVehiclePoses(Vehicle_Entity& Vehicle);
+  std::vector< btTransform > GetVehiclePoses(bullet_vehicle& Vehicle);
   double* GetVehicleTransform(double id);
 
  private:
   
   // Physics Bodies
-  std::map<int, Compound_Entity* > compounds_;
-  std::map<int, btTypedConstraint* > constraints_;
-  std::map<int, Shape_Entity* > shapes_;
-  std::map<int, Vehicle_Entity* > vehicles_;
+  std::vector<std::unique_ptr<Compound_Entity> > compounds_;
+  std::vector<std::unique_ptr<bullet_shape> > shapes_;
+  std::vector<std::unique_ptr<bullet_vehicle> > vehicles_;
+  std::vector<btTypedConstraint*> constraints_;
   
   // Physics Engine setup
   double timestep_;
   double gravity_;
   int max_sub_steps_;
   btDefaultCollisionConfiguration  collision_configuration_;
-  std::shared_ptr<btCollisionDispatcher> bt_dispatcher_;
-  std::shared_ptr<btDbvtBroadphase> bt_broadphase_;
-  std::shared_ptr<btSequentialImpulseConstraintSolver> bt_solver_;
+  std::unique_ptr<btCollisionDispatcher> bt_dispatcher_;
+  std::unique_ptr<btDbvtBroadphase> bt_broadphase_;
+  std::unique_ptr<btSequentialImpulseConstraintSolver> bt_solver_;
   
   // Physics and Graphics worlds
   std::shared_ptr<btDiscreteDynamicsWorld> dynamics_world_;
-  std::shared_ptr<GraphicsWorld> graphics_world_;
+  std::unique_ptr<GraphicsWorld> graphics_world_;
 
 
 };
