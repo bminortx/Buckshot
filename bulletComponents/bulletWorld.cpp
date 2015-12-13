@@ -18,7 +18,7 @@ BulletWorld::BulletWorld() {
                                   bt_solver_.get(),
                                   &collision_configuration_));
   dynamics_world_->setGravity(btVector3(0, 0, gravity_));
-  // graphics_world_ = std::make_shared<GraphicsWorld>(GraphicsWorld());
+  graphics_world_ = std::shared_ptr<GraphicsWorld>(new GraphicsWorld());
 }
 
 BulletWorld::~BulletWorld() {}
@@ -255,15 +255,9 @@ void BulletWorld::ResetVehicle(double id, double* start_pose, double* start_rot)
  *All of the constructors for our constraints.
  **********************************************************************/
 
-/////////////////
-/////////////////
-/// TODO: FIX CONSTRAINTS
-/////////////////
-/////////////////
-
-inline int BulletWorld::AddConstraintToWorld(btTypedConstraint& constraint) {
+inline int BulletWorld::AddConstraintToWorld(btTypedConstraint* constraint) {
   int id = constraints_.size();
-  constraints_.push_back(&constraint);
+  constraints_.push_back(constraint);
   dynamics_world_->addConstraint(constraints_.at(id));
   return id;
 }
@@ -273,7 +267,8 @@ inline int BulletWorld::AddConstraintToWorld(btTypedConstraint& constraint) {
 int BulletWorld::PointToPoint_one(double id_A, double* pivot_in_A) {
   std::unique_ptr<bullet_shape>& Shape_A = shapes_.at(id_A);
   btVector3 pivot_A(pivot_in_A[0], pivot_in_A[1], pivot_in_A[2]);
-  btPoint2PointConstraint constraint(*Shape_A->rigidBodyPtr(), pivot_A);
+  btPoint2PointConstraint* constraint =
+      new btPoint2PointConstraint(*Shape_A->rigidBodyPtr(), pivot_A);
   return AddConstraintToWorld(constraint);
 }
 
@@ -283,9 +278,10 @@ int BulletWorld::PointToPoint_two(double id_A, double id_B,
   std::unique_ptr<bullet_shape>& Shape_B = shapes_.at(id_B);
   btVector3 pivot_A(pivot_in_A[0], pivot_in_A[1], pivot_in_A[2]);
   btVector3 pivot_B(pivot_in_B[0], pivot_in_B[1], pivot_in_B[2]);
-  btPoint2PointConstraint constraint(*Shape_A->rigidBodyPtr(),
-                                     *Shape_B->rigidBodyPtr(),
-                                     pivot_A, pivot_B);
+  btPoint2PointConstraint* constraint =
+      new btPoint2PointConstraint(*Shape_A->rigidBodyPtr(),
+                                  *Shape_B->rigidBodyPtr(),
+                                  pivot_A, pivot_B);
   return AddConstraintToWorld(constraint);
 }
 
@@ -315,7 +311,7 @@ int BulletWorld::Hinge_one_pivot(double id_A, double* pivot_in_A,
   btHingeConstraint* Hinge = new btHingeConstraint(*Shape_A->rigidBodyPtr(),
                                                   pivot_A, axis_A, true);
   Hinge->setLimit(limits[0], limits[1], limits[2], limits[3], limits[4]);
-  return AddConstraintToWorld(*Hinge);
+  return AddConstraintToWorld(Hinge);
 }
 
 int BulletWorld::Hinge_two_pivot(double id_A, double id_B,
@@ -328,12 +324,12 @@ int BulletWorld::Hinge_two_pivot(double id_A, double id_B,
   btVector3 axis_A(axis_in_A[0], axis_in_A[1], axis_in_A[2]);
   btVector3 pivot_B(pivot_in_B[0], pivot_in_B[1], pivot_in_B[2]);
   btVector3 axis_B(axis_in_B[0], axis_in_B[1], axis_in_B[2]);
-  btHingeConstraint Hinge(*Shape_A->rigidBodyPtr(),
-                          *Shape_B->rigidBodyPtr(),
-                          pivot_A, pivot_B,
-                          axis_A, axis_B,
-                          true);
-  Hinge.setLimit(limits[0], limits[1], limits[2], limits[3], limits[4]);
+  btHingeConstraint* Hinge = new btHingeConstraint(*Shape_A->rigidBodyPtr(),
+                                                   *Shape_B->rigidBodyPtr(),
+                                                   pivot_A, pivot_B,
+                                                   axis_A, axis_B,
+                                                   true);
+  Hinge->setLimit(limits[0], limits[1], limits[2], limits[3], limits[4]);
   return AddConstraintToWorld(Hinge);
 }
 
@@ -347,36 +343,42 @@ int BulletWorld::Hinge2(double id_A, double id_B, double* Anchor, double* Axis_1
   btVector3 btAnchor(Anchor[0], Anchor[1], Anchor[2]);
   btVector3 btAxis_1(Axis_1[0], Axis_1[1], Axis_1[2]);
   btVector3 btAxis_2(Axis_2[0], Axis_2[1], Axis_2[2]);
-  btHinge2Constraint Hinge2(*Shape_A->rigidBodyPtr(),
-                            *Shape_B->rigidBodyPtr(),
-                            btAnchor, btAxis_1, btAxis_2);
-  Hinge2.setUpperLimit(steering_angle);
-  Hinge2.setLowerLimit(steering_angle);
-  Hinge2.enableSpring(3, true);
-  Hinge2.setStiffness(3, stiffness);
-  Hinge2.setDamping(3, damping);
+  btHinge2Constraint* Hinge2 = new btHinge2Constraint(*Shape_A->rigidBodyPtr(),
+                                                      *Shape_B->rigidBodyPtr(),
+                                                      btAnchor, btAxis_1,
+                                                      btAxis_2);
+  Hinge2->setUpperLimit(steering_angle);
+  Hinge2->setLowerLimit(steering_angle);
+  Hinge2->enableSpring(3, true);
+  Hinge2->setStiffness(3, stiffness);
+  Hinge2->setDamping(3, damping);
   return AddConstraintToWorld(Hinge2);
 }
 
 ///////
 // Six DOF
+
+/////////
+//// TODO: DEBUG CONSTRAINT
+/////////
 int BulletWorld::SixDOF_one(double id_A, double* transform_A, double* limits) {
   std::unique_ptr<bullet_shape>& Shape_A = shapes_.at(id_A);
   btQuaternion quat_A(transform_A[3], transform_A[4],
                       transform_A[5], transform_A[6]);
   btVector3 pos_A(transform_A[0], transform_A[1], transform_A[2]);
   btTransform trans_A(quat_A, pos_A);
-  btGeneric6DofConstraint SixDOF(*Shape_A->rigidBodyPtr(),
-                                 trans_A,
-                                 true);
+  btGeneric6DofConstraint* SixDOF =
+      new btGeneric6DofConstraint(*Shape_A->rigidBodyPtr(),
+                                  trans_A,
+                                  true);
   btVector3 max_lin_limits(limits[0], limits[1],  limits[2]);
   btVector3 min_lin_limits(limits[3], limits[4],  limits[5]);
   btVector3 max_ang_limits(limits[6], limits[7],  limits[8]);
   btVector3 min_ang_limits(limits[9], limits[10], limits[11]);
-  SixDOF.setLinearLowerLimit(min_lin_limits);
-  SixDOF.setLinearUpperLimit(max_lin_limits);
-  SixDOF.setAngularLowerLimit(min_ang_limits);
-  SixDOF.setAngularUpperLimit(max_ang_limits);
+  SixDOF->setLinearLowerLimit(min_lin_limits);
+  SixDOF->setLinearUpperLimit(max_lin_limits);
+  SixDOF->setAngularLowerLimit(min_ang_limits);
+  SixDOF->setAngularUpperLimit(max_ang_limits);
   return AddConstraintToWorld(SixDOF);
 }
 

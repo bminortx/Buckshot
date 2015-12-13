@@ -35,22 +35,18 @@ Shapes{4}.SetPosition([-6, 8, 8]);
 %%% constraint.
 Constraints{1} = Hinge(Shapes{1}, [4, 0, 0], [0, 1, 0]);
 Constraints{1}.SetLimits(3, -3);
-Constraints{2} = SixDOF(Shapes{3}, Shapes{4}, ...
+Constraints{2} = SixDOF(Shapes{3}, Shapes{4}, ... 
                         [1, 1, 0, 1, 0, 1], [-1, 1, 0, -1, 0, -1]);
 Constraints{3} = PointToPoint(Shapes{3},[1, 1, 1]);
 
+
 %%%% ADD OUR OBJECTS TO BUCKSHOT
 BuckshotSim.AddTerrain(Map);
-disp('done')
 BuckshotSim.AddShapes(Shapes);
-disp('done')
 BuckshotSim.AddConstraints(Constraints);
-disp('done')
 
-% %%%% RUN THE GUI
+%%%% RUN THE GUI
 BuckshotSim.InitSimulation();
-disp('done')
 while(BuckshotSim.gui.quit==false), 
   BuckshotSim.RunSimulation;
 end
-disp('done')

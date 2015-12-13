@@ -87,7 +87,7 @@ class BulletWorld {
    *CONSTRAINT METHODS
    *All of the constructors for our constraints.
    **********************************************************************/
-  int AddConstraintToWorld(btTypedConstraint& constraint);
+  int AddConstraintToWorld(btTypedConstraint* constraint);
   int PointToPoint_one(double id_A, double* pivot_in_A);
   int PointToPoint_two(double id_A, double id_B,
                        double* pivot_in_A, double* pivot_in_B);
@@ -134,8 +134,6 @@ class BulletWorld {
   
   // Physics and Graphics worlds
   std::shared_ptr<btDiscreteDynamicsWorld> dynamics_world_;
-  std::unique_ptr<GraphicsWorld> graphics_world_;
-
-
+  std::shared_ptr<GraphicsWorld> graphics_world_;
 };
 
