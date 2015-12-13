@@ -381,15 +381,15 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
       plhs[1] = mxCreateDoubleMatrix(3, 3, mxREAL);
       double* position = mxGetPr(plhs[0]);
       double* rotation = mxGetPr(plhs[1]);
-      position = &pose[0];
-      rotation = &pose[3];
+      memcpy( position, &pose[0], sizeof( double ) * 3 );
+      memcpy( rotation, &pose[3], sizeof( double ) * 9 );
     }
     else if(!strcmp(type, "Constraint")){
       plhs[0] = mxCreateDoubleMatrix(1, 3, mxREAL);
       std::vector<double> pose = bullet_sim_->GetConstraintTransform(*id);
       double* position = mxGetPr(plhs[0]);
       //Position
-      position = &pose[0];
+      memcpy( position, &pose[0], sizeof( double ) * 3 );
     }
     else if(!strcmp(type, "RaycastVehicle")){
       plhs[0] = mxCreateDoubleMatrix(1, 3, mxREAL);
