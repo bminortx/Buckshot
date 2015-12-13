@@ -67,6 +67,8 @@ int main(int argc, char* argv[]) {
 
   i = world.Hinge_one_pivot(id, pivot, axis, limits);
 
+  
+
   while (1) {
     world.StepSimulation();
     std::vector<double> pose = world.GetShapeTransform(0);

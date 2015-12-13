@@ -1,3 +1,16 @@
+###################
+# USER INPUT
+# might have to change these, depending on your system.
+###################
+
+set(MEX /usr/local/MATLAB/R2015b/bin/mex)
+set(BULLET_PRECISION -DBT_USE_DOUBLE_PRECISION)
+set(CMAKE_BUILD_TYPE RELEASE)
+
+###################
+# Project boilerplate
+###################
+
 project( Buckshot )
 set(PROJECT_NAME Buckshot)
 set(LIBRARY_NAME ${PROJECT_NAME})
@@ -5,28 +18,21 @@ cmake_minimum_required(VERSION 2.8)
 if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 OLD)
 endif(COMMAND cmake_policy)
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules")
-
-###################
-# USER INPUT
-# might have to change these, depending on your system.
-###################
-
-set(MEX /usr/local/MATLAB/R2015b/bin/mex)
 
 ###################
 # LINK TO OUR LIBRARIES
 ###################
 find_package( Eigen3 REQUIRED )
 find_package( Bullet REQUIRED )
-
+add_definitions(${BULLET_PRECISION})
+add_definitions(-DBT_NO_PROFILE)
 # TODO: MAKE THIS NOT REQUIRED
 find_package( OpenGL )
 find_package( GLUT )
 
-add_definitions(-DBT_USE_DOUBLE_PRECISION)
-add_definitions(-DBT_NO_PROFILE)
 set(USER_INC
   ${EIGEN3_INCLUDE_DIRS}
   ${BULLET_INCLUDE_DIR}
@@ -121,7 +127,7 @@ message(${MEXLIBS})
 # MEX COMPILATION
 ###################
 
-set(MEX_COMMAND ${MEX} -f ${MEX_CONFIG} -silent -cxx -DBT_USE_DOUBLE_PRECISION -O ${MEXINCLUDES} -output
+set(MEX_COMMAND ${MEX} -f ${MEX_CONFIG} -silent -cxx ${BULLET_PRECISION} -O ${MEXINCLUDES} -output
   ${MEX_OUTPUT} ${SRC} ${MEXLIBS} ${MEXLIBDIRS})
 
 add_custom_command(OUTPUT ${MEX_OUTPUT}

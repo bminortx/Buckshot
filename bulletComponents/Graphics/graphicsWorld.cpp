@@ -32,7 +32,7 @@ void GraphicsWorld::Init() {
   glutIdleFunc(gwIdle);
 
   // Load our shader programs
-  shader_program_ = CreateShaderProg("gl430.vert","gl430.frag");
+  // shader_program_ = CreateShaderProg("gl430.vert","gl430.frag");
 }
 
 void GraphicsWorld::stepSimulation() {
