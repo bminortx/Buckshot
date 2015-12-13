@@ -13,18 +13,18 @@ class bullet_cube: public bullet_shape {
     vertex_color_ = {0.5, 0.5, 0.5};
     vertex_data_size_ = 36;
     btVector3 bounds = btVector3(x_length*.5, y_length*.5, z_length*.5);
-    bulletShape = new btBoxShape(bounds);
+    bulletShape = std::make_shared<btBoxShape>(bounds);
 
-    bulletMotionState = new btDefaultMotionState(btTransform::getIdentity());
+    bulletMotionState = std::make_shared<btDefaultMotionState>(btTransform::getIdentity());
     bool isDynamic = ( dMass != 0.f );
     btVector3 localInertia( 0, 0, 0 );
     if( isDynamic ){
       bulletShape->calculateLocalInertia( dMass, localInertia );
     }
 
-    btRigidBody::btRigidBodyConstructionInfo  cInfo(dMass, bulletMotionState,
-                                                    bulletShape, localInertia);
-    bulletBody = new btRigidBody(cInfo);
+    btRigidBody::btRigidBodyConstructionInfo  cInfo(dMass, bulletMotionState.get(),
+                                                    bulletShape.get(), localInertia);
+    bulletBody = std::make_shared<btRigidBody>(cInfo);
     //    double dContactProcessingThreshold = 0.1;
     //    bulletBody->setContactProcessingThreshold( dContactProcessingThreshold );
     bulletBody->setRestitution( dRestitution );

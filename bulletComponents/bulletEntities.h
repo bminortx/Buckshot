@@ -1,5 +1,4 @@
-#ifndef BULLET_ENTITIES_H
-#define BULLET_ENTITIES_H
+#pragma once
 
 #include <memory>
 #include <bullet/btBulletDynamicsCommon.h>
@@ -80,5 +79,3 @@ public:
   RigidBodyPtr rigidbody_;
   VehiclePtr vehicle_;
 };
-
-#endif //  BULLET_ENTITIES_H

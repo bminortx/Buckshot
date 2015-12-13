@@ -1,5 +1,4 @@
-#ifndef __MATLAB_BULLET_WRAPPER_
-#define __MATLAB_BULLET_WRAPPER_
+#pragma once
 
 /*
  * File:   matlab_bullet_wrapper.h
@@ -16,12 +15,12 @@
 #pragma GCC diagnostic ignored "-Wextra"
 #pragma GCC diagnostic pop
 
-#include "bulletEntities.h"
 #include "../bulletShapes/bullet_cube.h"
 #include "../bulletShapes/bullet_cylinder.h"
 #include "../bulletShapes/bullet_heightmap.h"
 #include "../bulletShapes/bullet_sphere.h"
 #include "../bulletShapes/bullet_vehicle.h"
+#include "bulletEntities.h"
 #include "../Graphics/graphicsWorld.h"
 #include <map>
 #include <vector>
@@ -36,11 +35,12 @@
 class BulletWorld {
  public:
   BulletWorld();
+  ~BulletWorld();
 
   /*********************************************************************
    *ADDING OBJECTS
    **********************************************************************/
-  int AddShapeToWorld(bullet_shape shape);
+  int AddShapeToWorld(bullet_shape& shape);
 
   int AddCube(double x_length, double y_length, double z_length,
                      double dMass, double dRestitution,
@@ -122,10 +122,10 @@ class BulletWorld {
  private:
   
   // Physics Bodies
-  std::map<int, Compound_Entity> compounds_;
-  std::map<int, btTypedConstraint*> constraints_;
-  std::map<int, Shape_Entity> shapes_;
-  std::map<int, Vehicle_Entity> vehicles_;
+  std::map<int, Compound_Entity* > compounds_;
+  std::map<int, btTypedConstraint* > constraints_;
+  std::map<int, Shape_Entity* > shapes_;
+  std::map<int, Vehicle_Entity* > vehicles_;
   
   // Physics Engine setup
   double timestep_;
@@ -143,4 +143,3 @@ class BulletWorld {
 
 };
 
-#endif

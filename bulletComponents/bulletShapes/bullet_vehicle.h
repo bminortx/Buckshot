@@ -1,10 +1,11 @@
 #ifndef BULLET_VEHICLE_H
 #define BULLET_VEHICLE_H
 
+#include <bullet_shape.h>
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/BulletCollision/CollisionShapes/btBoxShape.h>
 #include <bullet/LinearMath/btAlignedAllocator.h>
-#include "bullet/BulletDynamics/Vehicle/btRaycastVehicle.h"
+#include <bullet/BulletDynamics/Vehicle/btRaycastVehicle.h>
 
 /////////////////////////////////////////
 /// \brief The bullet_vehicle class
@@ -16,7 +17,7 @@
 /// BulletCarModel.cpp. Way to go, champ.
 /////////////////////////////////////////
 
-class bullet_vehicle{
+class bullet_vehicle : public bullet_shape {
 public:
 
   //constructor
@@ -28,7 +29,7 @@ public:
     ///////
     //Create our Collision Objects
     ///////
-    bulletShape = new btBoxShape(btVector3(parameters[WheelBase]/2,
+    bulletShape = std::make_shared<btBoxShape>(btVector3(parameters[WheelBase]/2,
                                            parameters[Width]/2,
                                            parameters[Height]/2));
     btTransform startTransform;
@@ -39,14 +40,14 @@ public:
     if (isDynamic){
       bulletShape->calculateLocalInertia(parameters[Mass],localInertia);
     }
-    bulletMotionState = new btDefaultMotionState(startTransform);
+    bulletMotionState = std::make_shared<btDefaultMotionState>(startTransform);
     btRigidBody::btRigidBodyConstructionInfo cInfo(parameters[Mass],
-                                                   bulletMotionState,
-                                                   bulletShape,
+                                                   bulletMotionState.get(),
+                                                   bulletShape.get(),
                                                    localInertia);
-    bulletBody = new btRigidBody(cInfo);
+    bulletBody = std::make_shared<btRigidBody>(cInfo);
     bulletBody->setContactProcessingThreshold(BT_LARGE_FLOAT);
-    m_pDynamicsWorld->addRigidBody( bulletBody );
+    m_pDynamicsWorld->addRigidBody( bulletBody.get() );
 
     ///////
     //Create our Vehicle
@@ -63,12 +64,12 @@ public:
     tuning.m_maxSuspensionTravelCm = parameters[MaxSuspTravel]*100.0;
     btVehicleRaycaster* VehicleRaycaster =
         new btDefaultVehicleRaycaster(m_pDynamicsWorld);
-    bulletVehicle = new btRaycastVehicle(tuning, bulletBody,
+    bulletVehicle = std::make_shared<btRaycastVehicle>(tuning, bulletBody.get(),
                                          VehicleRaycaster);
     // Never deactivate the vehicle
     bulletBody->forceActivationState(DISABLE_DEACTIVATION);
     bulletVehicle->setCoordinateSystem(1, 2, 0);
-    m_pDynamicsWorld->addAction( bulletVehicle );
+    m_pDynamicsWorld->addAction( bulletVehicle.get() );
 
     bool bIsFrontWheel=true;
     double con_length = parameters[WheelBase]/2;
@@ -131,29 +132,29 @@ public:
   ///////////////////////////
 
   ///getters
-  btCollisionShape* getBulletShapePtr(){
-    return bulletShape;
-  }
+  // btCollisionShape* getBulletShapePtr(){
+  //   return bulletShape;
+  // }
 
-  btRigidBody* getBulletBodyPtr(){
-    return bulletBody;
-  }
+  // btRigidBody* getBulletBodyPtr(){
+  //   return bulletBody;
+  // }
 
-  btDefaultMotionState* getBulletMotionStatePtr(){
-    return bulletMotionState;
-  }
+  // btDefaultMotionState* getBulletMotionStatePtr(){
+  //   return bulletMotionState;
+  // }
 
-  btRaycastVehicle* getBulletRaycastVehicle(){
+  VehiclePtr getBulletRaycastVehicle(){
     return bulletVehicle;
   }
 
 
 private:
   //A compound shape to hold all of our collision shapes.
-  btCollisionShape* bulletShape;
-  btRigidBody* bulletBody;
-  btDefaultMotionState* bulletMotionState;
-  btRaycastVehicle* bulletVehicle;
+  CollisionShapePtr bulletShape;
+  RigidBodyPtr bulletBody;
+  MotionStatePtr bulletMotionState;
+  VehiclePtr bulletVehicle;
 
 
   enum{

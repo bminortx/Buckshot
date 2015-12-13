@@ -1,5 +1,4 @@
-#ifndef BULLET_HEIGHTMAP_H
-#define BULLET_HEIGHTMAP_H
+#pragma once
 
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/BulletCollision/CollisionShapes/btTriangleMesh.h>
@@ -20,13 +19,13 @@ public:
                    double* normal){
     if(max_ht<=1){
       //Just make a flat plain
-      bulletShape = new btStaticPlaneShape(
+      bulletShape = std::make_shared<btStaticPlaneShape>(
             btVector3(normal[0], normal[1], normal[2]), 0);
-      bulletMotionState = new btDefaultMotionState(btTransform::getIdentity());
-      btRigidBody::btRigidBodyConstructionInfo cInfo(0, bulletMotionState,
-                                                     bulletShape,
+      bulletMotionState = std::make_shared<btDefaultMotionState>(btTransform::getIdentity());
+      btRigidBody::btRigidBodyConstructionInfo cInfo(0, bulletMotionState.get(),
+                                                     bulletShape.get(),
                                                      btVector3(0, 0, 0));
-      bulletBody = new btRigidBody(cInfo);
+      bulletBody = std::make_shared<btRigidBody>(cInfo);
     }
     else{
       //////////////
@@ -70,41 +69,16 @@ public:
                                          totalVerts,
                                          (btScalar*) &m_vertices[0].x(),
                                          vertStride);
-      /////////////
-      bulletShape = new btBvhTriangleMeshShape(m_indexVertexArrays, true);
-      bulletMotionState = new btDefaultMotionState(btTransform::getIdentity());
-      btRigidBody::btRigidBodyConstructionInfo cInfo(0, bulletMotionState,
-                                                     bulletShape,
-                                                   btVector3(0, 0, 0));
-      bulletBody = new btRigidBody(cInfo);
+      
+      bulletShape = std::make_shared<btBvhTriangleMeshShape>(m_indexVertexArrays, true);
+      bulletMotionState = std::make_shared<btDefaultMotionState>(btTransform::getIdentity());
+      btRigidBody::btRigidBodyConstructionInfo cInfo(0, bulletMotionState.get(),
+                                                     bulletShape.get(),
+                                                     btVector3(0, 0, 0));
+      bulletBody = std::make_shared<btRigidBody>(cInfo);
     }
   }
 
   void set_vertex_data() {}
 
-  //////////////////////////
-
-  ///getters
-  btCollisionShape* getBulletShapePtr(){
-    return bulletShape;
-  }
-
-  btRigidBody* getBulletBodyPtr(){
-    return bulletBody;
-  }
-
-  btDefaultMotionState* getBulletMotionStatePtr(){
-    return bulletMotionState;
-  }
-
-private:
-  btCollisionShape* bulletShape;
-  btRigidBody* bulletBody;
-  btDefaultMotionState* bulletMotionState;
-
 };
-
-
-
-
-#endif // BULLET_HEIGHTMAP_H

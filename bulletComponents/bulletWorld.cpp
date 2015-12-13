@@ -22,21 +22,19 @@ BulletWorld::BulletWorld() {
   // graphics_world_ = std::make_shared<GraphicsWorld>(GraphicsWorld());
 }
 
+BulletWorld::~BulletWorld() {}
+
 /*********************************************************************
  *ADDING OBJECTS
  **********************************************************************/
 
-int BulletWorld::AddShapeToWorld(bullet_shape shape) {
-  CollisionShapePtr pShape(shape.getBulletShapePtr());
-  MotionStatePtr pMotionState(shape.getBulletMotionStatePtr());
-  RigidBodyPtr body(shape.getBulletBodyPtr());
-  dynamics_world_->addRigidBody(body.get());
-  Shape_Entity pEntity;
-  pEntity.rigidbody_ = body;
-  pEntity.shape_ = pShape;
-  pEntity.motionstate_ = pMotionState;
+int BulletWorld::AddShapeToWorld(bullet_shape& shape) {
+  Shape_Entity pEntity(shape.getBulletShapePtr(),
+                       shape.getBulletMotionStatePtr(),
+                       shape.getBulletBodyPtr());
   int id = shapes_.size();
-  shapes_[id] = pEntity;
+  shapes_[id] = &pEntity;
+  dynamics_world_->addRigidBody(shapes_[id]->rigidbody_.get());
   return id;
 }
 
@@ -67,39 +65,33 @@ int BulletWorld::AddTerrain(int row_count, int col_count, double grad,
                             double* X, double *Y, double* Z,
                             double* normal) {
   // Let's see if that works... if not, try something else.
-  bullet_heightmap btTerrain(row_count, col_count, grad, min_ht,
-                             max_ht, X, Y, Z, normal);
+  bullet_heightmap btTerrain (row_count, col_count, grad, min_ht,
+                              max_ht, X, Y, Z, normal);
   return AddShapeToWorld(btTerrain);
 }
 
 int BulletWorld::AddCompound(double* Shape_ids, double* Con_ids,
                              const char* CompoundType) {
-  Compound_Entity pCompound;
-  pCompound.shapeid_ = Shape_ids;
-  pCompound.constraintid_ = Con_ids;
   if (!std::strcmp(CompoundType, "Vehicle")) {
-    pCompound.type_ = VEHICLE;
+    Compound_Entity pCompound(Shape_ids, Con_ids, VEHICLE);
+    int id = compounds_.size();
+    compounds_[id] = &pCompound;
+    return id;
   }
-  int id = compounds_.size();
-  compounds_[id] = pCompound;
-  return id;
+  return -1;
 }
 
 int BulletWorld::AddRaycastVehicle(double* parameters, double* position,
                                    double* rotation) {
   bullet_vehicle btRayVehicle(parameters, position, rotation,
                               dynamics_world_.get());
-  CollisionShapePtr pShape(btRayVehicle.getBulletShapePtr());
-  MotionStatePtr pMotionState(btRayVehicle.getBulletMotionStatePtr());
+  CollisionShapePtr shape(btRayVehicle.getBulletShapePtr());
+  MotionStatePtr motionstate(btRayVehicle.getBulletMotionStatePtr());
   RigidBodyPtr body(btRayVehicle.getBulletBodyPtr());
   VehiclePtr vehicle(btRayVehicle.getBulletRaycastVehicle());
-  Vehicle_Entity pEntity;
-  pEntity.rigidbody_ = body;
-  pEntity.shape_ = pShape;
-  pEntity.motionstate_ = pMotionState;
-  pEntity.vehicle_ = vehicle;
+  Vehicle_Entity pEntity(shape, motionstate, body, vehicle);
   int id = vehicles_.size();
-  vehicles_[id] = pEntity;
+  vehicles_[id] = &pEntity;
   return id;
 }
 
@@ -116,16 +108,16 @@ void BulletWorld::StepSimulation() {
  **********************************************************************/
 
 void BulletWorld::CommandVehicle(double id, double steering_angle, double force) {
-  Compound_Entity Vehicle = compounds_[id];
-  double* Shape_ids = Vehicle.shapeid_;
-  double* Con_ids = Vehicle.constraintid_;
+  Compound_Entity* Vehicle = compounds_[id];
+  double* Shape_ids = Vehicle->shapeid_;
+  double* Con_ids = Vehicle->constraintid_;
   btHinge2Constraint* wheel_fl = static_cast<btHinge2Constraint*>(
       constraints_.at(int(Con_ids[0])));
   btHinge2Constraint* wheel_fr = static_cast<btHinge2Constraint*>(
       constraints_.at(int(Con_ids[1])));
-  Shape_Entity wheel_bl =
+  Shape_Entity* wheel_bl =
       shapes_.at(int(Shape_ids[3]));
-  Shape_Entity wheel_br =
+  Shape_Entity* wheel_br =
       shapes_.at(int(Shape_ids[4]));
   // Turn the front wheels. This requires manipulation of the constraints.
   wheel_fl->setUpperLimit(steering_angle);
@@ -135,8 +127,8 @@ void BulletWorld::CommandVehicle(double id, double steering_angle, double force)
   // Power to the back wheels. Requires torque on the back tires. They're
   // rotated the same way, so torque should be applied in the same direction
   btVector3 torque(0, 0, force);
-  wheel_bl.rigidbody_->applyTorque(torque);
-  wheel_br.rigidbody_->applyTorque(torque);
+  wheel_bl->rigidbody_->applyTorque(torque);
+  wheel_br->rigidbody_->applyTorque(torque);
 }
 
 /*********************************************************************
@@ -144,7 +136,7 @@ void BulletWorld::CommandVehicle(double id, double steering_angle, double force)
  **********************************************************************/
 
 void BulletWorld::CommandRaycastVehicle(double id, double steering_angle, double force) {
-  VehiclePtr Vehicle = vehicles_[id].vehicle_;
+  VehiclePtr Vehicle = vehicles_[id]->vehicle_;
   Vehicle->setSteeringValue(steering_angle, 0);
   Vehicle->setSteeringValue(steering_angle, 1);
   Vehicle->applyEngineForce(force, 2);
@@ -154,8 +146,8 @@ void BulletWorld::CommandRaycastVehicle(double id, double steering_angle, double
 // Holds the steering, engine force, and current velocity
 double* BulletWorld::GetRaycastMotionState(double id) {
   double* pose = new double[9];
-  VehiclePtr Vehicle = vehicles_[id].vehicle_;
-  RigidBodyPtr VehicleBody = vehicles_[id].rigidbody_;
+  VehiclePtr Vehicle = vehicles_[id]->vehicle_;
+  RigidBodyPtr VehicleBody = vehicles_[id]->rigidbody_;
   pose[0] = Vehicle->getSteeringValue(0);
   btWheelInfo wheel = Vehicle->getWheelInfo(2);
   pose[1] = wheel.m_engineForce;
@@ -171,12 +163,12 @@ double* BulletWorld::GetRaycastMotionState(double id) {
 
 double* BulletWorld::RaycastToGround(double id, double x, double y) {
   double* pose = new double[3];
-  VehiclePtr Vehicle = vehicles_[id].vehicle_;
+  VehiclePtr Vehicle = vehicles_[id]->vehicle_;
   //  Move our vehicle out of the way...
   btVector3 point(x+50, y+50, -100);
   btMatrix3x3 rot = Vehicle->getChassisWorldTransform().getBasis();
   btTransform bullet_trans(rot, point);
-  vehicles_[id].rigidbody_->setCenterOfMassTransform(bullet_trans);
+  vehicles_[id]->rigidbody_->setCenterOfMassTransform(bullet_trans);
   //  Now shoot our ray...
   btVector3 ray_start(x, y, 100);
   btVector3 ray_end(x, y, -100);
@@ -193,7 +185,7 @@ double* BulletWorld::RaycastToGround(double id, double x, double y) {
   }
   //  Now move our car!
   btTransform bullet_move(rot, hitpoint);
-  vehicles_[id].rigidbody_->setCenterOfMassTransform(bullet_move);
+  vehicles_[id]->rigidbody_->setCenterOfMassTransform(bullet_move);
 
   // Now make sure none of our wheels are in the ground.
   // Kind of a nasty oop, but keep it for now.
@@ -209,8 +201,7 @@ double* BulletWorld::RaycastToGround(double id, double x, double y) {
     // If we're still in the ground, lift us up!
     hitpoint.setZ(hitpoint[2]+.1);
     btTransform bullet_move(rot, hitpoint);
-    vehicles_[id].
-        rigidbody_->setCenterOfMassTransform(bullet_move);
+    vehicles_[id]->rigidbody_->setCenterOfMassTransform(bullet_move);
     if (hit!= -1) {
       break;
     }
@@ -234,7 +225,7 @@ double* BulletWorld::RaycastToGround(double id, double x, double y) {
 
 //  This just drops us off on the surface...
 int BulletWorld::OnTheGround(double id) {
-  VehiclePtr Vehicle = vehicles_[id].vehicle_;
+  VehiclePtr Vehicle = vehicles_[id]->vehicle_;
   int OnGround = 0;
   int hit = 0;
   for (int i = 0; i<4; i++) {
@@ -247,8 +238,8 @@ int BulletWorld::OnTheGround(double id) {
 }
 
 void BulletWorld::SetVehicleVels(double id, double* lin_vel, double* ang_vel) {
-  RigidBodyPtr VehicleBody = vehicles_[id].rigidbody_;
-  VehiclePtr Vehicle = vehicles_[id].vehicle_;
+  RigidBodyPtr VehicleBody = vehicles_[id]->rigidbody_;
+  VehiclePtr Vehicle = vehicles_[id]->vehicle_;
   btVector3 Lin(lin_vel[0], lin_vel[1], lin_vel[2]);
   btVector3 Ang(ang_vel[0], ang_vel[1], ang_vel[2]);
   VehicleBody->setLinearVelocity(Lin);
@@ -264,7 +255,7 @@ void BulletWorld::ResetVehicle(double id, double* start_pose, double* start_rot)
   btVector3 pose(start_pose[0], start_pose[1], start_pose[2]);
   btTransform bullet_trans(rot, pose);
   //  Reset our car to its initial state.
-  vehicles_[id].rigidbody_->setCenterOfMassTransform(bullet_trans);
+  vehicles_[id]->rigidbody_->setCenterOfMassTransform(bullet_trans);
 }
 
 /*********************************************************************
@@ -282,20 +273,20 @@ inline int BulletWorld::AddConstraintToWorld(btTypedConstraint& constraint) {
 ///////
 // Point-to-Point
 int BulletWorld::PointToPoint_one(double id_A, double* pivot_in_A) {
-  Shape_Entity Shape_A = shapes_.at(id_A);
+  Shape_Entity* Shape_A = shapes_.at(id_A);
   btVector3 pivot_A(pivot_in_A[0], pivot_in_A[1], pivot_in_A[2]);
-  btPoint2PointConstraint constraint(*Shape_A.rigidbody_, pivot_A);
+  btPoint2PointConstraint constraint(*Shape_A->rigidbody_, pivot_A);
   return AddConstraintToWorld(constraint);
 }
 
 int BulletWorld::PointToPoint_two(double id_A, double id_B,
                                   double* pivot_in_A, double* pivot_in_B) {
-  Shape_Entity Shape_A = shapes_.at(id_A);
-  Shape_Entity Shape_B = shapes_.at(id_B);
+  Shape_Entity* Shape_A = shapes_.at(id_A);
+  Shape_Entity* Shape_B = shapes_.at(id_B);
   btVector3 pivot_A(pivot_in_A[0], pivot_in_A[1], pivot_in_A[2]);
   btVector3 pivot_B(pivot_in_B[0], pivot_in_B[1], pivot_in_B[2]);
-  btPoint2PointConstraint constraint(*Shape_A.rigidbody_,
-                                     *Shape_B.rigidbody_,
+  btPoint2PointConstraint constraint(*Shape_A->rigidbody_,
+                                     *Shape_B->rigidbody_,
                                      pivot_A, pivot_B);
   return AddConstraintToWorld(constraint);
 }
@@ -303,7 +294,7 @@ int BulletWorld::PointToPoint_two(double id_A, double id_B,
 ///////
 // Hinge
 int BulletWorld::Hinge_one_transform(double id_A, double* transform_A, double* limits) {
-  Shape_Entity Shape_A = shapes_.at(id_A);
+  Shape_Entity* Shape_A = shapes_.at(id_A);
   int id = 0;
   return id;
 }
@@ -311,19 +302,18 @@ int BulletWorld::Hinge_one_transform(double id_A, double* transform_A, double* l
 int BulletWorld::Hinge_two_transform(double id_A, double id_B,
                                      double* transform_A, double* transform_B,
                                      double* limits) {
-  Shape_Entity Shape_A = shapes_.at(id_A);
-  Shape_Entity Shape_B = shapes_.at(id_B);
+  Shape_Entity* Shape_A = shapes_.at(id_A);
+  Shape_Entity* Shape_B = shapes_.at(id_B);
   int id = 0;
   return id;
-
 }
 
 int BulletWorld::Hinge_one_pivot(double id_A, double* pivot_in_A,
                                  double* axis_in_A, double* limits) {
-  Shape_Entity Shape_A = shapes_.at(id_A);
+  Shape_Entity* Shape_A = shapes_.at(id_A);
   btVector3 pivot_A(pivot_in_A[0], pivot_in_A[1], pivot_in_A[2]);
   btVector3 axis_A(axis_in_A[0], axis_in_A[1], axis_in_A[2]);
-  btHingeConstraint Hinge(*Shape_A.rigidbody_, pivot_A,
+  btHingeConstraint Hinge(*Shape_A->rigidbody_, pivot_A,
                           axis_A, true);
   Hinge.setLimit(limits[0], limits[1], limits[2], limits[3], limits[4]);
   return AddConstraintToWorld(Hinge);
@@ -333,14 +323,14 @@ int BulletWorld::Hinge_two_pivot(double id_A, double id_B,
                                  double* pivot_in_A, double* pivot_in_B,
                                  double* axis_in_A, double* axis_in_B,
                                  double* limits) {
-  Shape_Entity Shape_A = shapes_.at(id_A);
-  Shape_Entity Shape_B = shapes_.at(id_B);
+  Shape_Entity* Shape_A = shapes_.at(id_A);
+  Shape_Entity* Shape_B = shapes_.at(id_B);
   btVector3 pivot_A(pivot_in_A[0], pivot_in_A[1], pivot_in_A[2]);
   btVector3 axis_A(axis_in_A[0], axis_in_A[1], axis_in_A[2]);
   btVector3 pivot_B(pivot_in_B[0], pivot_in_B[1], pivot_in_B[2]);
   btVector3 axis_B(axis_in_B[0], axis_in_B[1], axis_in_B[2]);
-  btHingeConstraint Hinge(*Shape_A.rigidbody_,
-                          *Shape_B.rigidbody_,
+  btHingeConstraint Hinge(*Shape_A->rigidbody_,
+                          *Shape_B->rigidbody_,
                           pivot_A, pivot_B,
                           axis_A, axis_B,
                           true);
@@ -353,13 +343,13 @@ int BulletWorld::Hinge_two_pivot(double id_A, double id_B,
 int BulletWorld::Hinge2(double id_A, double id_B, double* Anchor, double* Axis_1,
                         double* Axis_2, double damping, double stiffness,
                         double steering_angle) {
-  Shape_Entity Shape_A = shapes_.at(id_A);
-  Shape_Entity Shape_B = shapes_.at(id_B);
+  Shape_Entity* Shape_A = shapes_.at(id_A);
+  Shape_Entity* Shape_B = shapes_.at(id_B);
   btVector3 btAnchor(Anchor[0], Anchor[1], Anchor[2]);
   btVector3 btAxis_1(Axis_1[0], Axis_1[1], Axis_1[2]);
   btVector3 btAxis_2(Axis_2[0], Axis_2[1], Axis_2[2]);
-  btHinge2Constraint Hinge2(*Shape_A.rigidbody_,
-                            *Shape_B.rigidbody_,
+  btHinge2Constraint Hinge2(*Shape_A->rigidbody_,
+                            *Shape_B->rigidbody_,
                             btAnchor, btAxis_1, btAxis_2);
   Hinge2.setUpperLimit(steering_angle);
   Hinge2.setLowerLimit(steering_angle);
@@ -372,12 +362,12 @@ int BulletWorld::Hinge2(double id_A, double id_B, double* Anchor, double* Axis_1
 ///////
 // Six DOF
 int BulletWorld::SixDOF_one(double id_A, double* transform_A, double* limits) {
-  Shape_Entity Shape_A = shapes_.at(id_A);
+  Shape_Entity* Shape_A = shapes_.at(id_A);
   btQuaternion quat_A(transform_A[3], transform_A[4],
                       transform_A[5], transform_A[6]);
   btVector3 pos_A(transform_A[0], transform_A[1], transform_A[2]);
   btTransform trans_A(quat_A, pos_A);
-  btGeneric6DofConstraint SixDOF(*Shape_A.rigidbody_,
+  btGeneric6DofConstraint SixDOF(*Shape_A->rigidbody_,
                                  trans_A,
                                  true);
   btVector3 max_lin_limits(limits[0], limits[1],  limits[2]);
@@ -401,9 +391,9 @@ std::vector<double> BulletWorld::GetShapeTransform(double id) {
   // 2. The rotation matrix that's used in motion.
   int n_id = (int)id;
   // double* pose = new double[12];
-  Shape_Entity entity = shapes_.at(n_id);
+  Shape_Entity* entity = shapes_.at(n_id);
   btTransform world_transform =
-      entity.rigidbody_->getCenterOfMassTransform();
+      entity->rigidbody_->getCenterOfMassTransform();
   btMatrix3x3 rotation = world_transform.getBasis();
   btVector3 position = world_transform.getOrigin();
   std::vector<double> pose {
@@ -450,8 +440,8 @@ std::vector< btTransform > BulletWorld::GetVehiclePoses(Vehicle_Entity& Vehicle)
 
 double* BulletWorld::GetVehicleTransform(double id) {
   int n_id = (int)id;
-  Vehicle_Entity Vehicle = vehicles_.at(n_id);
-  std::vector<btTransform> Transforms = GetVehiclePoses(Vehicle);
+  Vehicle_Entity* Vehicle = vehicles_.at(n_id);
+  std::vector<btTransform> Transforms = GetVehiclePoses(*Vehicle);
   double* pose = new double[12*5];
   for (unsigned int i = 0; i<5; i++) {
     btMatrix3x3 rotation = Transforms.at(i).getBasis();
