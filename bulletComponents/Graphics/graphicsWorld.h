@@ -55,7 +55,7 @@ class GraphicsWorld {
   GraphicsWorld();
 
   void Init();
-  int AddShapes();
+  int AddShapes(std::unique_ptr<bullet_shape>& currentShape);
   int AddConstraints();
   void stepSimulation();
 };
@@ -251,9 +251,10 @@ inline void gwDisplay(){
   // Set to model matrix
   int numModels = 1;
   for (int i = 1; i < numModels; i++) {
+    // TODO: SET CURRENT SHAPE
+    bullet_shape* currentShape;
     glm::mat4 ModelMatrix = glm::translate(glm::mat4(1.0f),
                                            glm::vec3(-5.0f, 0.0f, 0.0f));
-
     loc = glGetUniformLocation(shader_program_, "ModelViewMatrix");
     if (loc>=0) glUniformMatrix4fv(loc, 1, GL_FALSE,
                                    glm::value_ptr(ViewMatrix * ModelMatrix));
@@ -262,26 +263,35 @@ inline void gwDisplay(){
     // DRAWING OUR SHAPES
     //  Select cube buffer
     // glBindBuffer(GL_ARRAY_BUFFER, cube_buffer);
+    // Vertex array
+    // DO THIS WHEN WE GET A NEW SHAPE
 
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-    glEnableVertexAttribArray(2);
-    glEnableVertexAttribArray(3);
-    //   Attribute 0: vertex coordinate (vec4) at offset 0
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 12*sizeof(float),
-                          (void*)0);
-    //   Attribute 1:  vertex normal (vec3) offset 4 floats
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 12*sizeof(float),
-                          (void*)(4*sizeof(float)));
-    //   Attribute 2:  vertex color (vec3) offset 7 floats
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 12*sizeof(float),
-                          (void*)(7*sizeof(float)));
-    //   Attribute 3:  vertex texture (vec2) offset 10 floats
-    glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 12*sizeof(float),
-                          (void*)(10*sizeof(float)));
+    int prog;
+    glGetIntegerv(GL_CURRENT_PROGRAM, &prog);
+    glBindBuffer(GL_ARRAY_BUFFER, currentShape->vertex_buffer_);
+    // NOT SURE THIS IS CORRECT...
+    int XYZW = glGetAttribLocation(prog,"XYZW");
+    glEnableVertexAttribArray(XYZW);
+    glVertexAttribPointer(XYZW, 4, GL_FLOAT, GL_FALSE, 0, 0);
+    // Color array
+    glBindBuffer(GL_ARRAY_BUFFER, currentShape->color_buffer_);
+
+    int RGB = glGetAttribLocation(prog,"RGB");
+    glEnableVertexAttribArray(RGB);
+    glVertexAttribPointer(RGB, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    // Normal array
+    glBindBuffer(GL_ARRAY_BUFFER, currentShape->normal_buffer_);
+    int NORMAL = glGetAttribLocation(prog,"NORMAL");
+    glEnableVertexAttribArray(NORMAL);
+    glVertexAttribPointer(NORMAL,3, GL_FLOAT, GL_FALSE, 0, 0);
+    // Texture array? Not yet, but it goes here
+    ///
+    ///
 
     // Draw the cube
-    // glDrawArrays(GL_TRIANGLES,0,cube_size);
+    // TODO: SET THIS BASED ON CURRENT SHAPE
+    int numVertices = currentShape->vertex_data_.size();
+    glDrawArrays(GL_TRIANGLES, 0, numVertices);
 
     //  Disable vertex arrays
     glDisableVertexAttribArray(0);

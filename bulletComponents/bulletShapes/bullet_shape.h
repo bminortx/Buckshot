@@ -49,13 +49,6 @@ class bullet_shape{
 
   virtual void set_vertex_data(){}
 
- protected:
-  btCollisionShape* bulletShape;
-  btRigidBody* bulletBody;
-  btMotionState* bulletMotionState;
-  // Graphics functions
-  std::vector<float> vertex_color_;
-  int vertex_data_size_;
   unsigned int vertex_buffer_;  // Vertex buffer object 
   unsigned int color_buffer_;  // color buffer object 
   unsigned int normal_buffer_;  // normal buffer object 
@@ -65,4 +58,11 @@ class bullet_shape{
   std::vector<float> normal_data_;   // normal data (.xyz)
   std::vector<float> texture_data_;   // texture data (.st)
 
+ protected:
+  btCollisionShape* bulletShape;
+  btRigidBody* bulletBody;
+  btMotionState* bulletMotionState;
+  // Graphics functions
+  std::vector<float> vertex_color_;
+  int vertex_data_size_;
 };
