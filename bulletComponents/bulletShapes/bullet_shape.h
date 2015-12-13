@@ -27,15 +27,15 @@ class bullet_shape{
   }
 
   // Getters
-  CollisionShapePtr getBulletShapePtr(){
+  CollisionShapePtr collisionShapePtr(){
     return bulletShape;
   }
 
-  RigidBodyPtr getBulletBodyPtr(){
+  RigidBodyPtr rigidBodyPtr(){
     return bulletBody;
   }
 
-  MotionStatePtr getBulletMotionStatePtr(){
+  MotionStatePtr motionStatePtr(){
     return bulletMotionState;
   }
 

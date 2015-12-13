@@ -12,17 +12,17 @@ public:
   //constructor
   bullet_cylinder(double dRadius, double dHeight, double dMass, double dRestitution,
                 double *position, double* rotation){
-    bulletShape = std::make_shared<btCylinderShapeZ>(btVector3(dRadius, dRadius, dHeight/2));
-    bulletMotionState = std::make_shared<btDefaultMotionState>(btTransform::getIdentity());
+    bulletShape = new btCylinderShapeZ(btVector3(dRadius, dRadius, dHeight/2));
+    bulletMotionState = new btDefaultMotionState(btTransform::getIdentity());
     bool isDynamic = ( dMass != 0.f );
     btVector3 localInertia( 0, 0, 0 );
     if( isDynamic ){
         bulletShape->calculateLocalInertia( dMass, localInertia );
     }
 
-    btRigidBody::btRigidBodyConstructionInfo  cInfo(dMass, bulletMotionState.get(),
-                                                    bulletShape.get(), localInertia);
-    bulletBody = std::make_shared<btRigidBody>(cInfo);
+    btRigidBody::btRigidBodyConstructionInfo  cInfo(dMass, bulletMotionState,
+                                                    bulletShape, localInertia);
+    bulletBody = new btRigidBody(cInfo);
     double dContactProcessingThreshold = 0.001;
     bulletBody->setContactProcessingThreshold( dContactProcessingThreshold );
     bulletBody->setRestitution( dRestitution );

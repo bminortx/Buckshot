@@ -19,13 +19,13 @@ public:
                    double* normal){
     if(max_ht<=1){
       //Just make a flat plain
-      bulletShape = std::make_shared<btStaticPlaneShape>(
+      bulletShape = new btStaticPlaneShape(
             btVector3(normal[0], normal[1], normal[2]), 0);
-      bulletMotionState = std::make_shared<btDefaultMotionState>(btTransform::getIdentity());
-      btRigidBody::btRigidBodyConstructionInfo cInfo(0, bulletMotionState.get(),
-                                                     bulletShape.get(),
+      bulletMotionState = new btDefaultMotionState(btTransform::getIdentity());
+      btRigidBody::btRigidBodyConstructionInfo cInfo(0, bulletMotionState,
+                                                     bulletShape,
                                                      btVector3(0, 0, 0));
-      bulletBody = std::make_shared<btRigidBody>(cInfo);
+      bulletBody = new btRigidBody(cInfo);
     }
     else{
       //////////////
@@ -70,12 +70,12 @@ public:
                                          (btScalar*) &m_vertices[0].x(),
                                          vertStride);
       
-      bulletShape = std::make_shared<btBvhTriangleMeshShape>(m_indexVertexArrays, true);
-      bulletMotionState = std::make_shared<btDefaultMotionState>(btTransform::getIdentity());
-      btRigidBody::btRigidBodyConstructionInfo cInfo(0, bulletMotionState.get(),
-                                                     bulletShape.get(),
+      bulletShape = new btBvhTriangleMeshShape(m_indexVertexArrays, true);
+      bulletMotionState = new btDefaultMotionState(btTransform::getIdentity());
+      btRigidBody::btRigidBodyConstructionInfo cInfo(0, bulletMotionState,
+                                                     bulletShape,
                                                      btVector3(0, 0, 0));
-      bulletBody = std::make_shared<btRigidBody>(cInfo);
+      bulletBody = new btRigidBody(cInfo);
     }
   }
 

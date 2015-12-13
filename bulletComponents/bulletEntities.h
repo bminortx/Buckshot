@@ -4,10 +4,10 @@
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/LinearMath/btAlignedAllocator.h>
 
-typedef std::shared_ptr<btCollisionShape> CollisionShapePtr;
-typedef std::shared_ptr<btMotionState> MotionStatePtr;
-typedef std::shared_ptr<btRigidBody> RigidBodyPtr;
-typedef std::shared_ptr<btRaycastVehicle> VehiclePtr;
+typedef btCollisionShape* CollisionShapePtr;
+typedef btMotionState* MotionStatePtr;
+typedef btRigidBody* RigidBodyPtr;
+typedef btRaycastVehicle* VehiclePtr;
 
 // Useless enum until we get more compounds
 enum Compounds{

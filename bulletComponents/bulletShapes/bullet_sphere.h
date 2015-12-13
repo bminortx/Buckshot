@@ -12,18 +12,18 @@ public:
   //constructor
   bullet_sphere(double dRadius, double dMass, double dRestitution,
                 double *position, double* rotation){
-    bulletShape = std::make_shared<btSphereShape>(dRadius);
+    bulletShape = new btSphereShape(dRadius);
 
-    bulletMotionState = std::make_shared<btDefaultMotionState>(btTransform::getIdentity());
+    bulletMotionState = new btDefaultMotionState(btTransform::getIdentity());
     bool isDynamic = ( dMass != 0.f );
     btVector3 localInertia( 0, 0, 0 );
     if( isDynamic ){
         bulletShape->calculateLocalInertia( dMass, localInertia );
     }
 
-    btRigidBody::btRigidBodyConstructionInfo  cInfo(dMass, bulletMotionState.get(),
-                                                    bulletShape.get(), localInertia);
-    bulletBody = std::make_shared<btRigidBody>(cInfo);
+    btRigidBody::btRigidBodyConstructionInfo  cInfo(dMass, bulletMotionState,
+                                                    bulletShape, localInertia);
+    bulletBody = new btRigidBody(cInfo);
     double dContactProcessingThreshold = 0.001;
     bulletBody->setContactProcessingThreshold( dContactProcessingThreshold );
     bulletBody->setRestitution( dRestitution );

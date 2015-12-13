@@ -29,7 +29,7 @@ public:
     ///////
     //Create our Collision Objects
     ///////
-    bulletShape = std::make_shared<btBoxShape>(btVector3(parameters[WheelBase]/2,
+    bulletShape = new btBoxShape(btVector3(parameters[WheelBase]/2,
                                            parameters[Width]/2,
                                            parameters[Height]/2));
     btTransform startTransform;
@@ -40,14 +40,14 @@ public:
     if (isDynamic){
       bulletShape->calculateLocalInertia(parameters[Mass],localInertia);
     }
-    bulletMotionState = std::make_shared<btDefaultMotionState>(startTransform);
+    bulletMotionState = new btDefaultMotionState(startTransform);
     btRigidBody::btRigidBodyConstructionInfo cInfo(parameters[Mass],
-                                                   bulletMotionState.get(),
-                                                   bulletShape.get(),
+                                                   bulletMotionState,
+                                                   bulletShape,
                                                    localInertia);
-    bulletBody = std::make_shared<btRigidBody>(cInfo);
+    bulletBody = new btRigidBody(cInfo);
     bulletBody->setContactProcessingThreshold(BT_LARGE_FLOAT);
-    m_pDynamicsWorld->addRigidBody( bulletBody.get() );
+    m_pDynamicsWorld->addRigidBody( bulletBody );
 
     ///////
     //Create our Vehicle
@@ -64,12 +64,12 @@ public:
     tuning.m_maxSuspensionTravelCm = parameters[MaxSuspTravel]*100.0;
     btVehicleRaycaster* VehicleRaycaster =
         new btDefaultVehicleRaycaster(m_pDynamicsWorld);
-    bulletVehicle = std::make_shared<btRaycastVehicle>(tuning, bulletBody.get(),
+    bulletVehicle = new btRaycastVehicle(tuning, bulletBody,
                                          VehicleRaycaster);
     // Never deactivate the vehicle
     bulletBody->forceActivationState(DISABLE_DEACTIVATION);
     bulletVehicle->setCoordinateSystem(1, 2, 0);
-    m_pDynamicsWorld->addAction( bulletVehicle.get() );
+    m_pDynamicsWorld->addAction( bulletVehicle );
 
     bool bIsFrontWheel=true;
     double con_length = parameters[WheelBase]/2;
@@ -144,7 +144,7 @@ public:
   //   return bulletMotionState;
   // }
 
-  VehiclePtr getBulletRaycastVehicle(){
+  VehiclePtr vehiclePtr(){
     return bulletVehicle;
   }
 
