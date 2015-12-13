@@ -132,29 +132,14 @@ public:
   ///////////////////////////
 
   ///getters
-  // btCollisionShape* getBulletShapePtr(){
-  //   return bulletShape;
-  // }
-
-  // btRigidBody* getBulletBodyPtr(){
-  //   return bulletBody;
-  // }
-
-  // btDefaultMotionState* getBulletMotionStatePtr(){
-  //   return bulletMotionState;
-  // }
-
-  VehiclePtr vehiclePtr(){
+  btRaycastVehicle* vehiclePtr(){
     return bulletVehicle;
   }
 
 
 private:
   //A compound shape to hold all of our collision shapes.
-  CollisionShapePtr bulletShape;
-  RigidBodyPtr bulletBody;
-  MotionStatePtr bulletMotionState;
-  VehiclePtr bulletVehicle;
+  btRaycastVehicle* bulletVehicle;
 
 
   enum{

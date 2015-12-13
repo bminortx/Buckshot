@@ -72,7 +72,7 @@ int BulletWorld::AddCompound(double* Shape_ids, double* Con_ids,
                              const char* CompoundType) {
   if (!std::strcmp(CompoundType, "Vehicle")) {
     int id = compounds_.size();
-    compounds_.emplace_back(new Compound_Entity(Shape_ids, Con_ids, VEHICLE));
+    compounds_.emplace_back(new Compound(Shape_ids, Con_ids, VEHICLE));
     return id;
   }
   return -1;
@@ -101,7 +101,7 @@ void BulletWorld::StepSimulation() {
 
 void BulletWorld::CommandVehicle(double id, double steering_angle,
                                  double force) {
-  std::unique_ptr<Compound_Entity>& Vehicle = compounds_[id];
+  std::unique_ptr<Compound>& Vehicle = compounds_[id];
   double* Shape_ids = Vehicle->shapeid_;
   double* Con_ids = Vehicle->constraintid_;
   btHinge2Constraint* wheel_fl = static_cast<btHinge2Constraint*>(
@@ -130,7 +130,7 @@ void BulletWorld::CommandVehicle(double id, double steering_angle,
 
 void BulletWorld::CommandRaycastVehicle(double id, double steering_angle,
                                         double force) {
-  VehiclePtr Vehicle = vehicles_[id]->vehiclePtr();
+  btRaycastVehicle* Vehicle = vehicles_[id]->vehiclePtr();
   Vehicle->setSteeringValue(steering_angle, 0);
   Vehicle->setSteeringValue(steering_angle, 1);
   Vehicle->applyEngineForce(force, 2);
@@ -140,8 +140,8 @@ void BulletWorld::CommandRaycastVehicle(double id, double steering_angle,
 // Holds the steering, engine force, and current velocity
 double* BulletWorld::GetRaycastMotionState(double id) {
   double* pose = new double[9];
-  VehiclePtr Vehicle = vehicles_[id]->vehiclePtr();
-  RigidBodyPtr VehicleBody = vehicles_[id]->rigidBodyPtr();
+  btRaycastVehicle* Vehicle = vehicles_[id]->vehiclePtr();
+  btRigidBody* VehicleBody = vehicles_[id]->rigidBodyPtr();
   pose[0] = Vehicle->getSteeringValue(0);
   btWheelInfo wheel = Vehicle->getWheelInfo(2);
   pose[1] = wheel.m_engineForce;
@@ -157,7 +157,7 @@ double* BulletWorld::GetRaycastMotionState(double id) {
 
 double* BulletWorld::RaycastToGround(double id, double x, double y) {
   double* pose = new double[3];
-  VehiclePtr Vehicle = vehicles_[id]->vehiclePtr();
+  btRaycastVehicle* Vehicle = vehicles_[id]->vehiclePtr();
   //  Move our vehicle out of the way...
   btVector3 point(x+50, y+50, -100);
   btMatrix3x3 rot = Vehicle->getChassisWorldTransform().getBasis();
@@ -219,7 +219,7 @@ double* BulletWorld::RaycastToGround(double id, double x, double y) {
 
 //  This just drops us off on the surface...
 int BulletWorld::OnTheGround(double id) {
-  VehiclePtr Vehicle = vehicles_[id]->vehiclePtr();
+  btRaycastVehicle* Vehicle = vehicles_[id]->vehiclePtr();
   int OnGround = 0;
   int hit = 0;
   for (int i = 0; i<4; i++) {
@@ -232,8 +232,8 @@ int BulletWorld::OnTheGround(double id) {
 }
 
 void BulletWorld::SetVehicleVels(double id, double* lin_vel, double* ang_vel) {
-  RigidBodyPtr VehicleBody = vehicles_[id]->rigidBodyPtr();
-  VehiclePtr Vehicle = vehicles_[id]->vehiclePtr();
+  btRigidBody* VehicleBody = vehicles_[id]->rigidBodyPtr();
+  btRaycastVehicle* Vehicle = vehicles_[id]->vehiclePtr();
   btVector3 Lin(lin_vel[0], lin_vel[1], lin_vel[2]);
   btVector3 Ang(ang_vel[0], ang_vel[1], ang_vel[2]);
   VehicleBody->setLinearVelocity(Lin);

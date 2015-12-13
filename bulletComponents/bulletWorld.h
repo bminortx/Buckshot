@@ -20,7 +20,7 @@
 #include "../bulletShapes/bullet_heightmap.h"
 #include "../bulletShapes/bullet_sphere.h"
 #include "../bulletShapes/bullet_vehicle.h"
-#include "bulletEntities.h"
+#include "Compound.h"
 #include "../Graphics/graphicsWorld.h"
 #include <map>
 #include <vector>
@@ -118,7 +118,7 @@ class BulletWorld {
  private:
   
   // Physics Bodies
-  std::vector<std::unique_ptr<Compound_Entity> > compounds_;
+  std::vector<std::unique_ptr<Compound> > compounds_;
   std::vector<std::unique_ptr<bullet_shape> > shapes_;
   std::vector<std::unique_ptr<bullet_vehicle> > vehicles_;
   std::vector<btTypedConstraint*> constraints_;

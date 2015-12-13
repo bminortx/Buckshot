@@ -8,7 +8,6 @@
 
 #include <memory>
 #include <vector>
-#include <bulletEntities.h>
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/LinearMath/btAlignedAllocator.h>
 
@@ -27,15 +26,15 @@ class bullet_shape{
   }
 
   // Getters
-  CollisionShapePtr collisionShapePtr(){
+  btCollisionShape* collisionShapePtr(){
     return bulletShape;
   }
 
-  RigidBodyPtr rigidBodyPtr(){
+  btRigidBody* rigidBodyPtr(){
     return bulletBody;
   }
 
-  MotionStatePtr motionStatePtr(){
+  btMotionState* motionStatePtr(){
     return bulletMotionState;
   }
 
@@ -51,9 +50,9 @@ class bullet_shape{
   virtual void set_vertex_data(){}
 
  protected:
-  CollisionShapePtr bulletShape;
-  RigidBodyPtr bulletBody;
-  MotionStatePtr bulletMotionState;
+  btCollisionShape* bulletShape;
+  btRigidBody* bulletBody;
+  btMotionState* bulletMotionState;
   // Graphics functions
   std::vector<float> vertex_color_;
   int vertex_data_size_;

@@ -68,7 +68,7 @@ set(TEST_HDRS
   bulletShapes/bullet_sphere.h
   bulletShapes/bullet_vehicle.h
   bulletWorld.h
-  bulletEntities.h
+  Compound.h
   Graphics/graphicsWorld.h)
 set(TEST_SRC
   Graphics/graphicsWorld.cpp
