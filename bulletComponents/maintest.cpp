@@ -63,8 +63,6 @@ int main(int argc, char* argv[]) {
   int i = world.AddTerrain(row_count, col_count, grad, min_ht, max_ht,
                            X, Y, Z, normal);
 
-  std::cout << X[0] << std::endl;
-  std::cout << position[0] << std::endl;
   i = world.AddSphere(radius, mass, restitution, position, rotation);
 
   i = world.Hinge_one_pivot(id, pivot, axis, limits);
@@ -76,9 +74,6 @@ int main(int argc, char* argv[]) {
     double position[3];
     //Position
     memcpy( position, &pose2[0], sizeof( double ) * 3 );
-    std::cout << pose[1] << std::endl;
-    std::cout << pose2[1] << std::endl;
-    std::cout << position[1] << std::endl;
   }
 
   return 0;
