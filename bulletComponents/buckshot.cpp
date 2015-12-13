@@ -58,7 +58,6 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 
   // AddTerrain
   if (!strcmp("AddTerrain", cmd)) {
-    mexPrintf("did the terrain thing!");
 
     /// TODO: DEBUG. THESE ARE NOT POPULATING...
     double* row_count = mxGetPr(prhs[2]);
@@ -70,14 +69,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     double* Y = mxGetPr(prhs[8]);
     double* Z = mxGetPr(prhs[9]);
     double* normal = mxGetPr(prhs[10]);
-    mexPrintf("did the terrain thing!");
     int id = bullet_sim_->AddTerrain(int(*row_count), int(*col_count),
                                      *grad, *min_ht, *max_ht, X, Y, Z, normal);
-    mexPrintf("did the terrain thing!");
-
-
-
-    mexPrintf("%d", id);
     double d_id = (double)id;
     //Return the index, so that we can look up the position later.
     plhs[0] = mxCreateDoubleMatrix(1, 1, mxREAL);
