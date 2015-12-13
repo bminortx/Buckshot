@@ -1,5 +1,4 @@
-#ifndef __MATLAB_BULLET_WRAPPER_
-#define __MATLAB_BULLET_WRAPPER_
+#pragma once
 
 /*
  * File:   matlab_bullet_wrapper.h
@@ -16,12 +15,13 @@
 #pragma GCC diagnostic ignored "-Wextra"
 #pragma GCC diagnostic pop
 
-#include "bulletEntities.h"
 #include "../bulletShapes/bullet_cube.h"
 #include "../bulletShapes/bullet_cylinder.h"
 #include "../bulletShapes/bullet_heightmap.h"
 #include "../bulletShapes/bullet_sphere.h"
 #include "../bulletShapes/bullet_vehicle.h"
+#include "bulletEntities.h"
+#include "../Graphics/graphicsWorld.h"
 #include <map>
 #include <vector>
 #include <memory>
@@ -35,12 +35,11 @@
 class BulletWorld {
  public:
   BulletWorld();
+  ~BulletWorld();
 
   /*********************************************************************
    *ADDING OBJECTS
    **********************************************************************/
-  int AddShapeToWorld(bullet_shape shape);
-
   int AddCube(double x_length, double y_length, double z_length,
                      double dMass, double dRestitution,
                      double* position, double* rotation);
@@ -74,7 +73,6 @@ class BulletWorld {
   /*********************************************************************
    *RAYCAST VEHICLE METHODS
    **********************************************************************/
-
   void CommandRaycastVehicle(double id, double steering_angle, double force);
   // Holds the steering, engine force, and current velocity
   double* GetRaycastMotionState(double id);
@@ -84,17 +82,12 @@ class BulletWorld {
   int OnTheGround(double id);
   void SetVehicleVels(double id, double* lin_vel, double* ang_vel);
   void ResetVehicle(double id, double* start_pose, double* start_rot);
-  double* SpeedSim(double id, double* start_pose, double* start_rot,
-                   double* start_lin_vel, double* start_ang_vel,
-                   double* forces, double* steering_angles,
-                   double command_length);
 
   /*********************************************************************
    *CONSTRAINT METHODS
    *All of the constructors for our constraints.
    **********************************************************************/
-
-  int AddConstraintToWorld(btTypedConstraint& constraint);
+  int AddConstraintToWorld(btTypedConstraint* constraint);
   int PointToPoint_one(double id_A, double* pivot_in_A);
   int PointToPoint_two(double id_A, double id_B,
                        double* pivot_in_A, double* pivot_in_B);
@@ -119,18 +112,28 @@ class BulletWorld {
 
   std::vector<double> GetShapeTransform(double id);
   std::vector<double> GetConstraintTransform(double id);
-  std::vector< btTransform > GetVehiclePoses(Vehicle_Entity& Vehicle);
+  std::vector< btTransform > GetVehiclePoses(bullet_vehicle& Vehicle);
   double* GetVehicleTransform(double id);
 
  private:
-  std::map<int, Compound_Entity> compounds_;
-  std::map<int, btTypedConstraint*> constraints_;
-  std::map<int, Shape_Entity> shapes_;
-  std::map<int, Vehicle_Entity> vehicles_;
-  std::shared_ptr<btDiscreteDynamicsWorld> dynamics_world_;
+  
+  // Physics Bodies
+  std::vector<std::unique_ptr<Compound_Entity> > compounds_;
+  std::vector<std::unique_ptr<bullet_shape> > shapes_;
+  std::vector<std::unique_ptr<bullet_vehicle> > vehicles_;
+  std::vector<btTypedConstraint*> constraints_;
+  
+  // Physics Engine setup
   double timestep_;
   double gravity_;
   int max_sub_steps_;
+  btDefaultCollisionConfiguration  collision_configuration_;
+  std::unique_ptr<btCollisionDispatcher> bt_dispatcher_;
+  std::unique_ptr<btDbvtBroadphase> bt_broadphase_;
+  std::unique_ptr<btSequentialImpulseConstraintSolver> bt_solver_;
+  
+  // Physics and Graphics worlds
+  std::shared_ptr<btDiscreteDynamicsWorld> dynamics_world_;
+  std::shared_ptr<GraphicsWorld> graphics_world_;
 };
 
-#endif

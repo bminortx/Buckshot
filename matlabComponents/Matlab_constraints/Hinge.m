@@ -41,7 +41,6 @@ classdef Hinge < Constraint
   %    Default values: [-1, 1, .9, .3, 1]
   %
   
-  
   properties (SetAccess = public)
     Shape_A;
     Shape_B;

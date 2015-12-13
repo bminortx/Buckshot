@@ -1,10 +1,11 @@
 #ifndef BULLET_VEHICLE_H
 #define BULLET_VEHICLE_H
 
+#include <bullet_shape.h>
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/BulletCollision/CollisionShapes/btBoxShape.h>
 #include <bullet/LinearMath/btAlignedAllocator.h>
-#include "bullet/BulletDynamics/Vehicle/btRaycastVehicle.h"
+#include <bullet/BulletDynamics/Vehicle/btRaycastVehicle.h>
 
 /////////////////////////////////////////
 /// \brief The bullet_vehicle class
@@ -16,7 +17,7 @@
 /// BulletCarModel.cpp. Way to go, champ.
 /////////////////////////////////////////
 
-class bullet_vehicle{
+class bullet_vehicle : public bullet_shape {
 public:
 
   //constructor
@@ -126,32 +127,34 @@ public:
     SetVehiclePose(position, rotation);
   }
 
+  void set_vertex_data() {}
+
   ///////////////////////////
 
   ///getters
-  btCollisionShape* getBulletShapePtr(){
-    return bulletShape;
-  }
+  // btCollisionShape* getBulletShapePtr(){
+  //   return bulletShape;
+  // }
 
-  btRigidBody* getBulletBodyPtr(){
-    return bulletBody;
-  }
+  // btRigidBody* getBulletBodyPtr(){
+  //   return bulletBody;
+  // }
 
-  btDefaultMotionState* getBulletMotionStatePtr(){
-    return bulletMotionState;
-  }
+  // btDefaultMotionState* getBulletMotionStatePtr(){
+  //   return bulletMotionState;
+  // }
 
-  btRaycastVehicle* getBulletRaycastVehicle(){
+  VehiclePtr vehiclePtr(){
     return bulletVehicle;
   }
 
 
 private:
   //A compound shape to hold all of our collision shapes.
-  btCollisionShape* bulletShape;
-  btRigidBody* bulletBody;
-  btDefaultMotionState* bulletMotionState;
-  btRaycastVehicle* bulletVehicle;
+  CollisionShapePtr bulletShape;
+  RigidBodyPtr bulletBody;
+  MotionStatePtr bulletMotionState;
+  VehiclePtr bulletVehicle;
 
 
   enum{

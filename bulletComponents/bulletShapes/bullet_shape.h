@@ -1,5 +1,4 @@
-#ifndef BULLET_SHAPE_H
-#define BULLET_SHAPE_H
+#pragma once
 
 /////////////////////////////////////////
 /// \brief The bullet_shape class
@@ -7,58 +6,58 @@
 /// Bullet Shapes.
 /////////////////////////////////////////
 
+#include <memory>
+#include <vector>
+#include <bulletEntities.h>
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/LinearMath/btAlignedAllocator.h>
 
 class bullet_shape{
-public:
-
-  //Methods
+ public:
 
   //Set the object to the pose specified through MATLAB.
   int SetPose(double* position, double* rotation){
-    btVector3 pos;
-    pos.setX(position[0]);
-    pos.setY(position[1]);
-    pos.setZ(position[2]);
-    btMatrix3x3 rot;
-    rot[0].setX(rotation[0]);
-    rot[0].setY(rotation[1]);
-    rot[0].setZ(rotation[2]);
-    rot[1].setX(rotation[3]);
-    rot[1].setY(rotation[4]);
-    rot[1].setZ(rotation[5]);
-    rot[2].setX(rotation[6]);
-    rot[2].setY(rotation[7]);
-    rot[2].setZ(rotation[8]);
+    btVector3 pos (position[0], position[1], position[2]);
+    btMatrix3x3 rot (rotation[0], rotation[1], rotation[3],
+                     rotation[3], rotation[4], rotation[5],
+                     rotation[6], rotation[7], rotation[8]);
     btTransform bullet_trans(rot, pos);
     bulletBody->setCenterOfMassTransform(bullet_trans);
     return 0;
   }
 
-  ////////////////////////////////////
-
-  ///getters
-  btCollisionShape* getBulletShapePtr(){
+  // Getters
+  CollisionShapePtr collisionShapePtr(){
     return bulletShape;
   }
 
-  btRigidBody* getBulletBodyPtr(){
+  RigidBodyPtr rigidBodyPtr(){
     return bulletBody;
   }
 
-  btDefaultMotionState* getBulletMotionStatePtr(){
+  MotionStatePtr motionStatePtr(){
     return bulletMotionState;
   }
 
+  // OpenGL functions
+  void set_vertex_buffer(int buffer_int) {
+    vertex_buffer_ = buffer_int;
+  }
 
-protected:
-  btCollisionShape* bulletShape;
-  btRigidBody* bulletBody;
-  btDefaultMotionState* bulletMotionState;
+  unsigned int vertex_buffer() {
+    return vertex_buffer_;
+  };
+
+  virtual void set_vertex_data(){}
+
+ protected:
+  CollisionShapePtr bulletShape;
+  RigidBodyPtr bulletBody;
+  MotionStatePtr bulletMotionState;
+  // Graphics functions
+  std::vector<float> vertex_color_;
+  int vertex_data_size_;
+  unsigned int vertex_buffer_;  // Vertex buffer object
+  std::vector<float> vertex_data_;   // Vertex data
 
 };
-
-
-
-#endif // BULLET_SHAPE_H

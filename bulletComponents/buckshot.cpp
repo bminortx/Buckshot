@@ -1,11 +1,9 @@
-
 /*********************************************************************
- * File:   bullet_interface_mex.cpp
+ * File:   buckshot.cpp
  * Author: bminortx
  * The MEX interface that connects Bullet functions with MATLAB calls
  **********************************************************************/
 
-#include "mex.h"
 #include "class_handle.hpp"
 #include "iostream"
 #include "bulletWorld.h"
@@ -48,12 +46,9 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     return;
   }
 
+
   // Get the class instance pointer from the second input
   BulletWorld *bullet_sim_ = convertMat2Ptr<BulletWorld>(prhs[1]);
-
-  if (!strcmp("InitSimulation", cmd)) {
-    return;
-  }
 
   /*********************************************************************
    *
@@ -63,6 +58,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 
   // AddTerrain
   if (!strcmp("AddTerrain", cmd)) {
+
+    /// TODO: DEBUG. THESE ARE NOT POPULATING...
     double* row_count = mxGetPr(prhs[2]);
     double* col_count = mxGetPr(prhs[3]);
     double* grad = mxGetPr(prhs[4]);
@@ -245,61 +242,6 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     return;
   }
 
-  ///////
-
-  if(!strcmp("SpeedSim", cmd)){
-    double* id = mxGetPr(prhs[2]);
-    double* start_pose = mxGetPr(prhs[3]);
-    double* start_rot = mxGetPr(prhs[4]);
-    double* start_lin_vel = mxGetPr(prhs[5]);
-    double* start_ang_vel = mxGetPr(prhs[6]);
-    double* forces = mxGetPr(prhs[7]);
-    double* steering_angles = mxGetPr(prhs[8]);
-    double* command_length = mxGetPr(prhs[9]);
-    plhs[0] = mxCreateDoubleMatrix(3, *command_length, mxREAL);
-    plhs[1] = mxCreateDoubleMatrix(1, 3, mxREAL);
-    plhs[2] = mxCreateDoubleMatrix(3, 3, mxREAL);
-    plhs[3] = mxCreateDoubleMatrix(1, 3, mxREAL);
-    plhs[4] = mxCreateDoubleMatrix(1, 3, mxREAL);
-    plhs[5] = mxCreateDoubleMatrix(1, 1, mxREAL);
-    double* states = bullet_sim_->SpeedSim(*id, start_pose, start_rot,
-                                           start_lin_vel, start_ang_vel,
-                                           forces, steering_angles,
-                                           *command_length);
-    double* xy = mxGetPr(plhs[0]);
-    double* end_pos = mxGetPr(plhs[1]);
-    double* end_rot = mxGetPr(plhs[2]);
-    double* end_lin_vel = mxGetPr(plhs[3]);
-    double* end_ang_vel = mxGetPr(plhs[4]);
-    double* grounded = mxGetPr(plhs[5]);
-    int limit = 3*(*command_length);
-    for(int i = 0; i < limit; i++){
-      xy[i] = states[i];
-    }
-    end_pos[0]=states[limit];
-    end_pos[1]=states[limit+1];
-    end_pos[2]=states[limit+2];
-    end_rot[0]=states[limit+3];
-    end_rot[1]=states[limit+4];
-    end_rot[2]=states[limit+5];
-    end_rot[3]=states[limit+6];
-    end_rot[4]=states[limit+7];
-    end_rot[5]=states[limit+8];
-    end_rot[6]=states[limit+9];
-    end_rot[7]=states[limit+10];
-    end_rot[8]=states[limit+11];
-    end_lin_vel[0]=states[limit+12];
-    end_lin_vel[1]=states[limit+13];
-    end_lin_vel[2]=states[limit+14];
-    end_ang_vel[0]=states[limit+15];
-    end_ang_vel[1]=states[limit+16];
-    end_ang_vel[2]=states[limit+17];
-    grounded[0]=states[limit+18];
-    return;
-  }
-
-  ///////
-
   if (!strcmp("ResetVehicle", cmd)){
     double* id = mxGetPr(prhs[2]);
     double* start_pose = mxGetPr(prhs[3]);
@@ -439,15 +381,15 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
       plhs[1] = mxCreateDoubleMatrix(3, 3, mxREAL);
       double* position = mxGetPr(plhs[0]);
       double* rotation = mxGetPr(plhs[1]);
-      position = &pose[0];
-      rotation = &pose[3];
+      memcpy( position, &pose[0], sizeof( double ) * 3 );
+      memcpy( rotation, &pose[3], sizeof( double ) * 9 );
     }
     else if(!strcmp(type, "Constraint")){
       plhs[0] = mxCreateDoubleMatrix(1, 3, mxREAL);
       std::vector<double> pose = bullet_sim_->GetConstraintTransform(*id);
       double* position = mxGetPr(plhs[0]);
       //Position
-      position = &pose[0];
+      memcpy( position, &pose[0], sizeof( double ) * 3 );
     }
     else if(!strcmp(type, "RaycastVehicle")){
       plhs[0] = mxCreateDoubleMatrix(1, 3, mxREAL);

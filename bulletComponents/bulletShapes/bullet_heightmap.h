@@ -1,5 +1,4 @@
-#ifndef BULLET_HEIGHTMAP_H
-#define BULLET_HEIGHTMAP_H
+#pragma once
 
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/BulletCollision/CollisionShapes/btTriangleMesh.h>
@@ -70,39 +69,16 @@ public:
                                          totalVerts,
                                          (btScalar*) &m_vertices[0].x(),
                                          vertStride);
-      /////////////
+      
       bulletShape = new btBvhTriangleMeshShape(m_indexVertexArrays, true);
       bulletMotionState = new btDefaultMotionState(btTransform::getIdentity());
       btRigidBody::btRigidBodyConstructionInfo cInfo(0, bulletMotionState,
                                                      bulletShape,
-                                                   btVector3(0, 0, 0));
+                                                     btVector3(0, 0, 0));
       bulletBody = new btRigidBody(cInfo);
     }
   }
 
-  //////////////////////////
-
-  ///getters
-  btCollisionShape* getBulletShapePtr(){
-    return bulletShape;
-  }
-
-  btRigidBody* getBulletBodyPtr(){
-    return bulletBody;
-  }
-
-  btDefaultMotionState* getBulletMotionStatePtr(){
-    return bulletMotionState;
-  }
-
-private:
-  btCollisionShape* bulletShape;
-  btRigidBody* bulletBody;
-  btDefaultMotionState* bulletMotionState;
+  void set_vertex_data() {}
 
 };
-
-
-
-
-#endif // BULLET_HEIGHTMAP_H
