@@ -49,7 +49,7 @@ int main(int argc, char* argv[]) {
   double radius = 3;
   double mass = 5;
   double restitution = 2;
-  double position[] = {10, 10, 8};
+  double position[] = {0, 0, 1};
   double rotation[] = {1, 0, 0,
                        0, 1, 0,
                        0, 0, 1};
@@ -66,7 +66,7 @@ int main(int argc, char* argv[]) {
   i = world.AddSphere(radius, mass, restitution, position, rotation);
 
   i = world.Hinge_one_pivot(id, pivot, axis, limits);
-  
+
   while (1) {
     world.StepSimulation();
     std::vector<double> pose = world.GetShapeTransform(0);

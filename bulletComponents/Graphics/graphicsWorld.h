@@ -48,6 +48,16 @@ class GraphicsWorld {
   void stepSimulation();
 };
 
+inline void glFatal(const char* format , ...)
+{
+  va_list args;
+  va_start(args,format);
+  vfprintf(stderr,format,args);
+  va_end(args);
+  exit(1);
+}
+
+
 // Borrowed from Advanced Graphics
 inline void Project(double fov,double asp,double dim)
 {
@@ -77,16 +87,16 @@ static char* ReadText(const char *file)
   char* buffer;
   //  Open file
   FILE* f = fopen(file,"rt");
-  // if (!f) Fatal("Cannot open text file %s\n",file);
+  if (!f) glFatal("Cannot open text file %s\n",file);
   //  Seek to end to determine size, then rewind
   fseek(f,0,SEEK_END);
   n = ftell(f);
   rewind(f);
   //  Allocate memory for the whole file
   buffer = (char*)malloc(n+1);
-  // if (!buffer) Fatal("Cannot allocate %d bytes for text file %s\n",n+1,file);
+  if (!buffer) glFatal("Cannot allocate %d bytes for text file %s\n",n+1,file);
   //  Snarf the file
-  // if (fread(buffer,n,1,f)!=1) Fatal("Cannot read %d bytes for text file %s\n",n,file);
+  if (fread(buffer,n,1,f)!=1) glFatal("Cannot read %d bytes for text file %s\n",n,file);
   buffer[n] = 0;
   //  Close and return
   fclose(f);
@@ -104,13 +114,13 @@ static void PrintShaderLog(int obj,const char* file)
   {
     int n=0;
     char* buffer = (char *)malloc(len);
-    // if (!buffer) Fatal("Cannot allocate %d bytes of text for shader log\n",len);
+    if (!buffer) glFatal("Cannot allocate %d bytes of text for shader log\n",len);
     glGetShaderInfoLog(obj,len,&n,buffer);
     fprintf(stderr,"%s:\n%s\n",file,buffer);
     free(buffer);
   }
   glGetShaderiv(obj,GL_COMPILE_STATUS,&len);
-  // if (!len) Fatal("Error compiling %s\n",file);
+  if (!len) glFatal("Error compiling %s\n",file);
 }
 
 //
@@ -124,12 +134,12 @@ static void PrintProgramLog(int obj)
   {
     int n=0;
     char* buffer = (char *)malloc(len);
-    // if (!buffer) Fatal("Cannot allocate %d bytes of text for program log\n",len);
+    if (!buffer) glFatal("Cannot allocate %d bytes of text for program log\n",len);
     glGetProgramInfoLog(obj,len,&n,buffer);
     fprintf(stderr,"%s\n",buffer);
   }
   glGetProgramiv(obj,GL_LINK_STATUS,&len);
-  // if (!len) Fatal("Error linking program\n");
+  if (!len) glFatal("Error linking program\n");
 }
 
 //
@@ -160,8 +170,8 @@ static int CreateShaderProg(const char* VertFile,const char* FragFile)
   int prog = glCreateProgram();
   //  Create and compile vertex shader
   if (VertFile) CreateShader(prog,GL_VERTEX_SHADER,VertFile);
-  //  Create and compile fragment shader
-  if (FragFile) CreateShader(prog,GL_FRAGMENT_SHADER,FragFile);
+  // //  Create and compile fragment shader
+  // if (FragFile) CreateShader(prog,GL_FRAGMENT_SHADER,FragFile);
   //  Link program
   glLinkProgram(prog);
   //  Check for errors

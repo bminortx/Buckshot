@@ -29,7 +29,7 @@
 
 static std::vector<std::unique_ptr<Compound> > compounds_;
 static std::vector<std::unique_ptr<bullet_shape> > shapes_;
-static std::vector<std::unique_ptr<bullet_vehicle> > vehicles_; 
+static std::vector<std::unique_ptr<bullet_vehicle> > vehicles_;
 static std::vector<btTypedConstraint*> constraints_;
 
 /// OPENGL STUFF
@@ -39,7 +39,7 @@ static int view_angle_ = 0;
 static int view_elevation_ = 0;
 static float fov_ = 55;
 static float aspect_ratio_ = 1;
-static float world_dim_ = 3.0;
+static float world_dim_ = 10.0;
 static int light_move_ = 1;
 static int light_angle_ = 90;
 static float light_elevation_ = 2;
@@ -130,7 +130,7 @@ class BulletWorld {
   double* GetVehicleTransform(double id);
 
  private:
-  
+
   // Physics Engine setup
   double timestep_;
   double gravity_;
@@ -139,7 +139,7 @@ class BulletWorld {
   std::unique_ptr<btCollisionDispatcher> bt_dispatcher_;
   std::unique_ptr<btDbvtBroadphase> bt_broadphase_;
   std::unique_ptr<btSequentialImpulseConstraintSolver> bt_solver_;
-  
+
   // Physics and Graphics worlds
   std::shared_ptr<btDiscreteDynamicsWorld> dynamics_world_;
   std::shared_ptr<GraphicsWorld> graphics_world_;
@@ -219,34 +219,38 @@ inline void gwDisplay(){
   for (int i = 1; i < shapes_.size(); i++) {
     // TODO: SET CURRENT SHAPE
     std::unique_ptr<bullet_shape>& currentShape = shapes_[i];
-    glm::mat4 ModelMatrix = glm::translate(glm::mat4(1.0f),
-                                           glm::vec3(-5.0f, 0.0f, 0.0f));
+    btTransform world_transform =
+      currentShape->rigidBodyPtr()->getCenterOfMassTransform();
+    btMatrix3x3 rotation = world_transform.getBasis();
+    btVector3 position = world_transform.getOrigin();
+    float pose[] = {
+      position[0], position[1], position[2],
+      rotation[0][0], rotation[1][0], rotation[2][0],
+      rotation[0][1], rotation[1][1], rotation[2][1],
+      rotation[0][2], rotation[1][2], rotation[2][2]
+    };
+
+    glm::mat4 ModelMatrix = glm::make_mat4(pose);
     loc = glGetUniformLocation(shader_program_, "ModelViewMatrix");
     if (loc>=0) glUniformMatrix4fv(loc, 1, GL_FALSE,
                                    glm::value_ptr(ViewMatrix * ModelMatrix));
 
     /////////
     // DRAWING OUR SHAPES
-    //  Select cube buffer
-    // glBindBuffer(GL_ARRAY_BUFFER, cube_buffer);
-    // Vertex array
-    // DO THIS WHEN WE GET A NEW SHAPE
-
     glBindBuffer(GL_ARRAY_BUFFER, currentShape->vertex_buffer_);
     int XYZW = glGetAttribLocation(shader_program_,"Vertex");
-    glEnableVertexAttribArray(XYZW);
     glVertexAttribPointer(XYZW, 4, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(XYZW);
     // Color array
     glBindBuffer(GL_ARRAY_BUFFER, currentShape->color_buffer_);
-
     int RGB = glGetAttribLocation(shader_program_,"Color");
-    glEnableVertexAttribArray(RGB);
     glVertexAttribPointer(RGB, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(RGB);
     // Normal array
     glBindBuffer(GL_ARRAY_BUFFER, currentShape->normal_buffer_);
     int NORMAL = glGetAttribLocation(shader_program_,"Normal");
-    glEnableVertexAttribArray(NORMAL);
     glVertexAttribPointer(NORMAL,3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(NORMAL);
     // Texture array? Not yet, but it goes here
     ///
     ///
@@ -257,15 +261,13 @@ inline void gwDisplay(){
     glDrawArrays(GL_TRIANGLES, 0, numVertices);
 
     //  Disable vertex arrays
-    glDisableVertexAttribArray(0);
-    glDisableVertexAttribArray(1);
-    glDisableVertexAttribArray(2);
-    glDisableVertexAttribArray(3);
+    glDisableVertexAttribArray(currentShape->vertex_buffer_);
+    glDisableVertexAttribArray(currentShape->color_buffer_);
+    glDisableVertexAttribArray(currentShape->normal_buffer_);
 
     //  Unbind this buffer
     glBindBuffer(GL_ARRAY_BUFFER,0);
   }
-
 
   // Back to fixed pipeline
   glUseProgram(0);
@@ -273,6 +275,7 @@ inline void gwDisplay(){
   //  Display parameters
   glWindowPos2i(5,5);
   //  Render the scene and make it visible
+  glClearColor(.2, .2, 1, 1);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glFlush();
   glutSwapBuffers();
