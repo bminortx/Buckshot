@@ -8,6 +8,11 @@
 #include <memory>
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/LinearMath/btAlignedAllocator.h>
+#include "../bulletShapes/bullet_cube.h"
+#include "../bulletShapes/bullet_cylinder.h"
+#include "../bulletShapes/bullet_heightmap.h"
+#include "../bulletShapes/bullet_sphere.h"
+#include "../bulletShapes/bullet_vehicle.h"
 
 // Useless enum until we get more compounds
 enum Compounds{
@@ -17,7 +22,7 @@ enum Compounds{
 class Compound {
 public:
   Compound() { }
-  
+
   Compound(double* Shape_ids, double* Con_ids, Compounds type) {
     shapeid_ = Shape_ids;
     constraintid_ = Con_ids;

@@ -53,6 +53,7 @@ include_directories(${USER_INC})
 link_directories(${USER_INC})
 set(HDRS
   class_handle.hpp
+	Compound.h
   bulletWorld.h
   Graphics/graphicsWorld.h)
 set(SRC
@@ -67,8 +68,8 @@ set(TEST_HDRS
   bulletShapes/bullet_shape.h
   bulletShapes/bullet_sphere.h
   bulletShapes/bullet_vehicle.h
+	Compound.h
   bulletWorld.h
-  Compound.h
   Graphics/graphicsWorld.h)
 set(TEST_SRC
   Graphics/graphicsWorld.cpp

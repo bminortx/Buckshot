@@ -334,6 +334,7 @@ classdef bullet_interface < handle
               case 'q'
                 this.gui.quit = true;
                 close(this.gui.fig);
+                return;
               case 'space'
                 this.gui.draw = ~this.gui.draw;
               case 'p'

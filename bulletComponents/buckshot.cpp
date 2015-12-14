@@ -478,17 +478,6 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     return;
   }
 
-  // Just get SceneGraph to draw everything
-
-  if (!strcmp("InitSceneGraph", cmd)) {
-
-  }
-
-
-  if (!strcmp("RunSceneGraph", cmd)) {
-
-  }
-
   /**************************/
 
   // Got here, so command not recognized

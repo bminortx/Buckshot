@@ -1,11 +1,8 @@
-#ifndef BULLET_VEHICLE_H
-#define BULLET_VEHICLE_H
+#pragma once
 
 #include <bullet_shape.h>
-#include <bullet/btBulletDynamicsCommon.h>
-#include <bullet/BulletCollision/CollisionShapes/btBoxShape.h>
-#include <bullet/LinearMath/btAlignedAllocator.h>
 #include <bullet/BulletDynamics/Vehicle/btRaycastVehicle.h>
+#include <bullet/BulletCollision/CollisionShapes/btBoxShape.h>
 
 /////////////////////////////////////////
 /// \brief The bullet_vehicle class
@@ -214,7 +211,3 @@ private:
 
 
 };
-
-
-
-#endif // BULLET_VEHICLE_H

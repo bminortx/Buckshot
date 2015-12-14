@@ -1,10 +1,7 @@
 #pragma once
 
 #include <bullet/btBulletDynamicsCommon.h>
-#include <bullet/BulletCollision/CollisionShapes/btTriangleMesh.h>
 #include <bullet/BulletCollision/CollisionShapes/btBvhTriangleMeshShape.h>
-#include <bullet/BulletCollision/CollisionShapes/btConvexTriangleMeshShape.h>
-#include <bullet/BulletCollision/CollisionShapes/btTriangleMeshShape.h>
 #include <bullet/BulletCollision/CollisionShapes/btStaticPlaneShape.h>
 #include <bullet/LinearMath/btAlignedAllocator.h>
 

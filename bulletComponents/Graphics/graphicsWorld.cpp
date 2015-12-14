@@ -11,6 +11,7 @@ int GraphicsWorld::AddShapes(std::unique_ptr<bullet_shape>& currentShape) {
   currentShape->color_buffer_ = buffers[1];
   currentShape->normal_buffer_ = buffers[2];
   glBindBuffer(GL_ARRAY_BUFFER, currentShape->vertex_buffer_);
+  // NOT SURE THIS BUFFER COPY IS CORRECT...
   glBufferData(GL_ARRAY_BUFFER, sizeof(currentShape->vertex_data_),
                &currentShape->vertex_data_[0], GL_STATIC_DRAW);
   glBindBuffer(GL_ARRAY_BUFFER, currentShape->color_buffer_);
@@ -22,7 +23,13 @@ int GraphicsWorld::AddShapes(std::unique_ptr<bullet_shape>& currentShape) {
   return 0;
 }
 
-void GraphicsWorld::Init() {
+void GraphicsWorld::Init(int& window,
+                         int& shader_program_,
+                         void (*gwDisplay)(),
+                         void (*gwReshape)(int, int),
+                         void (*gwSpecial)(int, int, int),
+                         void (*gwKeyboard)(unsigned char, int, int),
+                         void (*gwIdle)()) {
   char *argv [1];
   int argc = 1;
   argv[0] = strdup ("Buckshot");
@@ -45,7 +52,9 @@ void GraphicsWorld::Init() {
   glutIdleFunc(gwIdle);
 
   // Load our shader programs
-  // shader_program_ = CreateShaderProg("gl430.vert","gl430.frag");
+  shader_program_ = CreateShaderProg(
+      "/home/replica/GitMisc/personal_repos/Buckshot/bulletComponents/Graphics/gl430.vert",
+      "/home/replica/GitMisc/personal_repos/Buckshot/bulletComponents/Graphics/gl430.frag");
 }
 
 void GraphicsWorld::stepSimulation() {

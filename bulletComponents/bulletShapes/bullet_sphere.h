@@ -1,5 +1,4 @@
-#ifndef BULLET_SPHERE_H
-#define BULLET_SPHERE_H
+#pragma once
 
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/BulletCollision/CollisionShapes/btSphereShape.h>
@@ -90,6 +89,3 @@ public:
     createIsocahedron(vertex_data_, color_data_, normal_data_);
   }
 };
-
-
-#endif // BULLET_SPHERE_H

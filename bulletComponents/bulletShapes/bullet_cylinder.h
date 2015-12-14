@@ -1,5 +1,4 @@
-#ifndef BULLET_CYLINDER_H
-#define BULLET_CYLINDER_H
+#pragma once
 
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/BulletCollision/CollisionShapes/btCylinderShape.h>
@@ -32,5 +31,3 @@ public:
   void set_vertex_data() {}
 
 };
-
-#endif // BULLET_CYLINDER_H
