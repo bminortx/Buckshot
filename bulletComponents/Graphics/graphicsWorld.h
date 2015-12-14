@@ -43,7 +43,7 @@ class GraphicsWorld {
             void (*gwSpecial)(int, int, int),
             void (*gwKeyboard)(unsigned char, int, int),
             void (*gwIdle)());
-  int AddShapes(std::unique_ptr<bullet_shape>& currentShape);
+  int AddShape(std::unique_ptr<bullet_shape>& currentShape);
   int AddConstraints();
   void stepSimulation();
 };

@@ -232,21 +232,19 @@ inline void gwDisplay(){
     // Vertex array
     // DO THIS WHEN WE GET A NEW SHAPE
 
-    int prog;
-    glGetIntegerv(GL_CURRENT_PROGRAM, &prog);
     glBindBuffer(GL_ARRAY_BUFFER, currentShape->vertex_buffer_);
-    int XYZW = glGetAttribLocation(prog,"XYZW");
+    int XYZW = glGetAttribLocation(shader_program_,"Vertex");
     glEnableVertexAttribArray(XYZW);
     glVertexAttribPointer(XYZW, 4, GL_FLOAT, GL_FALSE, 0, 0);
     // Color array
     glBindBuffer(GL_ARRAY_BUFFER, currentShape->color_buffer_);
 
-    int RGB = glGetAttribLocation(prog,"RGB");
+    int RGB = glGetAttribLocation(shader_program_,"Color");
     glEnableVertexAttribArray(RGB);
     glVertexAttribPointer(RGB, 3, GL_FLOAT, GL_FALSE, 0, 0);
     // Normal array
     glBindBuffer(GL_ARRAY_BUFFER, currentShape->normal_buffer_);
-    int NORMAL = glGetAttribLocation(prog,"NORMAL");
+    int NORMAL = glGetAttribLocation(shader_program_,"Normal");
     glEnableVertexAttribArray(NORMAL);
     glVertexAttribPointer(NORMAL,3, GL_FLOAT, GL_FALSE, 0, 0);
     // Texture array? Not yet, but it goes here

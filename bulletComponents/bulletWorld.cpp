@@ -39,6 +39,7 @@ int BulletWorld::AddCube(double x_length, double y_length, double z_length,
   shapes_.emplace_back(new bullet_cube(x_length, y_length, z_length, dMass,
                                        dRestitution, position, rotation));
   dynamics_world_->addRigidBody(shapes_[id]->rigidBodyPtr());
+  graphics_world_->AddShape(shapes_[id]);
   return id;
 }
 
@@ -48,6 +49,7 @@ int BulletWorld::AddSphere(double radius, double dMass, double dRestitution,
   shapes_.emplace_back(
       new bullet_sphere(radius, dMass, dRestitution, position, rotation));
   dynamics_world_->addRigidBody(shapes_[id]->rigidBodyPtr());
+  graphics_world_->AddShape(shapes_[id]);
   return id;
 }
 
@@ -58,6 +60,7 @@ int BulletWorld::AddCylinder(double radius, double height, double dMass,
   shapes_.emplace_back(new bullet_cylinder(radius, height, dMass, dRestitution,
                                            position, rotation));
   dynamics_world_->addRigidBody(shapes_[id]->rigidBodyPtr());
+  graphics_world_->AddShape(shapes_[id]);
   return id;
 }
 
@@ -69,6 +72,7 @@ int BulletWorld::AddTerrain(int row_count, int col_count, double grad,
   shapes_.emplace_back(new bullet_heightmap (row_count, col_count, grad,
                                              min_ht, max_ht, X, Y, Z, normal));
   dynamics_world_->addRigidBody(shapes_[id]->rigidBodyPtr());
+  graphics_world_->AddShape(shapes_[id]);
   return id;
 }
 
@@ -77,6 +81,7 @@ int BulletWorld::AddCompound(double* Shape_ids, double* Con_ids,
   if (!std::strcmp(CompoundType, "Vehicle")) {
     int id = compounds_.size();
     compounds_.emplace_back(new Compound(Shape_ids, Con_ids, VEHICLE));
+    graphics_world_->AddShape(shapes_[id]);
     return id;
   }
   return -1;

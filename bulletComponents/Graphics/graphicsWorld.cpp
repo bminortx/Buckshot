@@ -4,7 +4,7 @@
 GraphicsWorld::GraphicsWorld() {
 }
 
-int GraphicsWorld::AddShapes(std::unique_ptr<bullet_shape>& currentShape) {
+int GraphicsWorld::AddShape(std::unique_ptr<bullet_shape>& currentShape) {
   unsigned int buffers[3];
   glGenBuffers(3, buffers);
   currentShape->vertex_buffer_ = buffers[0];
