@@ -21,6 +21,8 @@
 #include <vector>
 #include <memory>
 #include <iostream>
+#include <thread>
+#include <chrono>
 
 ///////////////////////////////////////////////////////
 /// The BulletWorld class
@@ -40,7 +42,7 @@ static int view_angle_ = 0;
 static int view_elevation_ = 0;
 static float fov_ = 55;
 static float aspect_ratio_ = 1;
-static float world_dim_ = 3.0;
+static float world_dim_ = 7.0;
 static int light_move_ = 1;
 static int light_angle_ = 90;
 static float light_elevation_ = 2;
@@ -275,7 +277,23 @@ inline void gwDisplay(){
   id = glGetUniformLocation(shader_program_,"CrystalSize");
   if (id>=0) glUniform1f(id,CrystalSize);
 
+  std::unique_ptr<bullet_shape>& currentShape = shapes_[1];
+  btTransform world_transform =
+      currentShape->rigidBodyPtr()->getCenterOfMassTransform();
+  btMatrix3x3 rotation = world_transform.getBasis();
+  btVector3 position = world_transform.getOrigin();
+  float pose[] = {
+    (float)rotation[0][0], (float)rotation[0][1], (float)rotation[0][2], 0,
+    (float)rotation[1][0], (float)rotation[1][1], (float)rotation[1][2], 0,
+    (float)rotation[2][0], (float)rotation[2][1], (float)rotation[2][2], 0,
+    (float)position[0], (float)position[1], (float)position[2], 1
+  };
+  glMultMatrixf(pose);
   Cube();
+  std::this_thread::sleep_for (std::chrono::milliseconds(50));
+
+
+
 
   // FOR ALL OF OUR OBJECTS
   // Hand-calculate View Matrices FOR EACH OBJECT
@@ -284,17 +302,7 @@ inline void gwDisplay(){
   // int numModels = 1;
   // for (int i = 1; i < shapes_.size(); i++) {
   //   // TODO: SET CURRENT SHAPE
-  //   std::unique_ptr<bullet_shape>& currentShape = shapes_[i];
-  //   btTransform world_transform =
-  //     currentShape->rigidBodyPtr()->getCenterOfMassTransform();
-  //   btMatrix3x3 rotation = world_transform.getBasis();
-  //   btVector3 position = world_transform.getOrigin();
-  //   float pose[] = {
-  //     (float)rotation[0][0], (float)rotation[1][0], (float)rotation[2][0], (float)position[0],
-  //     (float)rotation[0][1], (float)rotation[1][1], (float)rotation[2][1], (float)position[1],
-  //     (float)rotation[0][2], (float)rotation[1][2], (float)rotation[2][2], (float)position[2],
-  //     0, 0, 0, 1
-  //   };
+
   // glm::mat4 ModelMatrix = glm::make_mat4(pose);
   // loc = glGetUniformLocation(shader_program_, "ModelViewMatrix");
   // if (loc>=0) glUniformMatrix4fv(loc, 1, GL_FALSE,
