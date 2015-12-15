@@ -32,15 +32,12 @@ public:
   /// OpenGL stuff
   void getDrawData() {
     glPushMatrix();
-    glLineWidth( 3.0 );
     glColor3f( 1, 1, 1);
-    glBegin( GL_LINE_LOOP );
     GLUquadricObj *quadric;
     quadric = gluNewQuadric();
     gluQuadricDrawStyle(quadric, GLU_FILL );
     gluSphere( quadric , .5 , 36 , 18 );
     gluDeleteQuadric(quadric); 
-    glEndList();
     glEnd();
     glPopMatrix();
   }
