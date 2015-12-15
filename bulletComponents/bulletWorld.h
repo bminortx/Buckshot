@@ -52,66 +52,66 @@ const float CrystalSize=.15;
 
 static unsigned int buffer;
 
-//
-//  Cube Vertexes
-//
-static void Cube(void)
-{
-  //  Front
-  glColor3f(1,0,0);
-  glBegin(GL_QUADS);
-  glNormal3f( 0, 0,+1);
-  glTexCoord2f(0,0); glVertex3f(-1,-1,+1);
-  glTexCoord2f(1,0); glVertex3f(+1,-1,+1);
-  glTexCoord2f(1,1); glVertex3f(+1,+1,+1);
-  glTexCoord2f(0,1); glVertex3f(-1,+1,+1);
-  glEnd();
-  //  Back
-  glColor3f(0,0,1);
-  glBegin(GL_QUADS);
-  glNormal3f( 0, 0,-1);
-  glTexCoord2f(0,0); glVertex3f(+1,-1,-1);
-  glTexCoord2f(1,0); glVertex3f(-1,-1,-1);
-  glTexCoord2f(1,1); glVertex3f(-1,+1,-1);
-  glTexCoord2f(0,1); glVertex3f(+1,+1,-1);
-  glEnd();
-  //  Right
-  glColor3f(1,1,0);
-  glBegin(GL_QUADS);
-  glNormal3f(+1, 0, 0);
-  glTexCoord2f(0,0); glVertex3f(+1,-1,+1);
-  glTexCoord2f(1,0); glVertex3f(+1,-1,-1);
-  glTexCoord2f(1,1); glVertex3f(+1,+1,-1);
-  glTexCoord2f(0,1); glVertex3f(+1,+1,+1);
-  glEnd();
-  //  Left
-  glColor3f(0,1,0);
-  glBegin(GL_QUADS);
-  glNormal3f(-1, 0, 0);
-  glTexCoord2f(0,0); glVertex3f(-1,-1,-1);
-  glTexCoord2f(1,0); glVertex3f(-1,-1,+1);
-  glTexCoord2f(1,1); glVertex3f(-1,+1,+1);
-  glTexCoord2f(0,1); glVertex3f(-1,+1,-1);
-  glEnd();
-  //  Top
-  glColor3f(0,1,1);
-  glBegin(GL_QUADS);
-  glNormal3f( 0,+1, 0);
-  glTexCoord2f(0,0); glVertex3f(-1,+1,+1);
-  glTexCoord2f(1,0); glVertex3f(+1,+1,+1);
-  glTexCoord2f(1,1); glVertex3f(+1,+1,-1);
-  glTexCoord2f(0,1); glVertex3f(-1,+1,-1);
-  glEnd();
-  //  Bottom
-  glColor3f(1,0,1);
-  glBegin(GL_QUADS);
-  glNormal3f( 0,-1, 0);
-  glTexCoord2f(0,0); glVertex3f(-1,-1,-1);
-  glTexCoord2f(1,0); glVertex3f(+1,-1,-1);
-  glTexCoord2f(1,1); glVertex3f(+1,-1,+1);
-  glTexCoord2f(0,1); glVertex3f(-1,-1,+1);
-  glEnd();
-}
+// //
+// //  Cube Vertexes
+// //
+// static void Cube(void)
+// {
+//   //  Front
+//   glColor3f(1,0,0);
+//   glBegin(GL_QUADS);
+//   glNormal3f( 0, 0,+1);
+//   glTexCoord2f(0,0); glVertex3f(-1,-1,+1);
+//   glTexCoord2f(1,0); glVertex3f(+1,-1,+1);
+//   glTexCoord2f(1,1); glVertex3f(+1,+1,+1);
+//   glTexCoord2f(0,1); glVertex3f(-1,+1,+1);
+//   glEnd();
+//   //  Back
+//   glColor3f(0,0,1);
+//   glBegin(GL_QUADS);
+//   glNormal3f( 0, 0,-1);
+//   glTexCoord2f(0,0); glVertex3f(+1,-1,-1);
+//   glTexCoord2f(1,0); glVertex3f(-1,-1,-1);
+//   glTexCoord2f(1,1); glVertex3f(-1,+1,-1);
+//   glTexCoord2f(0,1); glVertex3f(+1,+1,-1);
+//   glEnd();
+//   //  Right
+//   glColor3f(1,1,0);
+//   glBegin(GL_QUADS);
+//   glNormal3f(+1, 0, 0);
+//   glTexCoord2f(0,0); glVertex3f(+1,-1,+1);
+//   glTexCoord2f(1,0); glVertex3f(+1,-1,-1);
+//   glTexCoord2f(1,1); glVertex3f(+1,+1,-1);
+//   glTexCoord2f(0,1); glVertex3f(+1,+1,+1);
+//   glEnd();
+//   //  Left
+//   glColor3f(0,1,0);
+//   glBegin(GL_QUADS);
+//   glNormal3f(-1, 0, 0);
+//   glTexCoord2f(0,0); glVertex3f(-1,-1,-1);
+//   glTexCoord2f(1,0); glVertex3f(-1,-1,+1);
+//   glTexCoord2f(1,1); glVertex3f(-1,+1,+1);
+//   glTexCoord2f(0,1); glVertex3f(-1,+1,-1);
+//   glEnd();
+//   //  Top
+//   glColor3f(0,1,1);
+//   glBegin(GL_QUADS);
+//   glNormal3f( 0,+1, 0);
+//   glTexCoord2f(0,0); glVertex3f(-1,+1,+1);
+//   glTexCoord2f(1,0); glVertex3f(+1,+1,+1);
+//   glTexCoord2f(1,1); glVertex3f(+1,+1,-1);
+//   glTexCoord2f(0,1); glVertex3f(-1,+1,-1);
+//   glEnd();
+//   //  Bottom
+//   glColor3f(1,0,1);
+//   glBegin(GL_QUADS);
+//   glNormal3f( 0,-1, 0);
+//   glTexCoord2f(0,0); glVertex3f(-1,-1,-1);
+//   glTexCoord2f(1,0); glVertex3f(+1,-1,-1);
+//   glTexCoord2f(1,1); glVertex3f(+1,-1,+1);
+//   glTexCoord2f(0,1); glVertex3f(-1,-1,+1);
+//   glEnd();
+// }
 
 
 /// OPENGL STUFF
@@ -289,24 +289,13 @@ inline void gwDisplay(){
     (float)position[0], (float)position[1], (float)position[2], 1
   };
   glMultMatrixf(pose);
-  Cube();
+  currentShape->getDrawData();
   std::this_thread::sleep_for (std::chrono::milliseconds(50));
-
-
-
 
   // FOR ALL OF OUR OBJECTS
   // Hand-calculate View Matrices FOR EACH OBJECT
   // Get transformation matrix from bullet
   // Set to model matrix
-  // int numModels = 1;
-  // for (int i = 1; i < shapes_.size(); i++) {
-  //   // TODO: SET CURRENT SHAPE
-
-  // glm::mat4 ModelMatrix = glm::make_mat4(pose);
-  // loc = glGetUniformLocation(shader_program_, "ModelViewMatrix");
-  // if (loc>=0) glUniformMatrix4fv(loc, 1, GL_FALSE,
-  //                                glm::value_ptr(ViewMatrix * ModelMatrix));
 
   /////////
   // DRAWING OUR SHAPES

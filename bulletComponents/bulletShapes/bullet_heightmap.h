@@ -76,6 +76,6 @@ public:
     }
   }
 
-  void set_vertex_data() {}
+  void getDrawData() {}
 
 };

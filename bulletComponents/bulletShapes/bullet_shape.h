@@ -6,6 +6,29 @@
 /// Bullet Shapes.
 /////////////////////////////////////////
 
+#ifdef USEGLEW
+#include <GL/glew.h>
+#endif
+#define GL_GLEXT_PROTOTYPES
+
+/// TODO: Make this optional
+#include <GL/freeglut.h>
+
+#ifdef __APPLE__
+#include <GLUT/glut.h>
+#else
+#include <GL/glut.h>
+#endif
+
+/// OpenGL Headers
+#define GLM_FORCE_RADIANS
+#include <glm/glm.hpp>
+#include <glm/vec3.hpp> // glm::vec3
+#include <glm/vec4.hpp> // glm::vec4
+#include <glm/mat4x4.hpp> // glm::mat4
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 #include <memory>
 #include <vector>
 #include <bullet/btBulletDynamicsCommon.h>
@@ -39,30 +62,10 @@ class bullet_shape{
   }
 
   // OpenGL functions
-  void set_vertex_buffer(int buffer_int) {
-    vertex_buffer_ = buffer_int;
-  }
-
-  unsigned int vertex_buffer() {
-    return vertex_buffer_;
-  };
-
-  virtual void set_vertex_data(){}
-
-  unsigned int vertex_buffer_;  // Vertex buffer object 
-  unsigned int color_buffer_;  // color buffer object 
-  unsigned int normal_buffer_;  // normal buffer object 
-  unsigned int texture_buffer_;  // texture buffer object 
-  std::vector<float> vertex_data_;   // vertex data (.xyzw)
-  std::vector<float> color_data_;   // color data (.rgb)
-  std::vector<float> normal_data_;   // normal data (.xyz)
-  std::vector<float> texture_data_;   // texture data (.st);
+  virtual void getDrawData(){}
 
  protected:
   btCollisionShape* bulletShape;
   btRigidBody* bulletBody;
   btMotionState* bulletMotionState;
-  // Graphics functions
-  std::vector<float> vertex_color_;
-  int vertex_data_size_;
 };

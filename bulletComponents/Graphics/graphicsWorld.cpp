@@ -4,25 +4,6 @@
 GraphicsWorld::GraphicsWorld() {
 }
 
-int GraphicsWorld::AddShape(std::unique_ptr<bullet_shape>& currentShape) {
-  unsigned int buffers[3];
-  glGenBuffers(3, buffers);
-  currentShape->vertex_buffer_ = buffers[0];
-  currentShape->color_buffer_ = buffers[1];
-  currentShape->normal_buffer_ = buffers[2];
-  glBindBuffer(GL_ARRAY_BUFFER, currentShape->vertex_buffer_);
-  // NOT SURE THIS BUFFER COPY IS CORRECT...
-  glBufferData(GL_ARRAY_BUFFER, sizeof(currentShape->vertex_data_),
-               &currentShape->vertex_data_[0], GL_STATIC_DRAW);
-  glBindBuffer(GL_ARRAY_BUFFER, currentShape->color_buffer_);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(currentShape->color_data_),
-               &currentShape->color_data_[0], GL_STATIC_DRAW);
-  glBindBuffer(GL_ARRAY_BUFFER, currentShape->normal_buffer_);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(currentShape->normal_data_),
-               &currentShape->normal_data_[0], GL_STATIC_DRAW);
-  return 0;
-}
-
 void GraphicsWorld::Init(int& window,
                          int& shader_program_,
                          void (*gwDisplay)(),

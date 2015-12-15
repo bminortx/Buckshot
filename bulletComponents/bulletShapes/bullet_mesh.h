@@ -92,7 +92,7 @@ class bullet_mesh: public bullet_shape{
     }
   }
 
-  void set_vertex_data() {}
+  void getDrawData() {}
 };
 
 #endif //  BULLET_MESH_H

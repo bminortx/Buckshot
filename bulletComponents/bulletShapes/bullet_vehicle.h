@@ -124,7 +124,7 @@ public:
     SetVehiclePose(position, rotation);
   }
 
-  void set_vertex_data() {}
+  void getDrawData() {}
 
   ///////////////////////////
 
