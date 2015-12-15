@@ -14,6 +14,8 @@
 #pragma GCC diagnostic ignored "-Wignored-qualifiers"
 #pragma GCC diagnostic ignored "-Wextra"
 #pragma GCC diagnostic pop
+#define PI 3.14159265359
+#define TWOPI 6.28318530718
 
 #include "Compound.h"
 #include "../Graphics/graphicsWorld.h"
@@ -38,13 +40,13 @@ static std::vector<btTypedConstraint*> constraints_;
 /// OPENGL STUFF
 static int window;
 static std::vector<unsigned int> buffers_;
-static int view_angle_ = 0;
-static int view_elevation_ = 0;
+static float view_angle_ = 0;
+static float view_elevation_ = 0;
 static float fov_ = 55;
 static float aspect_ratio_ = 1;
 static float world_dim_ = 7.0;
 static int light_move_ = 1;
-static int light_angle_ = 90;
+static float light_angle_ = PI / 4;
 static float light_elevation_ = 2;
 static int shader_program_;
 const float CrystalDensity=5.0;
@@ -277,28 +279,24 @@ inline void gwDisplay(){
   id = glGetUniformLocation(shader_program_,"CrystalSize");
   if (id>=0) glUniform1f(id,CrystalSize);
 
-  std::unique_ptr<bullet_shape>& currentShape = shapes_[1];
-  btTransform world_transform =
-      currentShape->rigidBodyPtr()->getCenterOfMassTransform();
-  btMatrix3x3 rotation = world_transform.getBasis();
-  btVector3 position = world_transform.getOrigin();
-  float pose[] = {
-    (float)rotation[0][0], (float)rotation[0][1], (float)rotation[0][2], 0,
-    (float)rotation[1][0], (float)rotation[1][1], (float)rotation[1][2], 0,
-    (float)rotation[2][0], (float)rotation[2][1], (float)rotation[2][2], 0,
-    (float)position[0], (float)position[1], (float)position[2], 1
-  };
-  glMultMatrixf(pose);
-  currentShape->getDrawData();
-  std::this_thread::sleep_for (std::chrono::milliseconds(50));
-
-  // FOR ALL OF OUR OBJECTS
-  // Hand-calculate View Matrices FOR EACH OBJECT
-  // Get transformation matrix from bullet
-  // Set to model matrix
-
   /////////
   // DRAWING OUR SHAPES
+  for (std::unique_ptr<bullet_shape>& currentShape: shapes_) {
+    // std::unique_ptr<bullet_shape>& currentShape = shapes_[0];
+    btTransform world_transform =
+        currentShape->rigidBodyPtr()->getCenterOfMassTransform();
+    btMatrix3x3 rotation = world_transform.getBasis();
+    btVector3 position = world_transform.getOrigin();
+    float pose[] = {
+      (float)rotation[0][0], (float)rotation[0][1], (float)rotation[0][2], 0,
+      (float)rotation[1][0], (float)rotation[1][1], (float)rotation[1][2], 0,
+      (float)rotation[2][0], (float)rotation[2][1], (float)rotation[2][2], 0,
+      (float)position[0], (float)position[1], (float)position[2], 1
+    };
+    glMultMatrixf(pose);
+    currentShape->getDrawData();
+    std::this_thread::sleep_for (std::chrono::milliseconds(50));
+  }
 
   // Back to fixed pipeline
   glUseProgram(0);
@@ -325,16 +323,16 @@ inline void gwReshape(int width, int height){
 inline void gwSpecial(int key, int x, int y){
   //  Right arrow key - increase angle by 5 degrees
   if (key == GLUT_KEY_RIGHT)
-    view_angle_ += 1;
+    view_angle_ += .05;
   //  Left arrow key - decrease angle by 5 degrees
   else if (key == GLUT_KEY_LEFT)
-    view_angle_ -= 1;
+    view_angle_ -= .05;
   //  Up arrow key - increase elevation by 5 degrees
   else if (key == GLUT_KEY_UP)
-    view_elevation_ += 1;
+    view_elevation_ += .05;
   //  Down arrow key - decrease elevation by 5 degrees
   else if (key == GLUT_KEY_DOWN)
-    view_elevation_ -= 1;
+    view_elevation_ -= .05;
   //  PageUp key - increase dim
   else if (key == GLUT_KEY_PAGE_DOWN)
     world_dim_ += 0.1;
@@ -342,8 +340,8 @@ inline void gwSpecial(int key, int x, int y){
   else if (key == GLUT_KEY_PAGE_UP && world_dim_ > 1)
     world_dim_ -= 0.1;
   //  Keep angles to +/-360 degrees
-  view_angle_ %= 360;
-  view_elevation_ %= 360;
+  view_angle_ = fmod(view_angle_, TWOPI);
+  view_elevation_ = fmod(view_elevation_, TWOPI);
   //  Update projection
   Project(fov_, aspect_ratio_, world_dim_);
   glutPostRedisplay();

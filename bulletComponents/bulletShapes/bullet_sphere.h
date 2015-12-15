@@ -38,7 +38,6 @@ public:
     gluQuadricDrawStyle(quadric, GLU_FILL );
     gluSphere( quadric , .5 , 36 , 18 );
     gluDeleteQuadric(quadric); 
-    glEnd();
     glPopMatrix();
   }
 };
