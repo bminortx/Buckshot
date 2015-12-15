@@ -4,6 +4,7 @@
 #include <bullet/BulletCollision/CollisionShapes/btBvhTriangleMeshShape.h>
 #include <bullet/BulletCollision/CollisionShapes/btStaticPlaneShape.h>
 #include <bullet/LinearMath/btAlignedAllocator.h>
+#include <iostream>
 
 //Constructs a Bullet btHeightfieldTerrainShape.
 
@@ -29,18 +30,23 @@ public:
       //Algorithm for populating BVHTriangleMeshShape taken from VehicleDemo.cpp
       int vertStride = sizeof(btVector3);
       int indexStride = 3*sizeof(int);
-      const int NUM_VERTS_X = row_count;
-      const int NUM_VERTS_Y = col_count;
-      const int totalVerts = NUM_VERTS_X*NUM_VERTS_Y;
-      const int totalTriangles = 2*(NUM_VERTS_X-1)*(NUM_VERTS_Y-1);
+      NUM_VERTS_X = row_count;
+      NUM_VERTS_Y = col_count;
+      totalVerts = NUM_VERTS_X*NUM_VERTS_Y;
+      totalTriangles = 2*(NUM_VERTS_X-1)*(NUM_VERTS_Y-1);
       btVector3* m_vertices = new btVector3[totalVerts];
-      int* gIndices = new int[totalTriangles*3];
+      vertices = new float[totalVerts * 3];
+      gIndices = new int[totalTriangles * 3];
       for (int i=0;i<NUM_VERTS_X;i++){
         for (int j=0;j<NUM_VERTS_Y;j++){
           float width = X[i+j*NUM_VERTS_X];
           float length = Y[i+j*NUM_VERTS_X];
           float height = Z[i+j*NUM_VERTS_X];
           m_vertices[i+j*NUM_VERTS_X].setValue(width, length, height);
+          // TODO: FIGURE THIS OUT 
+          vertices[3*i + j*NUM_VERTS_X + 0] = width;
+          vertices[3*i + j*NUM_VERTS_X + 1] = length;
+          vertices[3*i + j*NUM_VERTS_X + 2] = height;
         }
       }
 
@@ -76,6 +82,18 @@ public:
     }
   }
 
-  void getDrawData() {}
+  void getDrawData() {
+    glEnableClientState( GL_VERTEX_ARRAY );
+    glVertexPointer( 3, GL_FLOAT, 0, vertices );
+    glDrawElements( GL_TRIANGLE_STRIP, totalTriangles * 3, GL_UNSIGNED_INT, gIndices );
+    glDisableClientState( GL_VERTEX_ARRAY );
+  }
+
+  float* vertices;
+  int* gIndices;
+  int totalTriangles;
+  int totalVerts;
+  int NUM_VERTS_X;
+  int NUM_VERTS_Y;
 
 };
