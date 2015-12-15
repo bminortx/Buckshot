@@ -20,6 +20,7 @@
 #include <map>
 #include <vector>
 #include <memory>
+#include <iostream>
 
 ///////////////////////////////////////////////////////
 /// The BulletWorld class
@@ -33,17 +34,84 @@ static std::vector<std::unique_ptr<bullet_vehicle> > vehicles_;
 static std::vector<btTypedConstraint*> constraints_;
 
 /// OPENGL STUFF
-static int window = 0;
-static std::vector<int> buffers_;
+static int window;
+static std::vector<unsigned int> buffers_;
 static int view_angle_ = 0;
 static int view_elevation_ = 0;
 static float fov_ = 55;
 static float aspect_ratio_ = 1;
-static float world_dim_ = 10.0;
+static float world_dim_ = 3.0;
 static int light_move_ = 1;
 static int light_angle_ = 90;
 static float light_elevation_ = 2;
 static int shader_program_;
+const float CrystalDensity=5.0;
+const float CrystalSize=.15;
+
+static unsigned int buffer;
+
+//
+//  Cube Vertexes
+//
+static void Cube(void)
+{
+  //  Front
+  glColor3f(1,0,0);
+  glBegin(GL_QUADS);
+  glNormal3f( 0, 0,+1);
+  glTexCoord2f(0,0); glVertex3f(-1,-1,+1);
+  glTexCoord2f(1,0); glVertex3f(+1,-1,+1);
+  glTexCoord2f(1,1); glVertex3f(+1,+1,+1);
+  glTexCoord2f(0,1); glVertex3f(-1,+1,+1);
+  glEnd();
+  //  Back
+  glColor3f(0,0,1);
+  glBegin(GL_QUADS);
+  glNormal3f( 0, 0,-1);
+  glTexCoord2f(0,0); glVertex3f(+1,-1,-1);
+  glTexCoord2f(1,0); glVertex3f(-1,-1,-1);
+  glTexCoord2f(1,1); glVertex3f(-1,+1,-1);
+  glTexCoord2f(0,1); glVertex3f(+1,+1,-1);
+  glEnd();
+  //  Right
+  glColor3f(1,1,0);
+  glBegin(GL_QUADS);
+  glNormal3f(+1, 0, 0);
+  glTexCoord2f(0,0); glVertex3f(+1,-1,+1);
+  glTexCoord2f(1,0); glVertex3f(+1,-1,-1);
+  glTexCoord2f(1,1); glVertex3f(+1,+1,-1);
+  glTexCoord2f(0,1); glVertex3f(+1,+1,+1);
+  glEnd();
+  //  Left
+  glColor3f(0,1,0);
+  glBegin(GL_QUADS);
+  glNormal3f(-1, 0, 0);
+  glTexCoord2f(0,0); glVertex3f(-1,-1,-1);
+  glTexCoord2f(1,0); glVertex3f(-1,-1,+1);
+  glTexCoord2f(1,1); glVertex3f(-1,+1,+1);
+  glTexCoord2f(0,1); glVertex3f(-1,+1,-1);
+  glEnd();
+  //  Top
+  glColor3f(0,1,1);
+  glBegin(GL_QUADS);
+  glNormal3f( 0,+1, 0);
+  glTexCoord2f(0,0); glVertex3f(-1,+1,+1);
+  glTexCoord2f(1,0); glVertex3f(+1,+1,+1);
+  glTexCoord2f(1,1); glVertex3f(+1,+1,-1);
+  glTexCoord2f(0,1); glVertex3f(-1,+1,-1);
+  glEnd();
+  //  Bottom
+  glColor3f(1,0,1);
+  glBegin(GL_QUADS);
+  glNormal3f( 0,-1, 0);
+  glTexCoord2f(0,0); glVertex3f(-1,-1,-1);
+  glTexCoord2f(1,0); glVertex3f(+1,-1,-1);
+  glTexCoord2f(1,1); glVertex3f(+1,-1,+1);
+  glTexCoord2f(0,1); glVertex3f(-1,-1,+1);
+  glEnd();
+}
+
+
 /// OPENGL STUFF
 
 class BulletWorld {
@@ -160,9 +228,11 @@ inline void gwDisplay(){
   // TAKEN FROM HW 4
   const double len=2.0;  //  Length of axes
   //  Light position and colors
-  float Ambient[]   = {1.0, 1.0, 1.0, 1.0};
-  float Diffuse[]   = {0.1, 0.1, 0.1, 1.0};
-  float Specular[]  = {0.6, 0.6, 0.6, 1.0};
+  float Emission[]  = {0.0,0.0,0.0,1.0};
+  float Ambient[]   = {0.3,0.3,0.3,1.0};
+  float Diffuse[]   = {1.0,1.0,1.0,1.0};
+  float Specular[]  = {1.0,1.0,1.0,1.0};
+  float Shinyness[] = {16};
   float Position[]  = {(float)(2 * std::cos(light_angle_)),
                        light_elevation_,
                        (float)(2*std::sin(light_angle_)),
@@ -178,108 +248,73 @@ inline void gwDisplay(){
   glutSolidSphere(0.03,10,10);
   glPopMatrix();
 
+  //  OpenGL should normalize normal vectors
+  glEnable(GL_NORMALIZE);
+  //  Enable lighting
+  glEnable(GL_LIGHTING);
+  //  glColor sets ambient and diffuse color materials
+  glColorMaterial(GL_FRONT_AND_BACK,GL_AMBIENT_AND_DIFFUSE);
+  glEnable(GL_COLOR_MATERIAL);
+  //  Enable light 0
+  glEnable(GL_LIGHT0);
+  //  Set ambient, diffuse, specular components and position of light 0
+  glLightfv(GL_LIGHT0,GL_AMBIENT ,Ambient);
+  glLightfv(GL_LIGHT0,GL_DIFFUSE ,Diffuse);
+  glLightfv(GL_LIGHT0,GL_SPECULAR,Specular);
+  glLightfv(GL_LIGHT0,GL_POSITION,Position);
+  //  Set materials
+  glMaterialfv(GL_FRONT_AND_BACK,GL_SHININESS,Shinyness);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,Specular);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,Emission);
+
   // Use our Shader
   glUseProgram(shader_program_);
+  int id;
+  id = glGetUniformLocation(shader_program_,"CrystalDensity");
+  if (id>=0) glUniform1f(id,CrystalDensity);
+  id = glGetUniformLocation(shader_program_,"CrystalSize");
+  if (id>=0) glUniform1f(id,CrystalSize);
 
-  /// Define our view matrices
-  int loc;
-  glm::mat4 ProjectionMatrix = glm::perspective<float>(fov_, aspect_ratio_,
-                                                       world_dim_/16,
-                                                       world_dim_*16);
-  Ex = -2 * world_dim_ * std::sin(view_angle_)
-    * std::cos(view_elevation_);
-  Ey = +2 * world_dim_ * std::sin(view_elevation_);
-  Ez = +2 * world_dim_ * std::cos(view_angle_) * std::cos(view_elevation_);
-  glm::mat4 ViewMatrix = glm::lookAt(
-                                     glm::vec3(Ex, Ey, Ez),
-                                     glm::vec3(0, 0, 0),
-                                     glm::vec3(0, std::cos(view_elevation_), 0));
-  glm::mat4 NormalMatrix = glm::transpose(glm::inverse(ViewMatrix));
-
-  loc = glGetUniformLocation(shader_program_, "light_position");
-  if (loc>=0) glUniform3fv(loc, 1, Position);
-  loc = glGetUniformLocation(shader_program_, "light_ambient");
-  if (loc>=0) glUniform4fv(loc, 1, Ambient);
-  loc = glGetUniformLocation(shader_program_, "light_diffuse");
-  if (loc>=0) glUniform4fv(loc, 1, Diffuse);
-  loc = glGetUniformLocation(shader_program_, "light_specular");
-  if (loc>=0) glUniform4fv(loc, 1, Specular);
-  loc = glGetUniformLocation(shader_program_, "ProjectionMatrix");
-  if (loc>=0) glUniformMatrix4fv(loc, 1, GL_FALSE,
-                                 glm::value_ptr(ProjectionMatrix));
-  loc = glGetUniformLocation(shader_program_, "NormalMatrix");
-  if (loc>=0) glUniformMatrix4fv(loc, 1, GL_FALSE,
-                                 glm::value_ptr(NormalMatrix));
+  Cube();
 
   // FOR ALL OF OUR OBJECTS
   // Hand-calculate View Matrices FOR EACH OBJECT
   // Get transformation matrix from bullet
   // Set to model matrix
-  int numModels = 1;
-  for (int i = 1; i < shapes_.size(); i++) {
-    // TODO: SET CURRENT SHAPE
-    std::unique_ptr<bullet_shape>& currentShape = shapes_[i];
-    btTransform world_transform =
-      currentShape->rigidBodyPtr()->getCenterOfMassTransform();
-    btMatrix3x3 rotation = world_transform.getBasis();
-    btVector3 position = world_transform.getOrigin();
-    float pose[] = {
-      position[0], position[1], position[2],
-      rotation[0][0], rotation[1][0], rotation[2][0],
-      rotation[0][1], rotation[1][1], rotation[2][1],
-      rotation[0][2], rotation[1][2], rotation[2][2]
-    };
+  // int numModels = 1;
+  // for (int i = 1; i < shapes_.size(); i++) {
+  //   // TODO: SET CURRENT SHAPE
+  //   std::unique_ptr<bullet_shape>& currentShape = shapes_[i];
+  //   btTransform world_transform =
+  //     currentShape->rigidBodyPtr()->getCenterOfMassTransform();
+  //   btMatrix3x3 rotation = world_transform.getBasis();
+  //   btVector3 position = world_transform.getOrigin();
+  //   float pose[] = {
+  //     (float)rotation[0][0], (float)rotation[1][0], (float)rotation[2][0], (float)position[0],
+  //     (float)rotation[0][1], (float)rotation[1][1], (float)rotation[2][1], (float)position[1],
+  //     (float)rotation[0][2], (float)rotation[1][2], (float)rotation[2][2], (float)position[2],
+  //     0, 0, 0, 1
+  //   };
+  // glm::mat4 ModelMatrix = glm::make_mat4(pose);
+  // loc = glGetUniformLocation(shader_program_, "ModelViewMatrix");
+  // if (loc>=0) glUniformMatrix4fv(loc, 1, GL_FALSE,
+  //                                glm::value_ptr(ViewMatrix * ModelMatrix));
 
-    glm::mat4 ModelMatrix = glm::make_mat4(pose);
-    loc = glGetUniformLocation(shader_program_, "ModelViewMatrix");
-    if (loc>=0) glUniformMatrix4fv(loc, 1, GL_FALSE,
-                                   glm::value_ptr(ViewMatrix * ModelMatrix));
-
-    /////////
-    // DRAWING OUR SHAPES
-    glBindBuffer(GL_ARRAY_BUFFER, currentShape->vertex_buffer_);
-    int XYZW = glGetAttribLocation(shader_program_,"Vertex");
-    glVertexAttribPointer(XYZW, 4, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(XYZW);
-    // Color array
-    glBindBuffer(GL_ARRAY_BUFFER, currentShape->color_buffer_);
-    int RGB = glGetAttribLocation(shader_program_,"Color");
-    glVertexAttribPointer(RGB, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(RGB);
-    // Normal array
-    glBindBuffer(GL_ARRAY_BUFFER, currentShape->normal_buffer_);
-    int NORMAL = glGetAttribLocation(shader_program_,"Normal");
-    glVertexAttribPointer(NORMAL,3, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(NORMAL);
-    // Texture array? Not yet, but it goes here
-    ///
-    ///
-
-    // Draw the cube
-    // TODO: SET THIS BASED ON CURRENT SHAPE
-    int numVertices = currentShape->vertex_data_.size();
-    glDrawArrays(GL_TRIANGLES, 0, numVertices);
-
-    //  Disable vertex arrays
-    glDisableVertexAttribArray(currentShape->vertex_buffer_);
-    glDisableVertexAttribArray(currentShape->color_buffer_);
-    glDisableVertexAttribArray(currentShape->normal_buffer_);
-
-    //  Unbind this buffer
-    glBindBuffer(GL_ARRAY_BUFFER,0);
-  }
+  /////////
+  // DRAWING OUR SHAPES
 
   // Back to fixed pipeline
   glUseProgram(0);
+  glutPostRedisplay();
 
   //  Display parameters
   glWindowPos2i(5,5);
   //  Render the scene and make it visible
-  glClearColor(.2, .2, 1, 1);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  // glClearColor(.2, .2, 1, 1);
+  // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glFlush();
   glutSwapBuffers();
-  glutPostWindowRedisplay(window);
+  // glutPostWindowRedisplay(window);
 }
 
 inline void gwReshape(int width, int height){
@@ -291,14 +326,67 @@ inline void gwReshape(int width, int height){
 }
 
 inline void gwSpecial(int key, int x, int y){
-  //  Tell GLUT it is necessary to redisplay the scene
+  //  Right arrow key - increase angle by 5 degrees
+  if (key == GLUT_KEY_RIGHT)
+    view_angle_ += 1;
+  //  Left arrow key - decrease angle by 5 degrees
+  else if (key == GLUT_KEY_LEFT)
+    view_angle_ -= 1;
+  //  Up arrow key - increase elevation by 5 degrees
+  else if (key == GLUT_KEY_UP)
+    view_elevation_ += 1;
+  //  Down arrow key - decrease elevation by 5 degrees
+  else if (key == GLUT_KEY_DOWN)
+    view_elevation_ -= 1;
+  //  PageUp key - increase dim
+  else if (key == GLUT_KEY_PAGE_DOWN)
+    world_dim_ += 0.1;
+  //  PageDown key - decrease dim
+  else if (key == GLUT_KEY_PAGE_UP && world_dim_ > 1)
+    world_dim_ -= 0.1;
+  //  Keep angles to +/-360 degrees
+  view_angle_ %= 360;
+  view_elevation_ %= 360;
+  //  Update projection
+  Project(fov_, aspect_ratio_, world_dim_);
   glutPostRedisplay();
 }
 
-inline void gwKeyboard(unsigned char ch,int x,int y){}
+inline void gwKeyboard(unsigned char ch,int x,int y){
+  //  Tell GLUT it is necessary to redisplay the scene
+  glutPostRedisplay();
+}
 
 inline void gwIdle(){
   double t = glutGet(GLUT_ELAPSED_TIME) / 1000.0;
   if (light_move_) light_angle_ = fmod(90 * t, 360.0);
   glutPostRedisplay();
+}
+
+inline void Init() {
+  char *argv [1];
+  int argc = 1;
+  argv[0] = strdup ("Buckshot");
+  glutInit(&argc,argv);
+  //  Request double buffered, true color window with Z buffering at 600x600
+  glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
+  glutInitWindowSize(600,600);
+  window = glutCreateWindow("Buckshot GUI");
+#ifdef USEGLEW
+  //  Initialize GLEW
+  if (glewInit()!=GLEW_OK) Fatal("Error initializing GLEW\n");
+  if (!GLEW_VERSION_4_3) Fatal("OpenGL 4.3 not supported\n");
+#endif
+
+  //  Set callbacks
+  glutDisplayFunc(gwDisplay);
+  glutReshapeFunc(gwReshape);
+  glutSpecialFunc(gwSpecial);
+  glutKeyboardFunc(gwKeyboard);
+  glutIdleFunc(gwIdle);
+
+  // Load our shader programs
+  shader_program_ = CreateShaderProg(
+      "/home/replica/GitMisc/personal_repos/Buckshot/bulletComponents/Graphics/gl430.vert",
+      "/home/replica/GitMisc/personal_repos/Buckshot/bulletComponents/Graphics/gl430.frag");
 }

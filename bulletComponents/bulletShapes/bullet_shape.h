@@ -56,7 +56,7 @@ class bullet_shape{
   std::vector<float> vertex_data_;   // vertex data (.xyzw)
   std::vector<float> color_data_;   // color data (.rgb)
   std::vector<float> normal_data_;   // normal data (.xyz)
-  std::vector<float> texture_data_;   // texture data (.st)
+  std::vector<float> texture_data_;   // texture data (.st);
 
  protected:
   btCollisionShape* bulletShape;

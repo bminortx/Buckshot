@@ -19,9 +19,7 @@ BulletWorld::BulletWorld() {
                                   &collision_configuration_));
   dynamics_world_->setGravity(btVector3(0, 0, gravity_));
   graphics_world_ = std::shared_ptr<GraphicsWorld>(new GraphicsWorld());
-  graphics_world_->Init(window, shader_program_,
-                        gwDisplay, gwReshape, gwSpecial,
-                        gwKeyboard, gwIdle);
+  Init();
 }
 
 BulletWorld::~BulletWorld() {
@@ -101,7 +99,7 @@ int BulletWorld::AddRaycastVehicle(double* parameters, double* position,
 
 void BulletWorld::StepSimulation() {
   dynamics_world_->stepSimulation(timestep_,  max_sub_steps_);
-  graphics_world_->stepSimulation();
+  glutMainLoopEvent();
 }
 
 /*********************************************************************

@@ -171,7 +171,7 @@ static int CreateShaderProg(const char* VertFile,const char* FragFile)
   //  Create and compile vertex shader
   if (VertFile) CreateShader(prog,GL_VERTEX_SHADER,VertFile);
   // //  Create and compile fragment shader
-  // if (FragFile) CreateShader(prog,GL_FRAGMENT_SHADER,FragFile);
+  if (FragFile) CreateShader(prog,GL_FRAGMENT_SHADER,FragFile);
   //  Link program
   glLinkProgram(prog);
   //  Check for errors

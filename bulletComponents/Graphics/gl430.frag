@@ -1,38 +1,34 @@
-#version 430 core
+// Custom shader developed by Brandon Minor
+varying float LightIntensity;
+varying vec2  ModelPos;
+varying vec3 ModelXYZ;
+varying vec3 LightDir;
+varying vec3 EyeDir;
+varying vec3 normal;
+uniform float time;
 
-// Light elements
-uniform vec3 light_position;
-uniform vec4 light_ambient;
-uniform vec4 light_diffuse;
-uniform vec4 light_specular;
+// Crystal!
+// Modified from the OpenGL Programming Guide 8ed, ex 8.10
 
-uniform sampler2D tex;
-in vec4 FragColor;
-in vec3 FragPosition;
-in vec3 FragNormal;
-in vec2 FragTexCoord;
-in vec3 FragLight;
-in vec3 FragView;
-
-//  Fragment color
-layout (location=0) out vec4 Frontcolor;
+uniform float CrystalDensity;
+uniform float CrystalSize;
 
 void main() {
-  // Start with ambient light
-  Frontcolor = light_ambient * FragColor;
-  vec3 N = normalize(FragNormal);
-  vec3 L = normalize(FragLight);
-  float diffuse = dot(N, L);
-  if (diffuse > 0.0) {
-    Frontcolor += diffuse * light_diffuse;
-    // Add Reflection
-    vec3 R = reflect(-L, N);
-    vec3 V = normalize(FragView);
-    float specular = dot(V, R);
-    if (specular > 0.0) {
-      // SUCH SPECULAR
-      Frontcolor += pow(specular, 128) * light_specular;
-    }
+  vec4 surface_color = vec4(0.0, 0.5, 0.5, 1.0);
+  vec2 center = CrystalDensity * ModelPos;
+  vec2 perturb = fract(center) - vec2(0.5);
+  // Reflect if the Light and normal are in a good range
+  float dist = dot(LightDir, normal);
+  float norm_factor = inversesqrt(dist + 1.0);
+  if (dist <= CrystalSize) {
+    perturb = vec2(0.0);
+    norm_factor = 1.0;
+    surface_color.g = 0.1;
   }
-  Frontcolor = Frontcolor * texture2D(tex, FragTexCoord);
+  vec3 norm_delta = vec3(perturb.x, perturb.y, 1.0) * norm_factor;
+  vec3 color = surface_color.rgb * max(dot(norm_delta, LightDir), 0.1);
+  vec3 reflect_dir = reflect(LightDir, norm_delta);
+  float spec = max(dot(EyeDir, reflect_dir), 0.0);
+  color = min(color, vec3(1.0));
+  gl_FragColor = vec4(color, surface_color.a);
 }
