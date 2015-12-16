@@ -15,6 +15,7 @@ public:
   bullet_heightmap(int row_count, int col_count, double grad, double min_ht,
                    double max_ht, double* X, double* Y, double* Z,
                    double* normal){
+    _max_ht = max_ht;
     if(max_ht<=1){
       //Just make a flat plain
       bulletShape = new btStaticPlaneShape(
@@ -43,7 +44,7 @@ public:
           float length = Y[i+j*NUM_VERTS_X];
           float height = Z[i+j*NUM_VERTS_X];
           m_vertices[i+j*NUM_VERTS_X].setValue(width, length, height);
-          // TODO: FIGURE THIS OUT 
+          // TODO:  FIGURE THIS OUT 
           vertices[3*i + j*NUM_VERTS_X + 0] = width;
           vertices[3*i + j*NUM_VERTS_X + 1] = length;
           vertices[3*i + j*NUM_VERTS_X + 2] = height;
@@ -83,12 +84,25 @@ public:
   }
 
   void getDrawData() {
-    glEnableClientState( GL_VERTEX_ARRAY );
-    glVertexPointer( 3, GL_FLOAT, 0, vertices );
-    glDrawElements( GL_TRIANGLE_STRIP, totalTriangles * 3, GL_UNSIGNED_INT, gIndices );
-    glDisableClientState( GL_VERTEX_ARRAY );
+    if (_max_ht <= 10) {
+      glLineWidth(2); 
+      glColor3f(1.0, 0.0, 0.0);
+      glBegin(GL_LINES);
+      for (int i = -10; i < 10; i++) {
+        for (int j = -10; j < 10; j++) {
+          glVertex3f(i, j, 0.0);
+        }
+      }
+      glEnd();
+    } else {
+      glEnableClientState( GL_VERTEX_ARRAY );
+      glVertexPointer( 3, GL_FLOAT, 0, vertices );
+      glDrawElements( GL_TRIANGLE_STRIP, totalTriangles * 3, GL_UNSIGNED_INT, gIndices );
+      glDisableClientState( GL_VERTEX_ARRAY );
+    }
   }
 
+  int _max_ht;
   float* vertices;
   int* gIndices;
   int totalTriangles;

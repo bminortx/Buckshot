@@ -10,7 +10,9 @@ class bullet_cylinder : public bullet_shape{
 public:
   //constructor
   bullet_cylinder(double dRadius, double dHeight, double dMass, double dRestitution,
-                double *position, double* rotation){
+                double *position, double* rotation)
+    : _radius(dRadius), _height(dHeight)
+  {
     bulletShape = new btCylinderShapeZ(btVector3(dRadius, dRadius, dHeight/2));
     bulletMotionState = new btDefaultMotionState(btTransform::getIdentity());
     bool isDynamic = ( dMass != 0.f );
@@ -28,6 +30,15 @@ public:
     SetPose(position, rotation);
   }
 
-  void getDrawData() {}
+  void getDrawData() {
+    glColor3f( 1, 1, 1);
+    GLUquadricObj *quadric;
+    quadric = gluNewQuadric();
+    gluQuadricDrawStyle(quadric, GLU_FILL );
+    gluCylinder(quadric, _radius, _radius, _height, 36, 18);
+    gluDeleteQuadric(quadric);
+  }
+
+  double _radius, _height;
 
 };

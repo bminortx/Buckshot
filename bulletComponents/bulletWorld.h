@@ -39,7 +39,6 @@ static std::vector<btTypedConstraint*> constraints_;
 
 /// OPENGL STUFF
 static int window;
-static std::vector<unsigned int> buffers_;
 static float view_angle_ = 0;
 static float view_elevation_ = 0;
 static float fov_ = 55;
@@ -51,70 +50,6 @@ static float light_elevation_ = 2;
 static int shader_program_;
 const float CrystalDensity=5.0;
 const float CrystalSize=.15;
-
-static unsigned int buffer;
-
-// //
-// //  Cube Vertexes
-// //
-// static void Cube(void)
-// {
-//   //  Front
-//   glColor3f(1,0,0);
-//   glBegin(GL_QUADS);
-//   glNormal3f( 0, 0,+1);
-//   glTexCoord2f(0,0); glVertex3f(-1,-1,+1);
-//   glTexCoord2f(1,0); glVertex3f(+1,-1,+1);
-//   glTexCoord2f(1,1); glVertex3f(+1,+1,+1);
-//   glTexCoord2f(0,1); glVertex3f(-1,+1,+1);
-//   glEnd();
-//   //  Back
-//   glColor3f(0,0,1);
-//   glBegin(GL_QUADS);
-//   glNormal3f( 0, 0,-1);
-//   glTexCoord2f(0,0); glVertex3f(+1,-1,-1);
-//   glTexCoord2f(1,0); glVertex3f(-1,-1,-1);
-//   glTexCoord2f(1,1); glVertex3f(-1,+1,-1);
-//   glTexCoord2f(0,1); glVertex3f(+1,+1,-1);
-//   glEnd();
-//   //  Right
-//   glColor3f(1,1,0);
-//   glBegin(GL_QUADS);
-//   glNormal3f(+1, 0, 0);
-//   glTexCoord2f(0,0); glVertex3f(+1,-1,+1);
-//   glTexCoord2f(1,0); glVertex3f(+1,-1,-1);
-//   glTexCoord2f(1,1); glVertex3f(+1,+1,-1);
-//   glTexCoord2f(0,1); glVertex3f(+1,+1,+1);
-//   glEnd();
-//   //  Left
-//   glColor3f(0,1,0);
-//   glBegin(GL_QUADS);
-//   glNormal3f(-1, 0, 0);
-//   glTexCoord2f(0,0); glVertex3f(-1,-1,-1);
-//   glTexCoord2f(1,0); glVertex3f(-1,-1,+1);
-//   glTexCoord2f(1,1); glVertex3f(-1,+1,+1);
-//   glTexCoord2f(0,1); glVertex3f(-1,+1,-1);
-//   glEnd();
-//   //  Top
-//   glColor3f(0,1,1);
-//   glBegin(GL_QUADS);
-//   glNormal3f( 0,+1, 0);
-//   glTexCoord2f(0,0); glVertex3f(-1,+1,+1);
-//   glTexCoord2f(1,0); glVertex3f(+1,+1,+1);
-//   glTexCoord2f(1,1); glVertex3f(+1,+1,-1);
-//   glTexCoord2f(0,1); glVertex3f(-1,+1,-1);
-//   glEnd();
-//   //  Bottom
-//   glColor3f(1,0,1);
-//   glBegin(GL_QUADS);
-//   glNormal3f( 0,-1, 0);
-//   glTexCoord2f(0,0); glVertex3f(-1,-1,-1);
-//   glTexCoord2f(1,0); glVertex3f(+1,-1,-1);
-//   glTexCoord2f(1,1); glVertex3f(+1,-1,+1);
-//   glTexCoord2f(0,1); glVertex3f(-1,-1,+1);
-//   glEnd();
-// }
-
 
 /// OPENGL STUFF
 
@@ -233,7 +168,7 @@ inline void gwDisplay(){
   const double len=2.0;  //  Length of axes
   //  Light position and colors
   float Emission[]  = {0.0,0.0,0.0,1.0};
-  float Ambient[]   = {0.3,0.3,0.3,1.0};
+  float Ambient[]   = {0.8,0.8,0.8,1.0};
   float Diffuse[]   = {1.0,1.0,1.0,1.0};
   float Specular[]  = {1.0,1.0,1.0,1.0};
   float Shinyness[] = {16};
@@ -282,7 +217,6 @@ inline void gwDisplay(){
   /////////
   // DRAWING OUR SHAPES
   for (std::unique_ptr<bullet_shape>& currentShape: shapes_) {
-    // std::unique_ptr<bullet_shape>& currentShape = shapes_[0];
     btTransform world_transform =
         currentShape->rigidBodyPtr()->getCenterOfMassTransform();
     btMatrix3x3 rotation = world_transform.getBasis();
@@ -293,9 +227,9 @@ inline void gwDisplay(){
       (float)rotation[2][0], (float)rotation[2][1], (float)rotation[2][2], 0,
       (float)position[0], (float)position[1], (float)position[2], 1
     };
-    glMultMatrixf(pose);
     currentShape->getDrawData();
-    std::this_thread::sleep_for (std::chrono::milliseconds(50));
+    glMultMatrixf(pose);
+    std::this_thread::sleep_for (std::chrono::milliseconds(10));
   }
 
   // Back to fixed pipeline
@@ -305,11 +239,8 @@ inline void gwDisplay(){
   //  Display parameters
   glWindowPos2i(5,5);
   //  Render the scene and make it visible
-  // glClearColor(.2, .2, 1, 1);
-  // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glFlush();
   glutSwapBuffers();
-  // glutPostWindowRedisplay(window);
 }
 
 inline void gwReshape(int width, int height){

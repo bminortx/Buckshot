@@ -11,6 +11,7 @@ public:
   //constructor
   bullet_sphere(double dRadius, double dMass, double dRestitution,
                 double *position, double* rotation){
+    _radius = dRadius;
     bulletShape = new btSphereShape(dRadius);
 
     bulletMotionState = new btDefaultMotionState(btTransform::getIdentity());
@@ -31,13 +32,14 @@ public:
 
   /// OpenGL stuff
   void getDrawData() {
-    glPushMatrix();
     glColor3f( 1, 1, 1);
     GLUquadricObj *quadric;
     quadric = gluNewQuadric();
-    gluQuadricDrawStyle(quadric, GLU_FILL );
-    gluSphere( quadric , .5 , 36 , 18 );
+    gluQuadricDrawStyle(quadric, GLU_FILL);
+    gluSphere(quadric, _radius, 36, 18);
     gluDeleteQuadric(quadric); 
-    glPopMatrix();
   }
+
+  double _radius;
+  
 };

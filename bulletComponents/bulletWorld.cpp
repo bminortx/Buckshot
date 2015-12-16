@@ -18,7 +18,6 @@ BulletWorld::BulletWorld() {
                                   bt_solver_.get(),
                                   &collision_configuration_));
   dynamics_world_->setGravity(btVector3(0, 0, gravity_));
-  graphics_world_ = std::shared_ptr<GraphicsWorld>(new GraphicsWorld());
   Init();
 }
 
