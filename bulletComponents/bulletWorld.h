@@ -196,15 +196,17 @@ inline void gwDisplay(){
   glEnable(GL_COLOR_MATERIAL);
   //  Enable light 0
   glEnable(GL_LIGHT0);
+
+  /// TODO: SET THIS BACK
   //  Set ambient, diffuse, specular components and position of light 0
-  glLightfv(GL_LIGHT0,GL_AMBIENT ,Ambient);
-  glLightfv(GL_LIGHT0,GL_DIFFUSE ,Diffuse);
-  glLightfv(GL_LIGHT0,GL_SPECULAR,Specular);
-  glLightfv(GL_LIGHT0,GL_POSITION,Position);
+  // glLightfv(GL_LIGHT0,GL_AMBIENT ,Ambient);
+  // glLightfv(GL_LIGHT0,GL_DIFFUSE ,Diffuse);
+  // glLightfv(GL_LIGHT0,GL_SPECULAR,Specular);
+  // glLightfv(GL_LIGHT0,GL_POSITION,Position);
   //  Set materials
-  glMaterialfv(GL_FRONT_AND_BACK,GL_SHININESS,Shinyness);
-  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,Specular);
-  glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,Emission);
+  // glMaterialfv(GL_FRONT_AND_BACK,GL_SHININESS,Shinyness);
+  // glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,Specular);
+  // glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,Emission);
 
   // Use our Shader
   glUseProgram(shader_program_);
@@ -289,6 +291,24 @@ inline void gwIdle(){
   glutPostRedisplay();
 }
 
+// http://bit.ly/1NwkgiQ
+inline void mouse(int button, int state, int x, int y)
+{
+  // Wheel reports as button 3(scroll up) and button 4(scroll down)
+  if ((button == 3) || (button == 4)) // It's a wheel event
+    {
+      // Each wheel event reports like a button click, GLUT_DOWN then GLUT_UP
+      if (state == GLUT_UP) return; // Disregard redundant GLUT_UP events
+      if (button == 3){
+        world_dim_ += 0.1;
+      } else {
+        if (world_dim_ > 1) world_dim_ -= 0.1;
+      }
+    } else {  // normal button event
+
+  }
+}
+
 inline void Init() {
   char *argv [1];
   int argc = 1;
@@ -309,6 +329,7 @@ inline void Init() {
   glutReshapeFunc(gwReshape);
   glutSpecialFunc(gwSpecial);
   glutKeyboardFunc(gwKeyboard);
+  glutMouseFunc(mouse);
   glutIdleFunc(gwIdle);
 
   // Load our shader programs
