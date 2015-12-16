@@ -32,7 +32,7 @@ public:
 
   /// OpenGL stuff
   void getDrawData() {
-    glColor3f( 1, 1, 1);
+    glColor3f(1, 1, 1);
     GLUquadricObj *quadric;
     quadric = gluNewQuadric();
     gluQuadricDrawStyle(quadric, GLU_FILL);

@@ -91,6 +91,7 @@ public:
       for (int i = -10; i < 10; i++) {
         for (int j = -10; j < 10; j++) {
           glVertex3f(i, j, 0.0);
+          glVertex3f(j, i, 0.0);
         }
       }
       glEnd();

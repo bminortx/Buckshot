@@ -49,7 +49,7 @@ int main(int argc, char* argv[]) {
   double radius = 3;
   double mass = 5;
   double restitution = 2;
-  double position[] = {0, 0, 1};
+  double position[] = {0, 4, 6};
   double rotation[] = {1, 0, 0,
                        0, 1, 0,
                        0, 0, 1};

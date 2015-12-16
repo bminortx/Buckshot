@@ -40,7 +40,7 @@ static std::vector<btTypedConstraint*> constraints_;
 /// OPENGL STUFF
 static int window;
 static float view_angle_ = 0;
-static float view_elevation_ = 0;
+static float view_elevation_ = 3;
 static float fov_ = 55;
 static float aspect_ratio_ = 1;
 static float world_dim_ = 7.0;
@@ -167,7 +167,7 @@ inline void gwDisplay(){
   // TAKEN FROM HW 4
   const double len=2.0;  //  Length of axes
   //  Light position and colors
-  float Emission[]  = {0.0,0.0,0.0,1.0};
+  float Emission[]  = {0.6,0.6,0.6,1.0};
   float Ambient[]   = {0.8,0.8,0.8,1.0};
   float Diffuse[]   = {1.0,1.0,1.0,1.0};
   float Specular[]  = {1.0,1.0,1.0,1.0};
@@ -180,7 +180,7 @@ inline void gwDisplay(){
   float Ex = -2 * world_dim_ * std::sin(view_angle_) * std::cos(view_elevation_);
   float Ey = +2 * world_dim_ * std::sin(view_elevation_);
   float Ez = +2 * world_dim_ * std::cos(view_angle_) * std::cos(view_elevation_);
-  gluLookAt(Ex,Ey,Ez , 0,0,0 , 0, std::cos(view_elevation_),0);
+  gluLookAt(Ex, Ey, Ez, 0,0,0 , 0, std::cos(view_elevation_),0);
   glColor3f(1,1,1);
   glPushMatrix();
   glTranslated(Position[0],Position[1],Position[2]);
@@ -227,8 +227,8 @@ inline void gwDisplay(){
       (float)rotation[2][0], (float)rotation[2][1], (float)rotation[2][2], 0,
       (float)position[0], (float)position[1], (float)position[2], 1
     };
-    currentShape->getDrawData();
     glMultMatrixf(pose);
+    currentShape->getDrawData();
     std::this_thread::sleep_for (std::chrono::milliseconds(10));
   }
 

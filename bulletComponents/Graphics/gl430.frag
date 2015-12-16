@@ -14,7 +14,7 @@ uniform float CrystalDensity;
 uniform float CrystalSize;
 
 void main() {
-  vec4 surface_color = vec4(0.0, 0.5, 0.5, 1.0);
+  vec4 surface_color = vec4(1.0, 0.5, 0.5, 1.0);
   vec2 center = CrystalDensity * ModelPos;
   vec2 perturb = fract(center) - vec2(0.5);
   // Reflect if the Light and normal are in a good range
