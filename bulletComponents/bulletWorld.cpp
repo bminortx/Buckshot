@@ -25,14 +25,19 @@ BulletWorld::~BulletWorld() {
 }
 
 void BulletWorld::Reset() {
-  for (std::unique_ptr<bullet_shape>& shape : shapes_) {
-    dynamics_world_->removeRigidBody(shape->rigidBodyPtr());
-    shape->rigidBodyPtr()->clearForces();
-    btVector3 zeroVector(0,0,0);
-    shape->rigidBodyPtr()->setLinearVelocity(zeroVector);
-    shape->rigidBodyPtr()->setAngularVelocity(zeroVector);
-    shape->rigidBodyPtr()->setWorldTransform(shape->startingPose());
-    dynamics_world_->addRigidBody(shape->rigidBodyPtr());
+  int i = 0;
+  for (std::unique_ptr<bullet_shape>& shape : shapes_) {;
+    if (i == 0) {
+      i++;
+    } else {
+      dynamics_world_->removeRigidBody(shape->rigidBodyPtr());
+      shape->rigidBodyPtr()->clearForces();
+      btVector3 zeroVector(0,0,0);
+      shape->rigidBodyPtr()->setLinearVelocity(zeroVector);
+      shape->rigidBodyPtr()->setAngularVelocity(zeroVector);
+      shape->rigidBodyPtr()->setWorldTransform(shape->startingPose());
+      dynamics_world_->addRigidBody(shape->rigidBodyPtr());
+    }
   }
   for (std::unique_ptr<bullet_vehicle>& shape : vehicles_) {
     dynamics_world_->removeRigidBody(shape->rigidBodyPtr());
@@ -136,6 +141,7 @@ void BulletWorld::RunSimulation() {
     is_running_ = false;
     is_iterating_ = false;
     Reset();
+    is_reset_ = false;
   }
   StepGUI();
 }
