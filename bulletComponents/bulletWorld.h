@@ -51,6 +51,13 @@ static int shader_program_;
 const float CrystalDensity=5.0;
 const float CrystalSize=.15;
 
+/// Key accessors to BulletWorld
+static bool is_running_ = false;
+static bool is_reset_ = false;
+static bool is_iterating_ = false;
+static bool is_drawing_constraints_ = false;
+static bool quit_now_ = false;
+
 /// OPENGL STUFF
 
 class BulletWorld {
@@ -284,7 +291,26 @@ inline void gwSpecial(int key, int x, int y){
 }
 
 inline void gwKeyboard(unsigned char ch,int x,int y){
-  //  Tell GLUT it is necessary to redisplay the scene
+  //  Exit on ESC
+  if (ch == 27 || ch == 'q')
+    exit(0);
+  //  Reset view angle
+  else if (ch == '0') {
+    view_angle_ = 0;
+    view_elevation_ = 3;
+  }
+  //  Cycle modes
+  // else if (ch == 'm' || ch == 'M')
+  //   mode = 1 - mode;
+  else if (ch == '+')
+    light_elevation_ += 0.1;
+  else if (ch == '-')
+    light_elevation_ -= 0.1;
+  else if (ch == '[')
+    light_angle_ = fmod(light_angle_ - .05, TWOPI);
+  else if (ch == ']')
+    light_angle_ = fmod(light_angle_ + .05, TWOPI);
+  Project(fov_, aspect_ratio_, world_dim_);
   glutPostRedisplay();
 }
 
