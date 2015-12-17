@@ -279,28 +279,20 @@ inline void gwReshape(int width, int height){
 }
 
 inline void gwSpecial(int key, int x, int y){
-  //  Right arrow key - increase angle by 5 degrees
   if (key == GLUT_KEY_RIGHT)
     view_angle_ += .05;
-  //  Left arrow key - decrease angle by 5 degrees
   else if (key == GLUT_KEY_LEFT)
     view_angle_ -= .05;
-  //  Up arrow key - increase elevation by 5 degrees
   else if (key == GLUT_KEY_UP)
     view_elevation_ += .05;
-  //  Down arrow key - decrease elevation by 5 degrees
   else if (key == GLUT_KEY_DOWN)
     view_elevation_ -= .05;
-  //  PageUp key - increase dim
   else if (key == GLUT_KEY_PAGE_DOWN)
     world_dim_ += 0.1;
-  //  PageDown key - decrease dim
   else if (key == GLUT_KEY_PAGE_UP && world_dim_ > 1)
     world_dim_ -= 0.1;
-  //  Keep angles to +/-360 degrees
   view_angle_ = fmod(view_angle_, TWOPI);
   view_elevation_ = fmod(view_elevation_, TWOPI);
-  //  Update projection
   Project(fov_, aspect_ratio_, world_dim_);
   glutPostRedisplay();
 }
@@ -311,7 +303,6 @@ inline void gwKeyboard(unsigned char ch,int x,int y){
     glutDestroyWindow(window);
     exit(0);
   }
-  //  Reset view angle
   else if (ch == '0') {
     view_angle_ = 0;
     view_elevation_ = 3;
@@ -348,19 +339,15 @@ inline void gwIdle(){
 // http://bit.ly/1NwkgiQ
 inline void mouse(int button, int state, int x, int y)
 {
-  // Wheel reports as button 3(scroll up) and button 4(scroll down)
-  if ((button == 3) || (button == 4)) // It's a wheel event
+  if ((button == 3) || (button == 4))
     {
-      // Each wheel event reports like a button click, GLUT_DOWN then GLUT_UP
-      if (state == GLUT_UP) return; // Disregard redundant GLUT_UP events
+      if (state == GLUT_UP) return;
       if (button == 3){
         world_dim_ += 0.1;
       } else {
         if (world_dim_ > 1) world_dim_ -= 0.1;
       }
-    } else {  // normal button event
-
-  }
+    } else { }
 }
 
 inline void Init() {
@@ -368,17 +355,13 @@ inline void Init() {
   int argc = 1;
   argv[0] = strdup ("Buckshot");
   glutInit(&argc,argv);
-  //  Request double buffered, true color window with Z buffering at 600x600
   glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
   glutInitWindowSize(600,600);
   window = glutCreateWindow("Buckshot GUI");
 #ifdef USEGLEW
-  //  Initialize GLEW
   if (glewInit()!=GLEW_OK) Fatal("Error initializing GLEW\n");
   if (!GLEW_VERSION_4_3) Fatal("OpenGL 4.3 not supported\n");
 #endif
-
-  //  Set callbacks
   glutDisplayFunc(gwDisplay);
   glutReshapeFunc(gwReshape);
   glutSpecialFunc(gwSpecial);
