@@ -164,7 +164,6 @@ class BulletWorld {
 
   // Physics and Graphics worlds
   std::shared_ptr<btDiscreteDynamicsWorld> dynamics_world_;
-  std::shared_ptr<GraphicsWorld> graphics_world_;
 };
 
 /////////////////////////
@@ -391,7 +390,6 @@ inline void Init() {
   glutMouseFunc(mouse);
   glutIdleFunc(gwIdle);
   // Load our shader programs
-  shader_program_[1] = CreateShaderProg(
-      "/home/replica/GitMisc/personal_repos/Buckshot/bulletComponents/Graphics/gl430.vert",
-      "/home/replica/GitMisc/personal_repos/Buckshot/bulletComponents/Graphics/gl430.frag");
+  shader_program_[1] = CreateShaderProg("bulletComponents/Graphics/gl430.vert",
+                                        "bulletComponents/Graphics/gl430.frag");
 }

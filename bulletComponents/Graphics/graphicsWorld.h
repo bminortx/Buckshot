@@ -11,20 +11,6 @@
 #include <stdio.h>
 #include <vector>
 
-class GraphicsWorld {
- public:
-  GraphicsWorld();
-  void Init(int& window,
-            int& shader_program_,
-            void (*gwDisplay)(),
-            void (*gwReshape)(int, int),
-            void (*gwSpecial)(int, int, int),
-            void (*gwKeyboard)(unsigned char, int, int),
-            void (*gwIdle)());
-  int AddConstraints();
-  void stepSimulation();
-};
-
 inline void glFatal(const char* format , ...)
 {
   va_list args;
@@ -34,26 +20,15 @@ inline void glFatal(const char* format , ...)
   exit(1);
 }
 
-
 // Borrowed from Advanced Graphics
 inline void Project(double fov,double asp,double dim)
 {
-  //  Tell OpenGL we want to manipulate the projection matrix
   glMatrixMode(GL_PROJECTION);
-  //  Undo previous transformations
   glLoadIdentity();
-  //  Perspective transformation
-  if (fov)
-    gluPerspective(fov,asp,dim/16,16*dim);
-  //  Orthogonal transformation
-  else
-    glOrtho(-asp*dim,asp*dim,-dim,+dim,-dim,+dim);
-  //  Switch to manipulating the model matrix
+  gluPerspective(fov,asp,dim/16,16*dim);
   glMatrixMode(GL_MODELVIEW);
-  //  Undo previous transformations
   glLoadIdentity();
 }
-
 
 //////////
 // LOADING SHADERS

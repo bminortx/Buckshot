@@ -55,8 +55,7 @@ set(HDRS
   Graphics/graphicsWorld.h)
 set(SRC
   buckshot.cpp
-  bulletWorld.cpp
-  Graphics/graphicsWorld.cpp)
+  bulletWorld.cpp)
 set(TEST_HDRS
   bulletShapes/bullet_cube.h
   bulletShapes/bullet_cylinder.h
@@ -69,7 +68,6 @@ set(TEST_HDRS
   bulletWorld.h
   Graphics/graphicsWorld.h)
 set(TEST_SRC
-  Graphics/graphicsWorld.cpp
   bulletWorld.cpp)
 
 ###################
