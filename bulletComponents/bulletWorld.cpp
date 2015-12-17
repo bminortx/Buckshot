@@ -2,11 +2,11 @@
 #include <iostream>
 #include <cstring>
 
-BulletWorld::BulletWorld() {
-  // See http://bulletphysics.org/mediawiki-1.5.8/index.php/Hello_World
-  timestep_ = 1.0/30.0;
-  gravity_ = -9.8;
-  max_sub_steps_ = 10; //  bullet -- for stepSimulation
+// See http://bulletphysics.org/mediawiki-1.5.8/index.php/Hello_World
+BulletWorld::BulletWorld() :
+  timestep_(1.0/30.0), gravity_(-9.8), max_sub_steps_(10),
+  use_opengl_(false)
+{
   bt_dispatcher_ = std::unique_ptr<btCollisionDispatcher>(
       new btCollisionDispatcher(&collision_configuration_));
   bt_broadphase_.reset(new btDbvtBroadphase);
@@ -18,7 +18,6 @@ BulletWorld::BulletWorld() {
                                   bt_solver_.get(),
                                   &collision_configuration_));
   dynamics_world_->setGravity(btVector3(0, 0, gravity_));
-  Init();
 }
 
 BulletWorld::~BulletWorld() {
@@ -44,6 +43,11 @@ void BulletWorld::Reset() {
     shape->rigidBodyPtr()->setWorldTransform(shape->startingPose());
     dynamics_world_->addRigidBody(shape->rigidBodyPtr());
   }
+}
+
+void BulletWorld::UseOpenGL() {
+  use_opengl_ = true;
+  Init();
 }
 
 /*********************************************************************
@@ -114,7 +118,12 @@ int BulletWorld::AddRaycastVehicle(double* parameters, double* position,
 
 void BulletWorld::StepSimulation() {
   dynamics_world_->stepSimulation(timestep_,  max_sub_steps_);
-  glutMainLoopEvent();
+}
+
+void BulletWorld::StepGUI() {
+  if (use_opengl_) {
+    glutMainLoopEvent();
+  }
 }
 
 /*********************************************************************

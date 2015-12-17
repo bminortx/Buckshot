@@ -49,8 +49,15 @@ classdef bullet_interface < handle
         end
         
         function reset(this)
+            this.gui.run = false;
+            this.gui.iter = false;
             buckshot('reset', this.buckshotAccessor);
             this.UpdatePoses();
+        end
+        
+        function useOpenGL(this) 
+            this.gui.opengl = true;
+            buckshot('useOpenGL', this.buckshotAccessor);
         end
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -340,7 +347,10 @@ classdef bullet_interface < handle
                   case 'p'
                     this.gui.path = ~this.gui.path;
                   case 'c'
-                    this.gui.draw_constraint = ~this.gui.draw_constraint;
+                    this.gui.draw_constraint = ~ ...
+                        this.gui.draw_constraint;
+                  case 'r'
+                    this.reset()
                 end
             end
             if ~this.gui.opengl,
@@ -454,6 +464,8 @@ classdef bullet_interface < handle
                     delete(h_constraints);
                     delete(h_rayvehicles);
                 end
+            else
+                buckshot('StepGUI', this.buckshotAccessor);                
             end
         end
 

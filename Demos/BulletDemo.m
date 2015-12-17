@@ -4,10 +4,12 @@ function BulletDemo
 %%% 1. CREATE THE BULLET WRAPPER
 %%% The most important part; that's why you're using this, right?
 
-if exist('BuckshotSim'), 
-  BuckshotSim.delete;
+if ~exist('BuckshotSim'), 
+    BuckshotSim = SETUP(true);
 end
-BuckshotSim = SETUP(true);
+
+BuckshotSim.useOpenGL();
+BuckshotSim.reset();
 
 %%% CREATE TERRAIN
 Map = Terrain(50, 50, 3, 1);

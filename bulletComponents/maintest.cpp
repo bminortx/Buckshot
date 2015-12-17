@@ -65,6 +65,8 @@ int main(int argc, char* argv[]) {
 
   i = world.AddSphere(radius, mass, restitution, position, rotation);
 
+  world.UseOpenGL();
+
   // i = world.Hinge_one_pivot(id, pivot, axis, limits);
 
   while (1) {

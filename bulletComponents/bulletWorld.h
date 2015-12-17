@@ -59,6 +59,7 @@ class BulletWorld {
   ~BulletWorld();
 
   void Reset();
+  void UseOpenGL();
 
   /*********************************************************************
    *ADDING OBJECTS
@@ -86,6 +87,7 @@ class BulletWorld {
    **********************************************************************/
 
   void StepSimulation();
+  void StepGUI();
 
   /*********************************************************************
    *COMPOUND METHODS
@@ -144,6 +146,7 @@ class BulletWorld {
   double timestep_;
   double gravity_;
   int max_sub_steps_;
+  bool use_opengl_;
   btDefaultCollisionConfiguration  collision_configuration_;
   std::unique_ptr<btCollisionDispatcher> bt_dispatcher_;
   std::unique_ptr<btDbvtBroadphase> bt_broadphase_;
@@ -331,7 +334,6 @@ inline void Init() {
   glutKeyboardFunc(gwKeyboard);
   glutMouseFunc(mouse);
   glutIdleFunc(gwIdle);
-
   // Load our shader programs
   shader_program_ = CreateShaderProg(
       "/home/replica/GitMisc/personal_repos/Buckshot/bulletComponents/Graphics/gl430.vert",
