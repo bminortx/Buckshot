@@ -39,11 +39,9 @@ Make sure that you're pointing to the correct mex directory in the CMake script;
 
 #### 3. SETUP.m ####
 
-Once 1. and 2. are out of the way, Open Matlab and run `SETUP(true)` in the top directory. `SETUP` is a good way to start any bullet-focused MATLAB script, as it:
-
-1. Connects all of Buckshot's paths to MATLAB
-2. Builds the BulletInterface class via CMake
-3. Creates a MATLAB pointer to the class, if you needed it [set argument to `false` if not]
+Once 1. and 2. are out of the way, Open Matlab and run `BuckshotCreator()` in the top directory. `BuckshotCreator` is a good way to start any bullet-focused MATLAB script, as . Run the function with `true` to
+- `BuckshotCreator(false)`		: connects all of Buckshot's paths to MATLAB
+- `BuckshotCreator(true)`		: builds the BulletInterface class via CMake, and creates a MATLAB pointer to the resulting Buckshot class
 
 - - - - - - - - -
 
@@ -65,8 +63,6 @@ for everything. Some of the constraints are a bit tricky, so this might help.
 #### The GUI ####
 
 Use OpenGL rendering to draw your Physics scene outside of the confines of MATLAB! Just specify the `useOpenGL` flag when calling `Buckshot.RunSimulation()`, and Buckshot will create an OpenGL context for you to play around in. This is a very new feature, so I'd love to get some feedback on improvements. 
-
-Key map:
 
 - spacebar		: Run/pause the simulation
 - 0				: Reset View
