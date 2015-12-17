@@ -46,7 +46,7 @@ int main(int argc, char* argv[]) {
   double normal[] = {0, 0, 1};
 
   ////////////
-  double radius = 3;
+  double radius = 1;
   double mass = 5;
   double restitution = 2;
   double position[] = {0, 4, 6};
@@ -56,18 +56,15 @@ int main(int argc, char* argv[]) {
 
   ////////////
   double id = 1;
-  double pivot[] = {4, 0, 0};
+  double pivot[] = {2, 0, 0};
   double axis[] = {0, 1, 0};
-  double limits[] = {-1, 1, .9, .3, 1};
+  double limits[] = {-6, 6, .9, .3, 1};
 
   int i = world.AddTerrain(row_count, col_count, grad, min_ht, max_ht,
                            X, Y, Z, normal);
-
   i = world.AddSphere(radius, mass, restitution, position, rotation);
-
+  i = world.Hinge_one_pivot(id, pivot, axis, limits);
   world.UseOpenGL();
-
-  // i = world.Hinge_one_pivot(id, pivot, axis, limits);
 
   while (1) {
     world.RunSimulation();

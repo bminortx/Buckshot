@@ -252,6 +252,20 @@ inline void gwDisplay(){
     glPopMatrix();
   }
 
+  if (is_drawing_constraints_) {
+    for (btTypedConstraint* cons: constraints_) {
+      // TODO(bminortx): investigate this. Have to cast down for now...
+      btHinge2Constraint* constraint =
+        static_cast<btHinge2Constraint*>(cons);
+      btVector3 position = constraint->getAnchor();
+      glColor4f(0.2, 1, 0.2, 0.7);
+      glPushMatrix();
+      glTranslated(position[0], position[1], position[2]);
+      glutSolidSphere(0.03,10,10);
+      glPopMatrix();
+    }
+  }
+
   glUseProgram(0);
   glutPostRedisplay();
 
@@ -311,8 +325,10 @@ inline void gwKeyboard(unsigned char ch,int x,int y){
   } else if (ch == 32) {
     is_running_ = !is_running_;
     is_iterating_ = false;
-  } else if (ch = 'r') {
+  } else if (ch == 'r') {
     is_reset_ = true;
+  } else if (ch == 'c') {
+    is_drawing_constraints_ = !is_drawing_constraints_;
   }
   else if (ch == 'm' || ch == 'M')
     mode = ((mode + 1) % MODE);
