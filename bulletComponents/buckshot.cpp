@@ -54,6 +54,11 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     return;
   }
 
+  if (!strcmp("useOpenGL", cmd)) {
+    bullet_sim_->UseOpenGL();
+    return;
+  }
+
   /*********************************************************************
    *
    *ADDING OBJECTS
@@ -162,11 +167,12 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 
   // StepSimulation
   if (!strcmp("StepSimulation", cmd)) {
-    // Check parameters
-    if (nlhs < 0 || nrhs > 2 )
-      mexErrMsgTxt("StepSimulation: Unexpected arguments.");
-    // Call the method
     bullet_sim_->StepSimulation();
+    return;
+  }
+
+  if (!strcmp("StepGUI", cmd)) {
+    bullet_sim_->StepGUI();
     return;
   }
 

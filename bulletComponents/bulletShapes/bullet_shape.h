@@ -45,6 +45,7 @@ class bullet_shape{
                      rotation[6], rotation[7], rotation[8]);
     btTransform bullet_trans(rot, pos);
     bulletBody->setCenterOfMassTransform(bullet_trans);
+    _startingPose = bullet_trans;
     return 0;
   }
 
@@ -61,6 +62,10 @@ class bullet_shape{
     return bulletMotionState;
   }
 
+  btTransform startingPose() {
+    return _startingPose;
+  }
+
   // OpenGL functions
   virtual void getDrawData(){}
 
@@ -68,4 +73,5 @@ class bullet_shape{
   btCollisionShape* bulletShape;
   btRigidBody* bulletBody;
   btMotionState* bulletMotionState;
+  btTransform _startingPose;
 };
