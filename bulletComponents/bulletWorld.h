@@ -95,6 +95,7 @@ class BulletWorld {
 
   void StepSimulation();
   void StepGUI();
+  void RunSimulation();
 
   /*********************************************************************
    *COMPOUND METHODS
@@ -236,9 +237,9 @@ inline void gwDisplay(){
     btMatrix3x3 rotation = world_transform.getBasis();
     btVector3 position = world_transform.getOrigin();
     float pose[] = {
-      (float)rotation[0][0], (float)rotation[0][1], (float)rotation[0][2], 0,
-      (float)rotation[1][0], (float)rotation[1][1], (float)rotation[1][2], 0,
-      (float)rotation[2][0], (float)rotation[2][1], (float)rotation[2][2], 0,
+      (float)rotation[0][0], (float)rotation[1][0], (float)rotation[2][0], 0,
+      (float)rotation[0][1], (float)rotation[1][1], (float)rotation[2][1], 0,
+      (float)rotation[0][2], (float)rotation[1][2], (float)rotation[2][2], 0,
       (float)position[0], (float)position[1], (float)position[2], 1
     };
     glMultMatrixf(pose);
@@ -292,12 +293,21 @@ inline void gwSpecial(int key, int x, int y){
 
 inline void gwKeyboard(unsigned char ch,int x,int y){
   //  Exit on ESC
-  if (ch == 27 || ch == 'q')
+  if (ch == 27 || ch == 'q') {
+    glutDestroyWindow(window);
     exit(0);
+  }
   //  Reset view angle
   else if (ch == '0') {
     view_angle_ = 0;
     view_elevation_ = 3;
+  } else if (ch == 'i') {
+    is_iterating_ = true;
+  } else if (ch == 32) {
+    is_running_ = false;
+    is_iterating_ = false;
+  } else if (ch = 'r') {
+    is_reset_ = true;
   }
   //  Cycle modes
   // else if (ch == 'm' || ch == 'M')

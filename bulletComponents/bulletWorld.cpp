@@ -126,6 +126,20 @@ void BulletWorld::StepGUI() {
   }
 }
 
+void BulletWorld::RunSimulation() {
+  if (is_running_) {
+    StepSimulation();
+  } else if (is_iterating_) {
+    StepSimulation();
+    is_iterating_ = false;
+  } else if (is_reset_) {
+    is_running_ = false;
+    is_iterating_ = false;
+    Reset();
+  }
+  StepGUI();
+}
+
 /*********************************************************************
  *COMPOUND METHODS
  **********************************************************************/

@@ -462,6 +462,9 @@ classdef bullet_interface < handle
             if runOpenGL, 
                 this.gui.opengl = true;
                 buckshot('useOpenGL', this.buckshotAccessor);
+                while(1)
+                    buckshot('RunSimulation', this.buckshotAccessor);
+                end
             end
             this.InitSimulation();
             if ~runOpenGL,

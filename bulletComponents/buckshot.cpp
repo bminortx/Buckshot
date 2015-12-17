@@ -175,6 +175,11 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     bullet_sim_->StepGUI();
     return;
   }
+  
+  if (!strcmp("RunSimulation", cmd)) {
+    bullet_sim_->RunSimulation();
+    return;
+  }
 
 
   /*********************************************************************
