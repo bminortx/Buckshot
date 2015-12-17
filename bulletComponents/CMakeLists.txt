@@ -25,7 +25,6 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules")
 ###################
 # LINK TO OUR LIBRARIES
 ###################
-find_package( Eigen3 REQUIRED )
 find_package( Bullet REQUIRED )
 add_definitions(${BULLET_PRECISION})
 add_definitions(-DBT_NO_PROFILE)
@@ -34,7 +33,6 @@ find_package( OpenGL )
 find_package( GLUT )
 
 set(USER_INC
-  ${EIGEN3_INCLUDE_DIRS}
   ${BULLET_INCLUDE_DIR}
   ${OPENGL_INCLUDE_DIRS}
   ${GLUT_INCLUDE_DIRS}  
@@ -46,7 +44,6 @@ set(LINK_DIRS
   /usr/local/lib/)
 set(LINK_LIBS
   ${BULLET_LIBRARIES}
-  ${EIGEN3_LIBRARIES}
   ${OPENGL_LIBRARIES}
   ${GLUT_LIBRARY})
 include_directories(${USER_INC})
