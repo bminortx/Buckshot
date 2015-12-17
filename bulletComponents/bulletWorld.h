@@ -390,6 +390,6 @@ inline void Init() {
   glutMouseFunc(mouse);
   glutIdleFunc(gwIdle);
   // Load our shader programs
-  shader_program_[1] = CreateShaderProg("bulletComponents/Graphics/gl430.vert",
-                                        "bulletComponents/Graphics/gl430.frag");
+  shader_program_[1] = CreateShaderProg("bulletComponents/Graphics/crystal.vert",
+                                        "bulletComponents/Graphics/crystal.frag");
 }
