@@ -304,7 +304,7 @@ inline void gwKeyboard(unsigned char ch,int x,int y){
   } else if (ch == 'i') {
     is_iterating_ = true;
   } else if (ch == 32) {
-    is_running_ = false;
+    is_running_ = !is_running_;
     is_iterating_ = false;
   } else if (ch = 'r') {
     is_reset_ = true;
