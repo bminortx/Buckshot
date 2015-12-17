@@ -242,8 +242,11 @@ inline void gwDisplay(){
       (float)rotation[0][2], (float)rotation[1][2], (float)rotation[2][2], 0,
       (float)position[0], (float)position[1], (float)position[2], 1
     };
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
     glMultMatrixf(pose);
     currentShape->getDrawData();
+    glPopMatrix();
     std::this_thread::sleep_for (std::chrono::milliseconds(10));
   }
 
