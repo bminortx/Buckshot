@@ -25,6 +25,27 @@ BulletWorld::~BulletWorld() {
   glutDestroyWindow(window);
 }
 
+void BulletWorld::Reset() {
+  for (std::unique_ptr<bullet_shape>& shape : shapes_) {
+    dynamics_world_->removeRigidBody(shape->rigidBodyPtr());
+    shape->rigidBodyPtr()->clearForces();
+    btVector3 zeroVector(0,0,0);
+    shape->rigidBodyPtr()->setLinearVelocity(zeroVector);
+    shape->rigidBodyPtr()->setAngularVelocity(zeroVector);
+    shape->rigidBodyPtr()->setWorldTransform(shape->startingPose());
+    dynamics_world_->addRigidBody(shape->rigidBodyPtr());
+  }
+  for (std::unique_ptr<bullet_vehicle>& shape : vehicles_) {
+    dynamics_world_->removeRigidBody(shape->rigidBodyPtr());
+    shape->rigidBodyPtr()->clearForces();
+    btVector3 zeroVector(0,0,0);
+    shape->rigidBodyPtr()->setLinearVelocity(zeroVector);
+    shape->rigidBodyPtr()->setAngularVelocity(zeroVector);
+    shape->rigidBodyPtr()->setWorldTransform(shape->startingPose());
+    dynamics_world_->addRigidBody(shape->rigidBodyPtr());
+  }
+}
+
 /*********************************************************************
  *ADDING OBJECTS
  **********************************************************************/

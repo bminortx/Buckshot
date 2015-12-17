@@ -58,6 +58,8 @@ class BulletWorld {
   BulletWorld();
   ~BulletWorld();
 
+  void Reset();
+
   /*********************************************************************
    *ADDING OBJECTS
    **********************************************************************/
@@ -234,13 +236,11 @@ inline void gwDisplay(){
     std::this_thread::sleep_for (std::chrono::milliseconds(10));
   }
 
-  // Back to fixed pipeline
   glUseProgram(0);
   glutPostRedisplay();
 
   //  Display parameters
   glWindowPos2i(5,5);
-  //  Render the scene and make it visible
   glFlush();
   glutSwapBuffers();
 }

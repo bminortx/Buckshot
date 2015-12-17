@@ -46,9 +46,13 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     return;
   }
 
-
   // Get the class instance pointer from the second input
   BulletWorld *bullet_sim_ = convertMat2Ptr<BulletWorld>(prhs[1]);
+
+  if (!strcmp("reset", cmd)) {
+    bullet_sim_->Reset();
+    return;
+  }
 
   /*********************************************************************
    *
