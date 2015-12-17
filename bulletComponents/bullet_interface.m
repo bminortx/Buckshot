@@ -55,11 +55,6 @@ classdef bullet_interface < handle
             this.UpdatePoses();
         end
         
-        function useOpenGL(this) 
-            this.gui.opengl = true;
-            buckshot('useOpenGL', this.buckshotAccessor);
-        end
-        
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%% ADDING OBJECTS
         
@@ -310,15 +305,6 @@ classdef bullet_interface < handle
             id = Vehicle.GetID();
             buckshot('ResetVehicle', this.buckshotAccessor, id, start_pose, start_rot);
         end
-        
-        function RapidGUI(this, Vehicle, forces, steering_angles)
-            Vehicle.AddCommand(steering_angles, forces);
-            this.InitSimulation();
-            while(this.gui.quit==false),
-                this.CommandRaycastVehicle(Vehicle);
-                this.RunSimulation;
-            end
-        end
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%% GUI METHODS
@@ -472,8 +458,13 @@ classdef bullet_interface < handle
         %%%% RUNNING THE SIMULATION
         %%%% Handles the interaction between the Bullet Physics engine and the Sim.
         
-        function RunSimulation(this) 
-            if ~this.gui.opengl, 
+        function RunSimulation(this, runOpenGL) 
+            if runOpenGL, 
+                this.gui.opengl = true;
+                buckshot('useOpenGL', this.buckshotAccessor);
+            end
+            this.InitSimulation();
+            if ~runOpenGL,
                 if this.gui.run,
                     title(['Bullet simulation (running)',char(10),'Timestep: ',...
                            num2str(this.gui.timestep), char(10), 'Framerate: ', ...

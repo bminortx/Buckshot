@@ -8,7 +8,6 @@ if ~exist('BuckshotSim'),
     BuckshotSim = SETUP(true);
 end
 
-BuckshotSim.useOpenGL();
 BuckshotSim.reset();
 
 %%% CREATE TERRAIN
@@ -48,7 +47,5 @@ BuckshotSim.AddShapes(Shapes);
 BuckshotSim.AddConstraints(Constraints);
 
 %%%% RUN THE GUI
-BuckshotSim.InitSimulation();
-while(BuckshotSim.gui.quit==false), 
-  BuckshotSim.RunSimulation;
-end
+useOpenGL = true;
+BuckshotSim.RunSimulation(useOpenGL);
