@@ -13,6 +13,8 @@ Buckshot's goal is to allow for convenient use of the MATLAB libraries,
 while also guaranteeing accurate simulation through Bullet Physics, a
 wonderful physics engine written by Erwin Coumans.
 
+## NOW WITH OpenGL GUI! Scroll down to learn more ##
+
 - - - - - - - - -
 
 ## Getting Started ##
@@ -23,7 +25,11 @@ wonderful physics engine written by Erwin Coumans.
 * CMake
 * MATLAB
 * [Bullet Physics Library](http://bulletphysics.org/wordpress/)
-* [Eigen Linear Algebra Library](http://bit.ly/LXBsEr)
+
+For the Graphics pipeline:
+
+* OpenGL
+* GLUT
 
 #### 2. MEX Directory ####
 
@@ -43,7 +49,6 @@ Once 1. and 2. are out of the way, Open Matlab and run `SETUP(true)` in the top 
 
 ## Demos ##
 
-
 [![The Bullet Demo in action](http://img.youtube.com/vi/IzXKR44iJ0o/0.jpg)](https://www.youtube.com/watch?v=IzXKR44iJ0o)
 
 Each demo has the same GUI (displayed at startup), but they
@@ -56,6 +61,33 @@ showcase different things:
 Every function in every directory should have a bit of documentation
 involved, so just type ```help [name of function]``` to look up usage and arguments
 for everything. Some of the constraints are a bit tricky, so this might help.
+
+#### The GUI ####
+
+Use OpenGL rendering to draw your Physics scene outside of the confines of MATLAB! Just specify the `useOpenGL` flag when calling `Buckshot.RunSimulation()`, and Buckshot will create an OpenGL context for you to play around in. This is a very new feature, so I'd love to get some feedback on improvements. 
+
+Key map:
+
+- spacebar		: Run/pause the simulation
+- 0				: Reset View
+- i				: Iterate one frame at a time (must be paused)
+- r				: Reset the physics simulation
+- c				: Draw constraints
+- m				: Change shader effect
+- + and -		: Move light up and down
+- [ and ]		: Move light angle
+- Mouse scroll	: Zoom in/out
+- PgUp / PgDwn	: Zoom in/out
+- q             : quit the program 
+
+TODOs left here:
+
+* Correct heightmap rendering (defaults to flat plane now)
+* Correct constraint rendering
+* Add mouse viewing translation/rotation
+* Add texturing for every shape type, as well as easy texture file linking through MATLAB
+* Add more shaders
+* Find a way to quit the GUI without quitting MATLAB
 
 - - - - - - - - -
 
