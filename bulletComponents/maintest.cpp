@@ -70,7 +70,7 @@ int main(int argc, char* argv[]) {
   // i = world.Hinge_one_pivot(id, pivot, axis, limits);
 
   while (1) {
-    world.StepSimulation();
+    world.RunSimulation();
     std::vector<double> pose = world.GetShapeTransform(0);
     std::vector<double> pose2 = world.GetShapeTransform(1);
     double position[3];

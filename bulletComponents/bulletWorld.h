@@ -47,7 +47,9 @@ static float world_dim_ = 7.0;
 static int light_move_ = 1;
 static float light_angle_ = PI / 4;
 static float light_elevation_ = 2;
-static int shader_program_;
+#define MODE 2
+static int shader_program_[MODE] = {0, 0};
+static int mode = 0;
 const float CrystalDensity=5.0;
 const float CrystalSize=.15;
 
@@ -210,23 +212,24 @@ inline void gwDisplay(){
   //  Enable light 0
   glEnable(GL_LIGHT0);
 
-  /// TODO: SET THIS BACK
-  //  Set ambient, diffuse, specular components and position of light 0
-  // glLightfv(GL_LIGHT0,GL_AMBIENT ,Ambient);
-  // glLightfv(GL_LIGHT0,GL_DIFFUSE ,Diffuse);
-  // glLightfv(GL_LIGHT0,GL_SPECULAR,Specular);
-  // glLightfv(GL_LIGHT0,GL_POSITION,Position);
-  //  Set materials
-  // glMaterialfv(GL_FRONT_AND_BACK,GL_SHININESS,Shinyness);
-  // glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,Specular);
-  // glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,Emission);
-
+  if (mode != 0) {
+    //  Set ambient, diffuse, specular components and position of light 0
+    glLightfv(GL_LIGHT0,GL_AMBIENT ,Ambient);
+    glLightfv(GL_LIGHT0,GL_DIFFUSE ,Diffuse);
+    glLightfv(GL_LIGHT0,GL_SPECULAR,Specular);
+    glLightfv(GL_LIGHT0,GL_POSITION,Position);
+    //  Set materials
+    glMaterialfv(GL_FRONT_AND_BACK,GL_SHININESS,Shinyness);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,Specular);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,Emission);
+  }
+  
   // Use our Shader
-  glUseProgram(shader_program_);
+  glUseProgram(shader_program_[mode]);
   int id;
-  id = glGetUniformLocation(shader_program_,"CrystalDensity");
+  id = glGetUniformLocation(shader_program_[mode],"CrystalDensity");
   if (id>=0) glUniform1f(id,CrystalDensity);
-  id = glGetUniformLocation(shader_program_,"CrystalSize");
+  id = glGetUniformLocation(shader_program_[mode],"CrystalSize");
   if (id>=0) glUniform1f(id,CrystalSize);
 
   /////////
@@ -311,9 +314,8 @@ inline void gwKeyboard(unsigned char ch,int x,int y){
   } else if (ch = 'r') {
     is_reset_ = true;
   }
-  //  Cycle modes
-  // else if (ch == 'm' || ch == 'M')
-  //   mode = 1 - mode;
+  else if (ch == 'm' || ch == 'M')
+    mode = ((mode + 1) % MODE);
   else if (ch == '+')
     light_elevation_ += 0.1;
   else if (ch == '-')
@@ -373,7 +375,7 @@ inline void Init() {
   glutMouseFunc(mouse);
   glutIdleFunc(gwIdle);
   // Load our shader programs
-  shader_program_ = CreateShaderProg(
+  shader_program_[1] = CreateShaderProg(
       "/home/replica/GitMisc/personal_repos/Buckshot/bulletComponents/Graphics/gl430.vert",
       "/home/replica/GitMisc/personal_repos/Buckshot/bulletComponents/Graphics/gl430.frag");
 }
