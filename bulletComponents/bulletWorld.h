@@ -201,14 +201,10 @@ inline void gwDisplay(){
   glutSolidSphere(0.03,10,10);
   glPopMatrix();
 
-  //  OpenGL should normalize normal vectors
   glEnable(GL_NORMALIZE);
-  //  Enable lighting
   glEnable(GL_LIGHTING);
-  //  glColor sets ambient and diffuse color materials
   glColorMaterial(GL_FRONT_AND_BACK,GL_AMBIENT_AND_DIFFUSE);
   glEnable(GL_COLOR_MATERIAL);
-  //  Enable light 0
   glEnable(GL_LIGHT0);
 
   if (mode != 0) {
