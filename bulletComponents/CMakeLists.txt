@@ -31,11 +31,14 @@ add_definitions(-DBT_NO_PROFILE)
 # TODO: MAKE THIS NOT REQUIRED
 find_package( OpenGL )
 find_package( GLUT )
+find_package( FREEGLUT )
+
 
 set(USER_INC
   ${BULLET_INCLUDE_DIR}
   ${OPENGL_INCLUDE_DIRS}
   ${GLUT_INCLUDE_DIRS}  
+  ${FREEGLUT_INCLUDE_DIRS}  
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/bulletShapes
   ${CMAKE_CURRENT_SOURCE_DIR}/Graphics
@@ -45,17 +48,25 @@ set(LINK_DIRS
 set(LINK_LIBS
   ${BULLET_LIBRARIES}
   ${OPENGL_LIBRARIES}
-  ${GLUT_LIBRARY})
+  ${GLUT_LIBRARY}
+  ${FREEGLUT_LIBRARY}  
+  )
 include_directories(${USER_INC})
 link_directories(${USER_INC})
+
+################
+# MATLAB MEX Files
 set(HDRS
   class_handle.hpp
-	Compound.h
+  Compound.h
   bulletWorld.h
   Graphics/graphicsWorld.h)
 set(SRC
   buckshot.cpp
   bulletWorld.cpp)
+
+################
+# Bullet tester files
 set(TEST_HDRS
   bulletShapes/bullet_cube.h
   bulletShapes/bullet_cylinder.h
@@ -64,7 +75,7 @@ set(TEST_HDRS
   bulletShapes/bullet_shape.h
   bulletShapes/bullet_sphere.h
   bulletShapes/bullet_vehicle.h
-	Compound.h
+  Compound.h
   bulletWorld.h
   Graphics/graphicsWorld.h)
 set(TEST_SRC
