@@ -4,10 +4,7 @@ function BulletDemo
 %%% 1. CREATE THE BULLET WRAPPER
 %%% The most important part; that's why you're using this, right?
 
-if ~exist('BuckshotSim'), 
-    BuckshotSim = SETUP(true);
-end
-
+BuckshotSim = BuckshotCreator(true);
 BuckshotSim.reset();
 
 %%% CREATE TERRAIN

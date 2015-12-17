@@ -403,6 +403,12 @@ classdef bullet_interface < handle
         end
         
         function StepSimulation(this)
+            for i = 1:numel(this.RayVehicles),
+                if this.RayVehicles{i}.NoMoreCommands(false) == false,
+                    BuckshotSim ...
+                        .CommandRaycastVehicle(RayVehicles{i});
+                end
+            end
             buckshot('StepSimulation', this.buckshotAccessor);
             this.UpdatePoses();
             if ~this.gui.opengl,
