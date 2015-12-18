@@ -47,7 +47,7 @@ Once 1. and 2. are out of the way, Open Matlab and run `BuckshotCreator()` in th
 
 ## Demos ##
 
-[![The Bullet Demo in action](http://img.youtube.com/vi/IzXKR44iJ0o/0.jpg)](https://www.youtube.com/watch?v=IzXKR44iJ0o)
+![Buckshot MATLAB in action](https://j.gifs.com/pYYxW6.gif)
 
 Each demo has the same GUI (displayed at startup), but they
 showcase different things: 
