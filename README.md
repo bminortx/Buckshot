@@ -1,21 +1,16 @@
-```
-______            _        _           _   
-| ___ \          | |      | |         | |  
-| |_/ /_   _  ___| | _____| |__   ___ | |_   
-| ___ \ | | |/ __| |/ / __| '_ \ / _ \| __|            
-| |_/ / |_| | (__|   <\__ \ | | | (_) | |_             
-\____/ \__,_|\___|_|\_\___/_| |_|\___/ \__|            
+# BUCKSHOT #
 
-```
 ## A MATLAB Interface for the Bullet Physics Engine ##
-
-#### UPDATE [12/17/15]: Now compatible with OpenGL ####
-
-![Buckshot MATLAB in action](https://j.gifs.com/pYYxW6.gif)
 
 Buckshot's goal is to allow for convenient use of the MATLAB
 libraries, while also guaranteeing accurate simulation through Bullet
 Physics, a wonderful physics engine written by Erwin Coumans.
+
+#### UPDATE [12/17/15]: Now compatible with OpenGL ####
+
+- - - - - - - - - - - - 
+
+![Buckshot MATLAB in action](https://j.gifs.com/pYYxW6.gif)
 
 - - - - - - - - -
 
