@@ -64,7 +64,7 @@ for everything. Some of the constraints are a bit tricky, so this might help.
 
 Use OpenGL rendering to draw your Physics scene outside of the confines of MATLAB! Just specify the `useOpenGL` flag when calling `Buckshot.RunSimulation()`, and Buckshot will create an OpenGL context for you to play around in. This is a very new feature, so I'd love to get some feedback on improvements.
 
-OpenGL GUI
+![OpenGL GUI](https://j.gifs.com/qxxykr.gif)
 
 - spacebar		: Run/pause the simulation
 - 0				: Reset View
