@@ -29,7 +29,7 @@ wonderful physics engine written by Erwin Coumans.
 For the Graphics pipeline:
 
 * OpenGL
-* GLUT
+* FreeGLUT
 
 #### 2. MEX Directory ####
 
@@ -62,7 +62,9 @@ for everything. Some of the constraints are a bit tricky, so this might help.
 
 #### The GUI ####
 
-Use OpenGL rendering to draw your Physics scene outside of the confines of MATLAB! Just specify the `useOpenGL` flag when calling `Buckshot.RunSimulation()`, and Buckshot will create an OpenGL context for you to play around in. This is a very new feature, so I'd love to get some feedback on improvements. 
+Use OpenGL rendering to draw your Physics scene outside of the confines of MATLAB! Just specify the `useOpenGL` flag when calling `Buckshot.RunSimulation()`, and Buckshot will create an OpenGL context for you to play around in. This is a very new feature, so I'd love to get some feedback on improvements.
+
+OpenGL GUI
 
 - spacebar		: Run/pause the simulation
 - 0				: Reset View
