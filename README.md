@@ -1,6 +1,4 @@
-# BUCKSHOT #
-
-## A MATLAB Interface for the Bullet Physics Engine ##
+# Buckshot!:  A MATLAB Interface for the Bullet Physics Engine #
 
 Buckshot's goal is to allow for convenient use of the MATLAB
 libraries, while also guaranteeing accurate simulation through Bullet
