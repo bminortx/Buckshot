@@ -82,16 +82,6 @@ so I'd love to get some feedback on improvements.
 - PgUp / PgDwn : Zoom in/out
 - q : quit the program
 
-TODOs left here:
-
-* Correct heightmap rendering (defaults to flat plane now)
-* Correct constraint rendering
-* Add mouse viewing translation/rotation
-* Add texturing for every shape type, as well as easy texture file
-  linking through MATLAB
-* Add more shaders
-* Find a way to quit the GUI without quitting MATLAB
-
 - - - - - - - - -
 
 ## WHO IS THIS ##
@@ -104,7 +94,8 @@ Associated Acts: ARPG @ CU Boulder,
 
 If you'd like to work on the project, or point out anything grossly
 wrong, just reach out! I would love to make Buckshot a legitimately
-useful tool.
+useful tool. See the Issues in GitHub for ways to improve upon what's
+there.
 
 - - - - - - - - -
 
