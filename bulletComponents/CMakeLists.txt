@@ -31,25 +31,24 @@ add_definitions(-DBT_NO_PROFILE)
 # TODO: MAKE THIS NOT REQUIRED
 find_package( OpenGL )
 find_package( GLUT )
-find_package( FREEGLUT )
-
+find_package( FREEGLUT REQUIRED )
 
 set(USER_INC
   ${BULLET_INCLUDE_DIR}
   ${OPENGL_INCLUDE_DIRS}
-  ${GLUT_INCLUDE_DIRS}  
-  ${FREEGLUT_INCLUDE_DIRS}  
+  ${FREEGLUT_INCLUDE_DIR}  
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/bulletShapes
   ${CMAKE_CURRENT_SOURCE_DIR}/Graphics
   ${CMAKE_CURRENT_BINARY_DIR})
 set(LINK_DIRS
-  /usr/local/lib/)
+  /usr/local/lib/
+)
+
 set(LINK_LIBS
   ${BULLET_LIBRARIES}
+  ${FREEGLUT_LIBRARY}
   ${OPENGL_LIBRARIES}
-  ${GLUT_LIBRARY}
-  ${FREEGLUT_LIBRARY}  
   )
 include_directories(${USER_INC})
 link_directories(${USER_INC})
@@ -107,27 +106,28 @@ endif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 set(MEXINCLUDES)
 set(MEXLIBS)
 set(MEXLIBDIRS)
+set(lengthth)
 foreach(INC_DIR ${USER_INC})
-  set(MEXINCLUDES "${MEXINCLUDES} -I${INC_DIR}")
+  list(APPEND MEXINCLUDES "-I${INC_DIR} ")
 endforeach()
 foreach(INC_DIR_OPT ${USER_INC_OPT})
-  set(MEXINCLUDES "${MEXINCLUDES} -I${INC_DIR_OPT}")
+  list(APPEND MEXINCLUDES "-I${INC_DIR_OPT} ")
 endforeach()
-separate_arguments(MEXINCLUDES)
-# message(${MEXINCLUDES})
+# separate_arguments(MEXINCLUDES)
+message(${MEXINCLUDES})
 
 foreach(DIR ${LINK_DIRS})
-  set(MEXLIBDIRS "${MEXINCLUDES} -L${DIR}")
+  list(APPEND MEXLIBDIRS "-L${DIR} ")
 endforeach()
-separate_arguments(MEXLIBDIRS)
+# separate_arguments(MEXLIBDIRS)
 
 foreach(DIR ${LINK_LIBS})
-  set(MEXLIBS "${MEXLIBS} ${DIR}")
-Endforeach()
+  list(APPEND MEXLIBS "${DIR} ")
+endforeach()
 foreach(DIR_OPT ${LINK_LIBS_OPT})
-  set(MEXLIBS "${MEXLIBS} -L${DIR_OPT}")
-Endforeach()
-separate_arguments(MEXLIBS)
+  list(APPEND MEXXLIBS "-L${DIR_OPT} ")
+endforeach()
+# separate_arguments(MEXLIBS)
 message(${MEXLIBS})
 
 ###################

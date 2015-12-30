@@ -146,7 +146,7 @@ echo "Error: Did not imbed 'options.sh' code"; exit 1 #imbed options.sh maci 12
             # C++keyLinkerName:
             # C++keyLinkerVersion:
             CXX='xcrun  -sdk macosx10.11  clang++'
-            CXXFLAGS="-fno-common -fexceptions -arch $ARCHS -isysroot $MW_SDKROOT -mmacosx-version-min=$MACOSX_DEPLOYMENT_TARGET"
+            CXXFLAGS="-fno-common -fexceptions -fPIC -arch $ARCHS -isysroot $MW_SDKROOT -mmacosx-version-min=$MACOSX_DEPLOYMENT_TARGET -std=c++11"
             CXXLIBS="$MLIBS -lstdc++"
             CXXOPTIMFLAGS='-O2 -DNDEBUG'
             CXXDEBUGFLAGS='-g'
