@@ -124,13 +124,13 @@ echo "Error: Did not imbed 'options.sh' code"; exit 1 #imbed options.sh maci 12
             # CkeyVersion:
             # CkeyLinkerName:
             # CkeyLinkerVersion:
-            CC='xcrun  -sdk macosx10.7  clang'
+            CC='xcrun  -sdk macosx10.11  clang'
 ## workaround clang defect temporarily use line below           SDKROOT='/Developer/SDKs/MacOSX10.6.sdk'
 # compute SDK root on the fly
-# target 10.7 
-            MW_SDKROOT_TMP="find `xcode-select -print-path` -name MacOSX10.7.sdk"
-			MW_SDKROOT=`$MW_SDKROOT_TMP`
-            MACOSX_DEPLOYMENT_TARGET='10.7'
+# target 10.11 
+            MW_SDKROOT_TMP="find `xcode-select -print-path` -name MacOSX10.11.sdk"
+	    MW_SDKROOT=`$MW_SDKROOT_TMP`
+            MACOSX_DEPLOYMENT_TARGET='10.11'
             ARCHS='x86_64'
             CFLAGS="-fno-common -arch $ARCHS -isysroot $MW_SDKROOT -mmacosx-version-min=$MACOSX_DEPLOYMENT_TARGET"
             CFLAGS="$CFLAGS  -fexceptions"
@@ -145,7 +145,7 @@ echo "Error: Did not imbed 'options.sh' code"; exit 1 #imbed options.sh maci 12
             # C++keyVersion:
             # C++keyLinkerName:
             # C++keyLinkerVersion:
-            CXX='xcrun  -sdk macosx10.7  clang++'
+            CXX='xcrun  -sdk macosx10.11  clang++'
             CXXFLAGS="-fno-common -fexceptions -arch $ARCHS -isysroot $MW_SDKROOT -mmacosx-version-min=$MACOSX_DEPLOYMENT_TARGET"
             CXXLIBS="$MLIBS -lstdc++"
             CXXOPTIMFLAGS='-O2 -DNDEBUG'
