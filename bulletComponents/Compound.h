@@ -6,8 +6,14 @@
 #pragma once
 
 #include <memory>
+#ifdef __APPLE__
+#include <btBulletDynamicsCommon.h>
+#include <LinearMath/btAlignedAllocator.h>
+#else
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/LinearMath/btAlignedAllocator.h>
+#endif
+
 #include "../bulletShapes/bullet_cube.h"
 #include "../bulletShapes/bullet_cylinder.h"
 #include "../bulletShapes/bullet_heightmap.h"

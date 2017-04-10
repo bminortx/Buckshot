@@ -31,7 +31,7 @@ For the Graphics pipeline:
 
 Make sure that you're pointing to the correct mex directory in the
 CMake script; it's a set variable at the very top of
-bulletInterface/CMakeLists.txt:
+bulletComponents/CMakeLists.txt:
 
 `set(MEX /usr/local/MATLAB/R2014a/bin/mex)`
 

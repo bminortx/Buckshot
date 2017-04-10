@@ -11,23 +11,16 @@
 #endif
 #define GL_GLEXT_PROTOTYPES
 
-/// TODO: Make this optional
 #include <GL/freeglut.h>
 
-#ifdef __APPLE__
-#include <GLUT/glut.h>
-#else
-#include <GL/glut.h>
-#endif
-
 /// OpenGL Headers
-#define GLM_FORCE_RADIANS
-#include <glm/glm.hpp>
-#include <glm/vec3.hpp> // glm::vec3
-#include <glm/vec4.hpp> // glm::vec4
-#include <glm/mat4x4.hpp> // glm::mat4
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+// #define GLM_FORCE_RADIANS
+// #include <glm/glm.hpp>
+// #include <glm/vec3.hpp> // glm::vec3
+// #include <glm/vec4.hpp> // glm::vec4
+// #include <glm/mat4x4.hpp> // glm::mat4
+// #include <glm/gtc/type_ptr.hpp>
+// #include <glm/gtc/matrix_transform.hpp>
 
 #include <memory>
 #include <vector>

@@ -3,7 +3,7 @@
 # might have to change these, depending on your system.
 ###################
 
-set(MEX /usr/local/MATLAB/R2015b/bin/mex)
+set(MEX /Applications/MATLAB_R2015b.app/bin/mex)
 set(BULLET_PRECISION -DBT_USE_DOUBLE_PRECISION)
 set(CMAKE_BUILD_TYPE RELEASE)
 
@@ -28,10 +28,16 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules")
 find_package( Bullet REQUIRED )
 add_definitions(${BULLET_PRECISION})
 add_definitions(-DBT_NO_PROFILE)
-# TODO: MAKE THIS NOT REQUIRED
 find_package( OpenGL )
-find_package( GLUT )
 find_package( FREEGLUT REQUIRED )
+
+
+##################
+# TODO: Find out why this program is trying to 
+# link /Applications/MATLAB_R2015b.app 
+# $ cd /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/glut.framework, and not GLUT.framework
+##################
+
 
 set(USER_INC
   ${BULLET_INCLUDE_DIR}
@@ -84,8 +90,8 @@ set(TEST_SRC
 # BULLET TESTER
 ###################
 
-add_executable(BulletTester maintest.cpp ${TEST_SRC} ${TEST_HDRS})
-target_link_libraries(BulletTester ${LINK_LIBS})
+# add_executable(BulletTester maintest.cpp ${TEST_SRC} ${TEST_HDRS})
+# target_link_libraries(BulletTester ${LINK_LIBS})
 
 ###################
 # MEX CONFIGURATION
@@ -125,7 +131,7 @@ foreach(DIR ${LINK_LIBS})
   list(APPEND MEXLIBS "${DIR} ")
 endforeach()
 foreach(DIR_OPT ${LINK_LIBS_OPT})
-  list(APPEND MEXXLIBS "-L${DIR_OPT} ")
+  list(APPEND MEXLIBS "-L${DIR_OPT} ")
 endforeach()
 # separate_arguments(MEXLIBS)
 message(${MEXLIBS})
